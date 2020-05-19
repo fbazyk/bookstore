@@ -10,8 +10,6 @@ import javax.validation.constraints.Size;
 })
 public class Book extends Article {
 
-
-
     @Size(max = 100)
     @Column(name = "author")
     private String author;
