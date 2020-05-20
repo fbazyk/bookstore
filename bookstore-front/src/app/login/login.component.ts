@@ -3,6 +3,7 @@ import {UserService} from "../user.service";
 import {User} from "../model/User";
 import {FormBuilder, Validators} from "@angular/forms";
 import {BehaviorSubject} from "rxjs";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,8 @@ export class LoginComponent implements OnInit {
   allUsersBS: BehaviorSubject<[User]> = new BehaviorSubject<[User]>([null]);
 
   constructor(private userService: UserService,
-              private formBuilder: FormBuilder){
+              private formBuilder: FormBuilder,
+              public router: Router){
     console.log("loaded login component");
     this.loginForm = this.formBuilder.group({
       userList: [this.allUsers]
@@ -42,7 +44,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  login(value:any) {
+  login() {
     console.log("Log In Action Triggered")
     console.log("Value: userList", this.loginForm.value.userList);
     let selectedUser:User = this.loginForm.value.userList;
@@ -52,6 +54,7 @@ export class LoginComponent implements OnInit {
     //have a form with Select objects
     //formgroup etc...
     this.userService.login(selectedUser);
+    this.router.navigateByUrl('/inventory')
   }
 
 }

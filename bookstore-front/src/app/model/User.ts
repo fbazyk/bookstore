@@ -5,7 +5,7 @@ export class User {
   role: UserRole;
 }
 
-enum UserRole {
-  ADMIN,
-  USER
+export enum UserRole {
+  ADMIN='ADMIN',
+  USER='USER'
 }

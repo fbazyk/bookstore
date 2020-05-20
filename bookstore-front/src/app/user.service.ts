@@ -1,9 +1,9 @@
 import {Injectable, OnInit} from '@angular/core';
-import {BehaviorSubject, Observable} from "rxjs";
+import {BehaviorSubject, Observable, of} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs/operators";
 import {environment} from "../environments/environment";
-import {User} from "./model/User";
+import {User, UserRole} from "./model/User";
 
 /**
  *
@@ -34,7 +34,7 @@ export class UserService implements OnInit{
   }
 
   login(selectedUser: User) {
-
+    console.log("UserService logging in", selectedUser);
     this.currentUserSubject.next(selectedUser);
 
     // return this.http.post<any>(`${environment.apiUrl}/users/authenticate`, { username, password })
@@ -64,6 +64,14 @@ export class UserService implements OnInit{
     return this.allUsersList;
   }
 
+  isAuth():Observable<boolean>{
+    //TODO check if user is authenticated through some jwt token (to implement in UCXX)
+
+    if(!!this.currentUserSubject.getValue()){
+      return of(true);
+    } else return of(false);
+  }
+
   ngOnInit(): void {
     console.log("ng oninit executed")
 
@@ -71,5 +79,18 @@ export class UserService implements OnInit{
     this.allUsersListBS.subscribe(value => {
       console.log(value);
     })
+  }
+
+  isUser():Observable<boolean> {
+    if(!!this.currentUserSubject.getValue() && this.currentUserSubject.getValue().role == UserRole.USER){
+      console.log(this.currentUserSubject.getValue().role);
+      return of(true);
+    }else return of(false);
+  }
+  isAdmin():Observable<boolean> {
+    if(!!this.currentUserSubject.getValue() && this.currentUserSubject.getValue().role == UserRole.ADMIN){
+      console.log(this.currentUserSubject.getValue().role);
+      return of(true);
+    }else return of(false);
   }
 }

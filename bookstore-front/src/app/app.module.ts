@@ -12,11 +12,15 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {HttpClientModule} from "@angular/common/http";
+import { DisplayInventoryComponent } from './display-inventory/display-inventory.component';
+import {AdminGuardService} from "./security/admin-guard.service";
+import {UserGuardService} from "./security/user-guard.service";
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
+    DisplayInventoryComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,7 +34,10 @@ import {HttpClientModule} from "@angular/common/http";
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    AdminGuardService,
+    UserGuardService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
