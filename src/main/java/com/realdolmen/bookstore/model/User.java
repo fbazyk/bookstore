@@ -20,7 +20,30 @@ public class User {
     @Size(max = 100)
     private String lastName;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private UserRole role;
+    private String role;
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }

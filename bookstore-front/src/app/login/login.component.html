@@ -1,0 +1,12 @@
+<p>login works!</p>
+<form [formGroup]="loginForm" (ngSubmit)="login()">
+<mat-form-field>
+  <mat-label>Select User</mat-label>
+  <mat-select formControlName="userList" placeholder="Select User">
+    <mat-option *ngFor="let user of allUsers" [value]="user">
+      {{user?.firstName}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<button mat-button type="submit"> Log In</button>
+</form>
