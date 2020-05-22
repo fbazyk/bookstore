@@ -15,6 +15,9 @@ import {HttpClientModule} from "@angular/common/http";
 import { DisplayInventoryComponent } from './display-inventory/display-inventory.component';
 import {AdminGuardService} from "./security/admin-guard.service";
 import {UserGuardService} from "./security/user-guard.service";
+import {MatTableModule} from "@angular/material/table";
+import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatSortModule} from "@angular/material/sort";
 
 @NgModule({
   declarations: [
@@ -32,7 +35,10 @@ import {UserGuardService} from "./security/user-guard.service";
     MatSelectModule,
     MatFormFieldModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
   ],
   providers: [
     AdminGuardService,

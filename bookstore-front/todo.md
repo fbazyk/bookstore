@@ -11,3 +11,19 @@
     - on the other hand different components by role is easier to make fast.
     
 So Route Guards are generally working now...    
+
+TABLE INITIALIZED
+
+Display Inventory TODO
+
+Load articles into db... HELL MY MAPPEDSUPERCLASS IS STILL NOT WORKING...
+Turns out, it was working, but i was expecting it would get me an Article JpaRepo..
+Nope...
+
+DID I DECIDE TO GO WITH NGRX?!
+
+
+Articles are available on REST
+
+Get them into Front, attach to the table, get sorting and shit done...
+

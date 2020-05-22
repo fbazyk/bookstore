@@ -16,4 +16,19 @@ public class LP extends Article {
     @Column(name = "genre")
     private LPGenre genre;
 
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    public LPGenre getGenre() {
+        return genre;
+    }
+
+    public void setGenre(LPGenre genre) {
+        this.genre = genre;
+    }
 }
