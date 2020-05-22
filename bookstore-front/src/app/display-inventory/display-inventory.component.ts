@@ -1,15 +1,11 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTable} from '@angular/material/table';
 import {MatSort} from "@angular/material/sort";
+import {ArticleService} from "../service/article.service";
+import {Article} from "../model/Articles";
 
-export interface UserData {
-  id: string;
-  name: string;
-  progress: string;
-  color: string;
-}
 
   /** Constants used to fill up our data base. */
   const COLORS: string[] = [
@@ -30,23 +26,37 @@ export interface UserData {
     styleUrls: ['./display-inventory.component.css'],
   })
   export class DisplayInventoryComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'name', 'progress', 'color'];
-  dataSource: MatTableDataSource<UserData>;
+  displayedColumns: string[] = ['id', 'name', 'type', 'price'];
+  dataSource: MatTableDataSource<Article>;
+  allArticles: Array<Article>;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-  constructor() {
+  constructor(private articleService: ArticleService, private changeDetectorRefs: ChangeDetectorRef) {
     // Create 100 users
-    const users = Array.from({length: 100}, (_, k) => createNewUser(k + 1));
 
     // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(users);
+    this.dataSource = new MatTableDataSource(this.articleService.currentArticles());
   }
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.dataSource.connect();
+    // this.articleService.allArticles().subscribe(value => {
+    //  console.log(value)
+    // });
+    this.articleService.allArticles1.subscribe(art => {
+      console.log(art)
+      this.dataSource.data=art;
+      // this.changeDetectorRefs.detectChanges();
+    });
+    this.articleService.findAll()
+    // this.articleService.allArticles2().subscribe(value => {
+    //   console.log(value)
+    //   this.allArticles = value;
+    // })
   }
 
   applyFilter(event: Event) {

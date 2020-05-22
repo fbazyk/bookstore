@@ -28,11 +28,11 @@ public class ArticleController {
 
     @CrossOrigin
     @GetMapping
-    public List<? extends Article> findAll() {
+    public List<Article> findAll() {
 
-        List<? extends Article> result =this.articleService.findAll();
-        logger.debug("Article 0: {}", result.get(0).getClass());
-        logger.debug("Article 0: {}", result.get(4).getClass());
+        List<Article> result =this.articleService.findAll();
+        logger.debug("Articles 0: {}", result.get(0).getClass());
+        logger.debug("Articles 0: {}", result.get(4).getClass());
         logger.error("Articles: {}", result);
         return result;
     }

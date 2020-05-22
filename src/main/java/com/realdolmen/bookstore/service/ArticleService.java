@@ -30,11 +30,11 @@ public class ArticleService {
         this.lpRepository = lpRepository;
     }
 
-    public List<? extends Article> findAll() {
+    public List<Article> findAll() {
         List<Book> books = this.bookRepository.findAll();
         List<Game> games = this.gameRepository.findAll();
         List<LP> lps = this.lpRepository.findAll();
-        List<? extends Article> articles = Stream.of(books, games, lps)
+        List<Article> articles = Stream.of(books, games, lps)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         return articles;
