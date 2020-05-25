@@ -23,6 +23,7 @@ export class ArticleService implements OnInit {
   }]);
   public allArticles1: Observable<Array<Article>> = this.allArticlesBS.asObservable();
 
+  public selectedCategory: BehaviorSubject<string> = new BehaviorSubject<string>("all");
 
   constructor(private http: HttpClient) {
     this.findAll();
@@ -33,20 +34,9 @@ export class ArticleService implements OnInit {
   }
 
   findAll() {
-    console.log("Fetching articles 333")
-    return this.http.get<Array<Article>>(`${environment.apiUrl}/articles`).pipe(
+    return this.http.get<Array<Article>>(`${environment.apiUrl}/inventory/articles`).pipe(
       tap(x => console.log("Piped from response", x, "Type of X = ", typeof x)),
-      map(array => {
-        let subclassesArray: Array<Article> = new Array<Article>();
-        array.forEach((article: any) => {
-          let target: any = new typeMapping[article.type];
-          for (const key in article) {
-            target[key] = article[key];
-          }
-          subclassesArray.push(target);
-        });
-        return subclassesArray;
-      }),
+      map(this.classifyArticles),
       tap(x => console.log("Piped from cast", x, "Type of X = ", typeof x)),)
       .subscribe(result => {
         this.allArticlesBS.next(result);
@@ -54,13 +44,20 @@ export class ArticleService implements OnInit {
       })
   }
 
-  allArticles2() {
-    console.log("fetching all articles")
-    return this.http.get<Array<Article>>(`${environment.apiUrl}/articles`)
-      .pipe(map(articles => {
-        console.log(articles)
-      }));
 
+  /**
+   * Apply types to incoming JSON based on the "type" field.
+   * */
+  classifyArticles(array) {
+    let subclassesArray: Array<Article> = new Array<Article>();
+    array.forEach((article: any) => {
+      let target: any = new typeMapping[article.type];
+      for (const key in article) {
+        target[key] = article[key];
+      }
+      subclassesArray.push(target);
+    });
+    return subclassesArray;
   }
 
   ngOnInit(): void {

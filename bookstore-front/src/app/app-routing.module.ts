@@ -5,6 +5,7 @@ import {AppComponent} from "./app.component";
 import {UserGuardService} from "./security/user-guard.service";
 import {AdminGuardService} from "./security/admin-guard.service";
 import {DisplayInventoryComponent} from "./display-inventory/display-inventory.component";
+import {InventoryComponent} from "./inventory/inventory.component";
 
 
 const routes: Routes = [
@@ -16,7 +17,7 @@ const routes: Routes = [
   },
   {
     path: 'inventory',
-    component: DisplayInventoryComponent,
+    component: InventoryComponent,
     canActivate: [AdminGuardService]
   },
   { path:  'login', component:  LoginComponent},
@@ -30,5 +31,4 @@ const routes: Routes = [
 })
 export class AppRoutingModule { }
 
-//TODO router guards
 

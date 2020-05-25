@@ -1,1 +1,9 @@
-<p>category-select works!</p>
+<div>
+  <mat-button-toggle-group #group value='{{togglevalues[0]}}' (change)="do($event)" name="fontStyle" aria-label="Font Style">
+    <mat-button-toggle value='{{togglevalues[0]}}'>{{togglevalues[0]}}</mat-button-toggle>
+    <mat-button-toggle value="books">Books</mat-button-toggle>
+    <mat-button-toggle value="games">Games</mat-button-toggle>
+    <mat-button-toggle value="lps">LPs</mat-button-toggle>
+  </mat-button-toggle-group>
+
+</div>

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 @RestController
-@RequestMapping("/games")
+@RequestMapping("/inventory/games")
 public class GameController {
 
 

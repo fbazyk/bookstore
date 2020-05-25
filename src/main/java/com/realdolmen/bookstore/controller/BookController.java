@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/inventory/books")
 public class BookController {
 
     Logger logger = LoggerFactory.getLogger(BookController.class);

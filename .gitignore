@@ -6,6 +6,7 @@ target/
 !**/src/main/**
 !**/src/test/**
 app.log
+todo.md
 
 ### STS ###
 .apt_generated

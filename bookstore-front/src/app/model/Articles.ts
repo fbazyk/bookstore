@@ -18,6 +18,18 @@ export class Book implements Article {
   author: string;
   isbn: string;
   pages: number;
+
+
+  constructor(type: string, id: number, title: string, price: number, supplierId: string, author: string, isbn: string, pages: number) {
+    this.type = type;
+    this.id = id;
+    this.title = title;
+    this.price = price;
+    this.supplierId = supplierId;
+    this.author = author;
+    this.isbn = isbn;
+    this.pages = pages;
+  }
 }
 
 

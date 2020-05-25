@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/lps")
+@RequestMapping("/inventory/lps")
 public class LpController {
 
     Logger logger = LoggerFactory.getLogger(LpController.class);
