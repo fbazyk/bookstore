@@ -58,7 +58,7 @@ export class Lp implements Article {
   genre: LpGenre
 }
 
-export const typeMapping:any = {
+export const articleTypeMapping:any = {
   'book' : Book,
   'game' : Game,
   'lp': Lp

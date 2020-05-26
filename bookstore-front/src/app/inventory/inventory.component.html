@@ -1,2 +1,7 @@
-<app-category-select></app-category-select>
-<app-display-inventory></app-display-inventory>
+<div class="container">
+
+<app-category-select [providedType]="providedType" (selectedType)="doChangeCategory($event)"></app-category-select>
+<app-display-inventory [articleType]="selectedCategory">
+
+</app-display-inventory>
+</div>

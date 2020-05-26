@@ -1,10 +1,11 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTable} from '@angular/material/table';
 import {MatSort} from "@angular/material/sort";
 import {ArticleService} from "../service/article.service";
-import {Article} from "../model/Articles";
+import {Article, Book, Game, Lp} from "../model/Articles";
+import {BehaviorSubject} from "rxjs";
 
 
   /** Constants used to fill up our data base. */
@@ -29,34 +30,55 @@ import {Article} from "../model/Articles";
   displayedColumns: string[] = ['id', 'name', 'type', 'price'];
   dataSource: MatTableDataSource<Article>;
   allArticles: Array<Article>;
+  displayedColumnsMap : Map<string, string[]> = new Map<string, string[]>();
+
+  @Input()
+  articleType: BehaviorSubject<string>;
+  // articleType: BehaviorSubject<string> = new BehaviorSubject<string>('all');
+
+  @Input()
+  articleList: Array<Article|Book|Game|Lp>;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   constructor(private articleService: ArticleService, private changeDetectorRefs: ChangeDetectorRef) {
-    // Create 100 users
+    this.provideDisplayedColumns();
 
     // Assign the data to the data source for the table to render
     this.dataSource = new MatTableDataSource(this.articleService.currentArticles());
+    this.articleService.displayedArticlesO.subscribe(articleList => {
+      console.log(articleList)
+      this.dataSource.data=articleList;
+      // this.changeDetectorRefs.detectChanges();
+    });
   }
 
-  ngOnInit() {
+    private provideDisplayedColumns() {
+      this.displayedColumnsMap.set('all', ['name', 'type', 'price']);
+      this.displayedColumnsMap.set('book', [ 'type', 'price']);
+      this.displayedColumnsMap.set('game', ['name',  'price']);
+      this.displayedColumnsMap.set('lp', ['name', 'type']);
+    }
+
+    ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.dataSource.connect();
     // this.articleService.allArticles().subscribe(value => {
     //  console.log(value)
     // });
-    this.articleService.allArticles1.subscribe(art => {
-      console.log(art)
-      this.dataSource.data=art;
-      // this.changeDetectorRefs.detectChanges();
-    });
+
     this.articleService.findAll()
     // this.articleService.allArticles2().subscribe(value => {
     //   console.log(value)
     //   this.allArticles = value;
     // })
+
+    this.articleType.subscribe(type => {
+      console.log("Article Type Selection Through!!!",type);
+      this.displayedColumns = this.displayedColumnsMap.get(type);
+    })
   }
 
   applyFilter(event: Event) {

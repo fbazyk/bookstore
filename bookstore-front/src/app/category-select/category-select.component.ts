@@ -1,6 +1,17 @@
-import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef, EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {ArticleService} from "../service/article.service";
 import {MatButtonToggleChange, MatButtonToggleGroup} from "@angular/material/button-toggle";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: 'app-category-select',
@@ -9,27 +20,18 @@ import {MatButtonToggleChange, MatButtonToggleGroup} from "@angular/material/but
 })
 export class CategorySelectComponent implements OnInit {
 
-  togglevalues: Array<string> = [
-    'all',
-    'books',
-    'games',
-    'lps'
-  ];
+  @Input()
+  providedType: string;
 
-  @ViewChild('group') element: MatButtonToggleGroup;
-  categoryToggle: string = 'all';
+  @Output()
+  // selectedType: EventEmitter<MatButtonToggleChange> = new EventEmitter<MatButtonToggleChange>();
+  selectedType: EventEmitter<MatButtonToggleChange> = new EventEmitter();
 
-  constructor(private articleS: ArticleService,
-              private _elementRef: ElementRef) {
+  constructor() {
+
   }
-
 
   ngOnInit(): void {
-  }
-
-
-  do($event: MatButtonToggleChange) {
-    this.articleS.selectedCategory.next($event.value)
   }
 
 }
