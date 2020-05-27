@@ -1,3 +1,16 @@
-.container{
+.inventory--container{
   width: 90%;
+}
+
+:host {
+  width: 90%;
+}
+
+.inventory--table__wide {
+  width: 90%;
+}
+
+.inventory--cat-select__right {
+  display: flex;
+  flex-direction: row-reverse;
 }

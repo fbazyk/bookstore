@@ -6,18 +6,31 @@ import {UserGuardService} from "./security/user-guard.service";
 import {AdminGuardService} from "./security/admin-guard.service";
 import {DisplayInventoryComponent} from "./display-inventory/display-inventory.component";
 import {InventoryComponent} from "./inventory/inventory.component";
+import {DisplayArticleComponent} from "./display-article/display-article.component";
+import {Article} from "./model/Articles";
+import {EditArticleComponent} from "./edit-article/edit-article.component";
 
 
 const routes: Routes = [
 
   {
     path: '',
-    component: AppComponent,
-    canActivate: []
+    component: InventoryComponent,
+    canActivate: [ UserGuardService]
   },
   {
     path: 'inventory',
     component: InventoryComponent,
+    canActivate: [UserGuardService]
+  },
+  {
+    path: 'article/:type/:id',
+    component: DisplayArticleComponent,
+    canActivate: [ UserGuardService]
+  },
+  {
+    path: 'article/edit/:type/:id',
+    component: EditArticleComponent,
     canActivate: [AdminGuardService]
   },
   { path:  'login', component:  LoginComponent},

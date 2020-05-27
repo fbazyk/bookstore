@@ -1,11 +1,12 @@
-import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTable} from '@angular/material/table';
 import {MatSort} from "@angular/material/sort";
 import {ArticleService} from "../service/article.service";
 import {Article, Book, Game, Lp} from "../model/Articles";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
+import {Router} from "@angular/router";
 
 
   /** Constants used to fill up our data base. */
@@ -26,57 +27,53 @@ import {BehaviorSubject} from "rxjs";
     templateUrl: './display-inventory.component.html',
     styleUrls: ['./display-inventory.component.css'],
   })
-  export class DisplayInventoryComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'name', 'type', 'price'];
+  export class DisplayInventoryComponent implements OnInit, OnDestroy {
+  displayedColumns: string[] = ['id', 'title', 'type', 'price'];
   dataSource: MatTableDataSource<Article>;
-  allArticles: Array<Article>;
   displayedColumnsMap : Map<string, string[]> = new Map<string, string[]>();
+    subscriptions: Subscription[] = [];
 
   @Input()
-  articleType: BehaviorSubject<string>;
+  providedType: BehaviorSubject<string>;
   // articleType: BehaviorSubject<string> = new BehaviorSubject<string>('all');
 
-  @Input()
-  articleList: Array<Article|Book|Game|Lp>;
+    @Input()
+  articleList: Array<Article|Book|Game|Lp> = [];
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-  constructor(private articleService: ArticleService, private changeDetectorRefs: ChangeDetectorRef) {
+  constructor(private articleService: ArticleService, private router: Router) {
     this.provideDisplayedColumns();
-
-    // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(this.articleService.currentArticles());
-    this.articleService.displayedArticlesO.subscribe(articleList => {
-      console.log(articleList)
-      this.dataSource.data=articleList;
-      // this.changeDetectorRefs.detectChanges();
-    });
+    // // Assign the data to the data source for the table to render
+    this.dataSource = new MatTableDataSource();
+    this.articleService.displayedArticlesO.subscribe(value => {
+      this.dataSource.data = value;
+    })
+    // this.dataSource.data = this.articleList;
+    // let i = 0;
+    // let subscription = this.articleService.displayedArticlesO.subscribe(articleList => {
+    //   // console.log(i=i++)
+    //   // console.log(articleList)
+    //   this.dataSource.data=articleList;
+    // });
+    // this.subscriptions.push(subscription)
   }
 
     private provideDisplayedColumns() {
-      this.displayedColumnsMap.set('all', ['name', 'type', 'price']);
-      this.displayedColumnsMap.set('book', [ 'type', 'price']);
-      this.displayedColumnsMap.set('game', ['name',  'price']);
-      this.displayedColumnsMap.set('lp', ['name', 'type']);
+      this.displayedColumnsMap.set('all', ['title', 'type', 'price']);
+      this.displayedColumnsMap.set('book', ['title', 'author', 'isbn', 'pages', 'price']);
+      this.displayedColumnsMap.set('game', ['title', 'publisher', 'min_age', 'genre', 'price']);
+      this.displayedColumnsMap.set('lp', ['title', 'artist', 'genre', 'price']);
     }
 
     ngOnInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.dataSource.connect();
-    // this.articleService.allArticles().subscribe(value => {
-    //  console.log(value)
-    // });
 
-    this.articleService.findAll()
-    // this.articleService.allArticles2().subscribe(value => {
-    //   console.log(value)
-    //   this.allArticles = value;
-    // })
 
-    this.articleType.subscribe(type => {
-      console.log("Article Type Selection Through!!!",type);
+    this.providedType.subscribe(type => {
       this.displayedColumns = this.displayedColumnsMap.get(type);
     })
   }
@@ -89,7 +86,18 @@ import {BehaviorSubject} from "rxjs";
       this.dataSource.paginator.firstPage();
     }
   }
-}
+
+    displayArticle(article: Article) {
+
+    console.log(article)
+      this.router.navigate([ '/article', article.type, article.id])
+    }
+
+    ngOnDestroy(): void {
+      this.subscriptions.forEach(subscription => subscription.unsubscribe())
+
+    }
+  }
 
 /** Builds and returns a new User. */
 function createNewUser(id: number) {

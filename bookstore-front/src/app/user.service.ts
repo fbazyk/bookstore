@@ -82,7 +82,7 @@ export class UserService implements OnInit{
   }
 
   isUser():Observable<boolean> {
-    if(!!this.currentUserSubject.getValue() && this.currentUserSubject.getValue().role == UserRole.USER){
+    if(!!this.currentUserSubject.getValue() && (this.currentUserSubject.getValue().role == UserRole.USER || this.currentUserSubject.getValue().role == UserRole.ADMIN )){
       console.log(this.currentUserSubject.getValue().role);
       return of(true);
     }else return of(false);

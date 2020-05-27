@@ -7,14 +7,12 @@ import com.realdolmen.bookstore.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @RestController
-@RequestMapping("/inventory/articles")
+@RequestMapping
 public class ArticleController {
 
     Logger logger = LoggerFactory.getLogger(ArticleController.class);
@@ -27,7 +25,7 @@ public class ArticleController {
     }
 
     @CrossOrigin
-    @GetMapping
+    @GetMapping("/inventory/articles")
     public List<Article> findAll() {
 
         List<Article> result =this.articleService.findAll();
@@ -35,5 +33,45 @@ public class ArticleController {
         logger.debug("Articles 0: {}", result.get(4).getClass());
         logger.error("Articles: {}", result);
         return result;
+    }
+
+    @CrossOrigin
+    @DeleteMapping("/article/{type}/{id}")
+    ResponseEntity<?> deleteArticle(@PathVariable String type, @PathVariable long id) {
+        if(articleService.deleteByTypeById(type, id)){
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
+    @CrossOrigin
+    @PostMapping("/article/{type}/{id}")
+    ResponseEntity<?> changeArticle(@PathVariable String type, @PathVariable long id) {
+
+        //TODO extract object from body
+
+
+        if(articleService.editArticle()){
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
+    @CrossOrigin
+    @PutMapping("/article/{type}")
+    ResponseEntity<?> addArticle(@PathVariable String type) {
+        //TODO obtain object from the body
+        //parse it here from the json according to type?
+        //todo give json to the article service?
+        //or what?
+        //i guess, the service will know better about what kind of article that is....
+        Object article = new Object();
+        if(articleService.addArticle(type, article)){
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
     }
 }

@@ -1,11 +1,20 @@
 import {GameGenre, LpGenre} from "./Genres";
 
+export type Item = |Book|Game|Lp;
+
 export interface Article{
   type: string;
   id: number;
   title: string;
   price: number;
-  supplierId: string;
+  supplierId: string
+  author?: string;
+  isbn?: string;
+  pages?: number;
+  publisher?: string;
+  min_age?: number;
+  artist?: string;
+  genre?: GameGenre|LpGenre;
 }
 
 

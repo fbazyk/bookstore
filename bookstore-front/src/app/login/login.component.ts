@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UserService} from "../user.service";
 import {User} from "../model/User";
 import {FormBuilder, Validators} from "@angular/forms";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 import {Router} from "@angular/router";
 
 @Component({
@@ -10,8 +10,9 @@ import {Router} from "@angular/router";
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
+  private subs: Subscription[] = new Array<Subscription>();
   loginForm: any;
   allUsers: Array<User>;
   allUsersBS: BehaviorSubject<[User]> = new BehaviorSubject<[User]>([null]);
@@ -36,12 +37,13 @@ export class LoginComponent implements OnInit {
 
   subscribeToUserListBS() {
     console.log("subscribing to all users");
-    this.userService.allUsersListBS.subscribe(userList => {
-      console.log("User List:")
-      console.log(userList)
+    const userSub = this.userService.allUsersListBS.subscribe(userList => {
+      console.log("User List:");
+      console.log(userList);
       this.allUsers = userList;
       this.loginForm.patchValue({"userList": this.allUsers})
     });
+    this.subs.push(userSub);
   }
 
   login() {
@@ -56,5 +58,10 @@ export class LoginComponent implements OnInit {
     this.userService.login(selectedUser);
     this.router.navigateByUrl('/inventory')
   }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(value => value.unsubscribe());
+  }
+
 
 }

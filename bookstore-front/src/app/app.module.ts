@@ -21,6 +21,10 @@ import {MatSortModule} from "@angular/material/sort";
 import { CategorySelectComponent } from './category-select/category-select.component';
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
 import { InventoryComponent } from './inventory/inventory.component';
+import { DisplayArticleComponent } from './display-article/display-article.component';
+import {MatCardModule} from "@angular/material/card";
+import { EditArticleComponent } from './edit-article/edit-article.component';
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -29,6 +33,8 @@ import { InventoryComponent } from './inventory/inventory.component';
     DisplayInventoryComponent,
     CategorySelectComponent,
     InventoryComponent,
+    DisplayArticleComponent,
+    EditArticleComponent,
   ],
     imports: [
         BrowserModule,
@@ -45,10 +51,12 @@ import { InventoryComponent } from './inventory/inventory.component';
         MatSortModule,
         MatPaginatorModule,
         MatButtonToggleModule,
+        MatCardModule,
+      MatSnackBarModule
     ],
   providers: [
     AdminGuardService,
-    UserGuardService
+    UserGuardService,
   ],
   bootstrap: [AppComponent]
 })

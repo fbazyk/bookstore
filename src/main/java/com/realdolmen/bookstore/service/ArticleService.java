@@ -39,4 +39,54 @@ public class ArticleService {
                 .collect(Collectors.toList());
         return articles;
     }
+
+    public boolean addArticle(String type, Object article){
+
+        //todo convert article Object to its respective class
+        //TODO push it to respective repository
+
+        //        switch (type){
+//            case "book" : {
+//                this.bookRepository.addBook(article);
+//                break;
+//            }
+//            case "game":{
+//                this.gameRepository.addGame(article);
+//                break;
+//            }
+//            case "lp":{
+//                this.lpRepository.addLp(article);
+//                break;
+//            }
+//            default: return false;
+//        }
+        return true;
+    }
+
+    public boolean deleteByTypeById(String type, long id) {
+//        switch (type){
+//            case "book" : {
+//                this.bookRepository.deleteById(id);
+//                break;
+//            }
+//            case "game":{
+//                this.gameRepository.deleteById(id);
+//                break;
+//            }
+//            case "lp":{
+//                this.lpRepository.deleteById(id);
+//                break;
+//            }
+//            default: return false;
+//        }
+        return true;
+    }
+
+    public boolean editArticle() {
+        //todo return new article from db?
+        //todo or just return true so front-end must do another request to request the article?
+        //i guess returning a new article will be faster...
+        return false;
+
+    }
 }

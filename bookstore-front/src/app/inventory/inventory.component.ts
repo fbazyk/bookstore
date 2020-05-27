@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ArticleService} from "../service/article.service";
 import {BehaviorSubject} from "rxjs";
 import {MatButtonToggleChange} from "@angular/material/button-toggle";
+import {Article} from "../model/Articles";
 
 @Component({
   selector: 'app-inventory',
@@ -12,15 +13,20 @@ export class InventoryComponent implements OnInit {
 
 providedType: string;
   selectedCategory: BehaviorSubject<string>;
+  displayedArticles: Array<Article> = new Array<Article>();
 
   constructor(private articleService: ArticleService) {
-    this.providedType = articleService.selectedCategory.getValue();
+    this.articleService.selectedCategory.subscribe(value => this.providedType = value);
     this.selectedCategory = articleService.selectedCategory;
+    this.articleService.displayedArticlesO.subscribe(value => {
+      this.displayedArticles = value;
+    })
   }
 
 
 
   ngOnInit(): void {
+    this.articleService.findAll()
 
 
       //todo send request according to the value
@@ -36,8 +42,11 @@ providedType: string;
   }
 
   doChangeCategory(categoryChange: MatButtonToggleChange){
+    console.log("category changed just now!", categoryChange)
     //todo store.dispatch.'Inventory ArticleCategory Changed'
-    this.articleService.selectedCategory.next(categoryChange.value);
+    if(this.articleService.selectedCategory.getValue() !== categoryChange.value){
+      this.articleService.selectedCategory.next(categoryChange.value);
+    }
   }
 
 }

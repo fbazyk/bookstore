@@ -21,17 +21,18 @@ import {BehaviorSubject} from "rxjs";
 export class CategorySelectComponent implements OnInit {
 
   @Input()
-  providedType: string;
+  providedType: string = 'all';
 
   @Output()
   // selectedType: EventEmitter<MatButtonToggleChange> = new EventEmitter<MatButtonToggleChange>();
   selectedType: EventEmitter<MatButtonToggleChange> = new EventEmitter();
 
   constructor() {
-
   }
 
   ngOnInit(): void {
+    console.log(this.providedType)
+    console.log(this.selectedType)
   }
 
 }
