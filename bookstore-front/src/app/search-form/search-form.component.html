@@ -1,0 +1,17 @@
+<p>search-form works!</p>
+<div [formGroup]="searchForm" *ngIf="!providedState.engaged">
+<div></div>
+INPUT FIELDS:
+
+  Article ID
+  Article TYPE
+  Article THIS
+  Article THAT
+  Anything else?
+
+</div>
+<div *ngIf="providedState.engaged"> Results</div>
+<button mat-button type="submit">Search</button>
+<button mat-button type="button" (click)="clearForm()">New Search</button>
+<button mat-button type="button" (click)="changeSearch()" [disabled]="!this.providedState.engaged">Change Search</button>
+<button mat-stroked-button type="button" (click)="search()" *ngIf="!providedState.engaged">Search</button>

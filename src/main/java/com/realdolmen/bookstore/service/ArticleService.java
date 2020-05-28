@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -88,5 +89,13 @@ public class ArticleService {
         //i guess returning a new article will be faster...
         return false;
 
+    }
+
+    public List<Article> search(Map<String,String> searchFields) {
+        //todo switch through the map and build a query parameter with each field
+        //create a named query in each repository
+        //or should it be some other type of query?
+        List<Book> bookResults = this.bookRepository.searchallfields();
+        return null;
     }
 }

@@ -3,8 +3,8 @@ import {HttpClient} from "@angular/common/http";
 import {Article, Book, Game, Lp, articleTypeMapping, Item} from "../model/Articles";
 import {User} from "../model/User";
 import {environment} from "../../environments/environment";
-import { map, tap, withLatestFrom} from "rxjs/operators";
-import { combineLatest } from "rxjs/index";
+import {map, tap, withLatestFrom} from "rxjs/operators";
+import {combineLatest} from "rxjs/index";
 import {BehaviorSubject, Observable} from "rxjs";
 import {errorObject} from "rxjs/internal-compatibility";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -16,7 +16,7 @@ export class ArticleService implements OnInit {
   provideState: string = "all";
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  private allArticles: BehaviorSubject<Array<Article>> = new BehaviorSubject<Array<Article|Book|Game|Lp>>([{
+  private allArticles: BehaviorSubject<Array<Article>> = new BehaviorSubject<Array<Article | Book | Game | Lp>>([{
     type: 'book',
     id: 1,
     title: '',
@@ -32,47 +32,47 @@ export class ArticleService implements OnInit {
   public displayedArticlesO: Observable<Array<Article>> = this.displayedArticles.asObservable();
 
   public selectedCategory: BehaviorSubject<string> = new BehaviorSubject<string>(this.provideState);
+
   // public lastCategory: BehaviorSubject<string> = new BehaviorSubject<string>(this.provideState);
 
 
   constructor(private http: HttpClient,
               public snackBar: MatSnackBar,
               private zone: NgZone) {
-    // this.subscribeToCategoryChanges();
-    // this.subscribeToAllArticlesUpdate()
     this.subscribeTo()
-    // this.findAll();
   }
 
-  currentArticles(){
+  currentArticles() {
     return this.allArticles.getValue();
   }
 
-  subscribeToCategoryChanges(){
+  subscribeToCategoryChanges() {
     this.selectedCategory.subscribe(value => {
-        this.displayedArticles.next(this.allArticles.getValue().filter(value1 => {
-          return value1.type == value || value == 'all'
-        }));
+      this.displayedArticles.next(this.allArticles.getValue().filter(value1 => {
+        return value1.type == value || value == 'all'
+      }));
     })
   }
 
-  subscribeToAllArticlesUpdate(){
+  subscribeToAllArticlesUpdate() {
     this.allArticles.subscribe(value => {
       this.displayedArticles.next(value)
     })
   }
 
-  subscribeTo(){
+  subscribeTo() {
     const list = this.allArticles;
     const type = this.selectedCategory;
 
     const result = combineLatest([list, type]);
     result.subscribe(([articleList, categoryType]) => {
-      this.displayedArticles.next( articleList.filter(article => {
+      this.displayedArticles.next(articleList.filter(article => {
         return article.type == categoryType || categoryType == 'all'
       }))
     })
   }
+
+
 
   // findByCategory(){
   //   return this.http.post(`${environment.apiUrl}/`)
@@ -120,30 +120,75 @@ export class ArticleService implements OnInit {
     }
   }
 
-/**
- * Delete an article by String and Id
- * */
+  /**
+   * Delete an article by String and Id
+   * On success
+   * */
   delete(type: string, id: number) {
-  //show bar on start
-  let actionSnackBar = this.snackBar.open(`Deleting ${type + ' ' + id} `)
-  //send request
-  console.log (this.isLoading)
-  console.log (this.isLoading.getValue())
-  this.isLoading.next(true);
-  this.http.delete(`${environment.apiUrl}/article/${type}/${id}`).subscribe(response => {
-    console.log(response);
-    if(!!response){
-      //show a new bar with success
-      let successSnackBar = this.snackBar.open(`Article ${type + ' ' + id} was deleted.`, 'Dismiss', {duration: 2500})
+    //show bar on start
+    let actionSnackBar = this.snackBar.open(`Deleting ${type + ' ' + id} `)
+    //send request
+    this.isLoading.next(true);
+    this.http.delete(`${environment.apiUrl}/article/${type}/${id}`).subscribe(response => {
+      console.log(response);
+      if (!!response) {
+        //show a new bar with success
+        let successSnackBar = this.snackBar.open(`Article ${type + ' ' + id} was deleted.`, 'Dismiss', {duration: 2500})
 
-      let index: number = this.allArticles.getValue().findIndex(value => {
-        return value.type == type && value.id == id;
+        //find where it was in currently displayed articles
+        let index: number = this.allArticles.getValue().findIndex(value => {
+          return value.type == type && value.id == id;
+        });
+        this.allArticles.next(this.allArticles.getValue().splice(index, 1));
+        this.isLoading.next(false);
+      }
+    })
+
+
+  }
+
+  /**
+   * SubmitArticle sends Article to back-end for storage in DB.
+   * Called by the EditArticle Component, providing the article data from the form
+   * if Id = 0, it's a new article, and PUT method is used
+   * if Id > 0, it's an existing article, and post method is used.
+   * The success triggers reload of All Articles
+   *
+   * //or should it receive the new article and put into AllArticles - the stuff gets more tightly coupled... w/e, for later then.
+   * For now see above: reload all articles.
+   * */
+  submitArticle(submittedArticle: Article) {
+    let actionSnackBar = this.snackBar.open(`Submitting ${submittedArticle.type + ' ' + submittedArticle.id + submittedArticle.title} `);
+    this.isLoading.next(true);
+    // submittedArticle.id == 0 only if it's a new article
+    if (submittedArticle.id > 0) {
+      this.http.post(`${environment.apiUrl}/article/${submittedArticle.type}/${submittedArticle.id}`, submittedArticle).subscribe(response => {
+        console.log(response);
+        //todo maybe manually update all articles with new article data received from the back-end?
+        //todo to know where to put it, I need sorting from the table, or do i, if sorting happens only in the table?
+        //todo i guess it depends in how far the state of the table should get saved between component jumps
+        let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type + ' ' + submittedArticle.id} was updated.`, null, {duration: 2500})
+        this.isLoading.next(false);
+        this.findAll();
       });
-      this.allArticles.next(this.allArticles.getValue().splice(index, 1));
-      this.isLoading.next(false);
+    } else {
+      this.http.put(`${environment.apiUrl}/article`, submittedArticle).subscribe(response => {
+        console.log(response);
+        let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type + ' ' + submittedArticle.title} was created.`, null, {duration: 2500})
+        this.isLoading.next(false);
+        this.findAll();
+      })
     }
-  })
+  }
 
-
+  /**
+   * Accepts list of foundArticles coming from Search request.
+   * Feeds AllArticles pipeline.
+   * Resets the category select to All.
+   * */
+  foundArticles(foundArticles: Array<Article>) {
+    console.log("ArticleService accepts foundArticles: ", foundArticles);
+    this.allArticles.next(foundArticles);
+    this.selectedCategory.next('all');
   }
 }

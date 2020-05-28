@@ -6,8 +6,8 @@ export interface Article{
   type: string;
   id: number;
   title: string;
-  price: number;
-  supplierId: string
+  price?: number;
+  supplierId?: string
   author?: string;
   isbn?: string;
   pages?: number;

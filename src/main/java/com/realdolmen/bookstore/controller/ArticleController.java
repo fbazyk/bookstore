@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping
 public class ArticleController {
@@ -73,5 +75,13 @@ public class ArticleController {
         } else {
             return ResponseEntity.unprocessableEntity().build();
         }
+    }
+
+    @CrossOrigin
+    @PutMapping("/article/search")
+    ResponseEntity<?> searchArticle(
+            @RequestBody Map<String,String> searchFields) {
+        List<Article> resultLsit = this.articleService.search(searchFields);
+        return ResponseEntity.ok(resultLsit);
     }
 }

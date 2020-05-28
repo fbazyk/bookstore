@@ -1,5 +1,5 @@
 <div class="inventory--container">
-
+<app-search-form [providedState]="searchState" (newSearch)="newSearch.next($event)"></app-search-form>
 <app-category-select [providedType]="providedType" (selectedType)="doChangeCategory($event)" class="inventory--cat-select__right"></app-category-select>
 <app-display-inventory [providedType]="selectedCategory" class="inventory--table__wide">
 

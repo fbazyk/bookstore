@@ -49,9 +49,13 @@ export class EditArticleComponent implements OnInit {
 
   submitChanges($event: Event) {
     console.log("Form Submitted",$event)
+    //todo process event to produce an object of an Article
+    const submittedArticle: Article = null;
+    this.articleService.submitArticle(submittedArticle)
   }
 
   dismissChanges($event: MouseEvent) {
     console.log("Dismiss Changes:", $event)
+    this.router.navigate([`/article/${this.type}/${this.id}`])
   }
 }

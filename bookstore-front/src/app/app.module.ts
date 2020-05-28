@@ -25,6 +25,7 @@ import { DisplayArticleComponent } from './display-article/display-article.compo
 import {MatCardModule} from "@angular/material/card";
 import { EditArticleComponent } from './edit-article/edit-article.component';
 import {MatSnackBarModule} from "@angular/material/snack-bar";
+import { SearchFormComponent } from './search-form/search-form.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     InventoryComponent,
     DisplayArticleComponent,
     EditArticleComponent,
+    SearchFormComponent,
   ],
     imports: [
         BrowserModule,
