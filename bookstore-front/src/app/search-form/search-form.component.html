@@ -1,8 +1,33 @@
-<p>search-form works!</p>
-<div [formGroup]="searchForm" *ngIf="!providedState.engaged">
-<div></div>
-INPUT FIELDS:
+<div [formGroup]="searchForm">
+<div class="search-form--inputs__vertical">
+Please enter your search
+  <mat-form-field appearance="fill">
+    <mat-label>Id</mat-label>
+    <input matInput placeholder="Simple placeholder" formControlName="id" >
+  </mat-form-field>
 
+  <mat-form-field appearance="fill">
+    <mat-label>Type</mat-label>
+    <input matInput placeholder="Simple placeholder" formControlName="type">
+  </mat-form-field>
+
+
+
+  <mat-form-field appearance="fill">
+    <mat-label>Title</mat-label>
+    <input matInput placeholder="Simple placeholder" formControlName="title">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Min price</mat-label>
+    <input matInput placeholder="Simple placeholder" formControlName="minprice">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Max price</mat-label>
+    <input matInput placeholder="Simple placeholder" formControlName="maxprice">
+  </mat-form-field>
+</div>
   Article ID
   Article TYPE
   Article THIS
@@ -10,8 +35,6 @@ INPUT FIELDS:
   Anything else?
 
 </div>
-<div *ngIf="providedState.engaged"> Results</div>
-<button mat-button type="submit">Search</button>
 <button mat-button type="button" (click)="clearForm()">New Search</button>
 <button mat-button type="button" (click)="changeSearch()" [disabled]="!this.providedState.engaged">Change Search</button>
 <button mat-stroked-button type="button" (click)="search()" *ngIf="!providedState.engaged">Search</button>

@@ -1,0 +1,6 @@
+.search-form--inputs__vertical {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+
+}

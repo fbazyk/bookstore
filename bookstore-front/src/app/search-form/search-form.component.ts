@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormControl, FormGroup} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {BehaviorSubject} from "rxjs";
 import {SearchState, provideEmptySearchState} from "../model/SearchState";
 import {require} from "isbnjs";
@@ -28,7 +28,10 @@ export class SearchFormComponent implements OnInit {
   isbn10a = ISBN.parse('4873113369');
 
 
-  constructor() { }
+  constructor(private fb: FormBuilder) {
+
+
+  }
 
   ngOnInit(): void {
     console.log(this.isbn10a.asIsbn13());
@@ -38,9 +41,13 @@ export class SearchFormComponent implements OnInit {
       this.providedState = next;
     })
 
-    this.searchForm = new FormGroup({
-      firstName: new FormControl()
-    });
+    this.searchForm = this.fb.group({
+      id:[''],
+      type:['all'],
+      title:[''],
+      minprice:[''],
+      maxprice:[''],
+    })
   }
 
   search() {

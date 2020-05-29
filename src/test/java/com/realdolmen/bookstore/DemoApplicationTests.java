@@ -2,6 +2,7 @@ package com.realdolmen.bookstore;
 
 import com.realdolmen.bookstore.controller.ArticleController;
 import com.realdolmen.bookstore.model.Article;
+import com.realdolmen.bookstore.model.Book;
 import com.realdolmen.bookstore.service.ArticleService;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -31,6 +32,14 @@ class DemoApplicationTests {
 
 		ArrayList<Article> findAllResults =  new ArrayList<>(this.articleService.findAll());
 		ArrayList<Article> emptySearchResults =  new ArrayList<>(this.articleService.search(null));
+
+	}
+
+
+	@Test
+	void checkAddArticle(){
+		Book emptyBook = new Book();
+		Boolean re = articleService.addArticle("book", emptyBook);
 
 	}
 

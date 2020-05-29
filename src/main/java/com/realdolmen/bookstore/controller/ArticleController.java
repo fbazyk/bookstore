@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import static javafx.scene.input.KeyCode.T;
+
 @RestController
 @RequestMapping
 public class ArticleController {
@@ -63,25 +65,21 @@ public class ArticleController {
 
     @CrossOrigin
     @PutMapping("/article/{type}")
-    ResponseEntity<?> addArticle(@PathVariable String type) {
-        //TODO obtain object from the body
-        //parse it here from the json according to type?
-        //todo give json to the article service?
-        //or what?
-        //i guess, the service will know better about what kind of article that is....
-        Object article = new Object();
-        if(articleService.addArticle(type, article)){
+    ResponseEntity<?> addArticle(@RequestParam String type) {
+//        logger.debug("Put Article {} of type {}",article, type);
+        logger.debug("Put Article {} of type {}", type);
+//        if(articleService.addArticle(type, article)){
+//        } else {
+//            return ResponseEntity.unprocessableEntity().build();
+//        }
             return ResponseEntity.ok(true);
-        } else {
-            return ResponseEntity.unprocessableEntity().build();
-        }
     }
 
     @CrossOrigin
-    @PutMapping("/article/search")
-    ResponseEntity<?> searchArticle(
-            @RequestBody Map<String,String> searchFields) {
-        List<Article> resultLsit = this.articleService.search(searchFields);
+    @PostMapping("/article/search")
+    ResponseEntity<?> searchArticle(@RequestBody Map<String,String> searchFields) {
+        List<? extends Article> resultLsit = this.articleService.search(searchFields);
+        //todo catch custom exception and throw bad request "field not provided"
         return ResponseEntity.ok(resultLsit);
     }
 }

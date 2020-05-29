@@ -1,5 +1,6 @@
 package com.realdolmen.bookstore.service;
 
+import com.realdolmen.bookstore.jpaclassification.ArticleSpecifications;
 import com.realdolmen.bookstore.model.*;
 import com.realdolmen.bookstore.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,26 +42,30 @@ public class ArticleService {
         return articles;
     }
 
-    public boolean addArticle(String type, Object article){
+    public boolean addArticle(String type, Article article) {
 
         //todo convert article Object to its respective class
         //TODO push it to respective repository
 
-        //        switch (type){
-//            case "book" : {
-//                this.bookRepository.addBook(article);
-//                break;
-//            }
-//            case "game":{
-//                this.gameRepository.addGame(article);
-//                break;
-//            }
-//            case "lp":{
-//                this.lpRepository.addLp(article);
-//                break;
-//            }
-//            default: return false;
-//        }
+        //todo check type and article !null
+        switch (type) {
+            case "book": {
+                this.bookRepository.saveAndFlush((Book) article);
+                break;
+            }
+            case "game": {
+                this.gameRepository.saveAndFlush((Game) article);
+                break;
+            }
+            case "lp": {
+                this.lpRepository.saveAndFlush((LP)article);
+                break;
+            }
+            default:
+                return false;
+        }
+
+        //if somwthing went wrong, throw custom exception
         return true;
     }
 
@@ -91,11 +96,17 @@ public class ArticleService {
 
     }
 
-    public List<Article> search(Map<String,String> searchFields) {
+    public List<? extends Article> search(Map<String, String> searchFields) {
+//        searchFields.entrySet().stream();
+        //todo map searchfields to the search query arguments
+        List<Book> booksByAuthor = this.bookRepository.findAll(ArticleSpecifications.bookHasAuthor2(searchFields.get("author")));
+
+        //todo stream the fields through the function that adds a query parameter
+
         //todo switch through the map and build a query parameter with each field
         //create a named query in each repository
         //or should it be some other type of query?
-        List<Book> bookResults = this.bookRepository.searchallfields();
-        return null;
+//        List<Book> bookResults = this.bookRepository.searchallfields();
+        return booksByAuthor;
     }
 }
