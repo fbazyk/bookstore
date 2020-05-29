@@ -16,6 +16,9 @@ public class LP extends Article {
     @Column(name = "genre")
     private LPGenre genre;
 
+    public LP() {
+    }
+
     public String getArtist() {
         return artist;
     }

@@ -1,5 +1,7 @@
 package com.realdolmen.bookstore.service;
 
+import com.realdolmen.bookstore.exception.ArticleNotFoundException;
+import com.realdolmen.bookstore.exception.UnableToUpdateArticleException;
 import com.realdolmen.bookstore.jpaclassification.ArticleSpecifications;
 import com.realdolmen.bookstore.model.*;
 import com.realdolmen.bookstore.repository.*;
@@ -43,57 +45,94 @@ public class ArticleService {
     }
 
     public boolean addArticle(String type, Article article) {
-
-        //todo convert article Object to its respective class
-        //TODO push it to respective repository
-
-        //todo check type and article !null
-        switch (type) {
-            case "book": {
-                this.bookRepository.saveAndFlush((Book) article);
-                break;
+        if(type != null && article != null){
+            switch (type) {
+                case "book": {
+                    this.bookRepository.saveAndFlush((Book) article);
+                    return true;
+                }
+                case "game": {
+                    this.gameRepository.saveAndFlush((Game) article);
+                    return true;
+                }
+                case "lp": {
+                    this.lpRepository.saveAndFlush((LP) article);
+                    return true;
+                }
+                default:
+                    return false;
             }
-            case "game": {
-                this.gameRepository.saveAndFlush((Game) article);
-                break;
-            }
-            case "lp": {
-                this.lpRepository.saveAndFlush((LP)article);
-                break;
-            }
-            default:
-                return false;
         }
-
-        //if somwthing went wrong, throw custom exception
         return true;
     }
 
-    public boolean deleteByTypeById(String type, long id) {
-//        switch (type){
-//            case "book" : {
-//                this.bookRepository.deleteById(id);
-//                break;
-//            }
-//            case "game":{
-//                this.gameRepository.deleteById(id);
-//                break;
-//            }
-//            case "lp":{
-//                this.lpRepository.deleteById(id);
-//                break;
-//            }
-//            default: return false;
-//        }
-        return true;
+    public boolean deleteByTypeById(String type, long id) throws ArticleNotFoundException {
+        if (type != null && id > 0) {
+            switch (type) {
+                case "book": {
+                    try {
+                        this.bookRepository.deleteById(id);
+                        this.bookRepository.flush();
+                    } catch (Exception ex) {
+                        //todo throw another exception to the controller
+                        throw new ArticleNotFoundException();
+                    }
+                    return true;
+                }
+                case "game": {
+                    try {
+                        this.gameRepository.deleteById(id);
+                        this.gameRepository.flush();
+                    } catch (Exception ex) {
+                        throw new ArticleNotFoundException();
+                    }
+                    return true;
+                }
+                case "lp": {
+                    try {
+                        this.lpRepository.deleteById(id);
+                        this.lpRepository.flush();
+                    } catch (Exception ex) {
+                        throw new ArticleNotFoundException();
+                    }
+                    return true;
+                }
+                default:
+                    return false;
+            }
+        } else return false;
     }
 
-    public boolean editArticle() {
-        //todo return new article from db?
-        //todo or just return true so front-end must do another request to request the article?
-        //i guess returning a new article will be faster...
-        return false;
+    public boolean updateArticle(Article article) throws UnableToUpdateArticleException {
 
+        if(article.getId()!= null && article.getId()>0){
+            if(article instanceof Book){
+                try{
+                    this.bookRepository.saveAndFlush((Book)article);
+                    return true;
+                } catch (Exception ex){
+                    throw new UnableToUpdateArticleException();
+                }
+            } else if(article instanceof Game){
+                try{
+                    this.gameRepository.saveAndFlush((Game) article);
+                    return true;
+                } catch (Exception ex){
+                    throw new UnableToUpdateArticleException();
+                }
+            } else if(article instanceof LP){
+                try{
+                    this.lpRepository.saveAndFlush((LP) article);
+                    return true;
+                } catch (Exception ex){
+                    throw new UnableToUpdateArticleException();
+                }
+            } else {
+                throw new UnableToUpdateArticleException();
+            }
+        } else {
+            throw new UnableToUpdateArticleException();
+        }
     }
 
     public List<? extends Article> search(Map<String, String> searchFields) {

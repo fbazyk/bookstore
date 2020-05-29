@@ -36,6 +36,9 @@ public class Article {
     @Size(max=100)
     private String supplierId;
 
+    public Article() {
+    }
+
     public Long getId() {
         return id;
     }

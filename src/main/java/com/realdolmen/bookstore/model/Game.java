@@ -18,6 +18,9 @@ public class Game extends Article {
     @Column(name = "genre")
     private GameGenre genre;
 
+    public Game() {
+    }
+
     public String getPublisher() {
         return publisher;
     }

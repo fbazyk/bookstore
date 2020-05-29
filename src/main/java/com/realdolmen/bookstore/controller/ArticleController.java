@@ -1,9 +1,9 @@
 package com.realdolmen.bookstore.controller;
 
+import com.realdolmen.bookstore.exception.ArticleNotFoundException;
+import com.realdolmen.bookstore.exception.UnableToUpdateArticleException;
 import com.realdolmen.bookstore.model.Article;
-import com.realdolmen.bookstore.model.User;
 import com.realdolmen.bookstore.service.ArticleService;
-import com.realdolmen.bookstore.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-
-import static javafx.scene.input.KeyCode.T;
 
 @RestController
 @RequestMapping
@@ -29,7 +27,7 @@ public class ArticleController {
     }
 
     @CrossOrigin
-    @GetMapping("/inventory/articles")
+    @GetMapping("/articles")
     public List<Article> findAll() {
 
         List<Article> result =this.articleService.findAll();
@@ -41,43 +39,45 @@ public class ArticleController {
 
     @CrossOrigin
     @DeleteMapping("/article/{type}/{id}")
-    ResponseEntity<?> deleteArticle(@PathVariable String type, @PathVariable long id) {
-        if(articleService.deleteByTypeById(type, id)){
-            return ResponseEntity.ok(true);
-        } else {
-            return ResponseEntity.unprocessableEntity().build();
+    public ResponseEntity<?> deleteArticle(@PathVariable String type, @PathVariable long id) {
+        try{
+            articleService.deleteByTypeById(type, id);
+            String successMessage = "Deleted Article" + type + ":" + id;
+            return ResponseEntity.ok(successMessage);
+        } catch (ArticleNotFoundException ex){
+            String errorMessage = "Unable to delete Article" + type + ":" + id;
+            return ResponseEntity.badRequest().body(errorMessage);
         }
     }
 
     @CrossOrigin
     @PostMapping("/article/{type}/{id}")
-    ResponseEntity<?> changeArticle(@PathVariable String type, @PathVariable long id) {
-
-        //TODO extract object from body
-
-
-        if(articleService.editArticle()){
-            return ResponseEntity.ok(true);
-        } else {
-            return ResponseEntity.unprocessableEntity().build();
+    public ResponseEntity<?> changeArticle(@PathVariable String type, @PathVariable long id, @RequestBody Article article) {
+        try{
+            if(article.getId() != id) throw new UnableToUpdateArticleException();
+            articleService.updateArticle(article);
+            return ResponseEntity.ok("Article Updated");
+        } catch (UnableToUpdateArticleException ex){
+            return ResponseEntity.unprocessableEntity().body("Article Was Not Updated");
         }
     }
 
     @CrossOrigin
     @PutMapping("/article/{type}")
-    ResponseEntity<?> addArticle(@RequestParam String type) {
-//        logger.debug("Put Article {} of type {}",article, type);
-        logger.debug("Put Article {} of type {}", type);
-//        if(articleService.addArticle(type, article)){
-//        } else {
-//            return ResponseEntity.unprocessableEntity().build();
-//        }
+    public ResponseEntity<?> addArticle(@RequestBody Article article, @PathVariable String type) {
+        logger.debug("Put Article {}", type);
+        try{
+            articleService.addArticle(type, article);
+        } catch (Exception ex){
+            String reason = "Article could not be added:" + ex.getMessage();
+            return ResponseEntity.unprocessableEntity().body(reason);
+        }
             return ResponseEntity.ok(true);
     }
 
     @CrossOrigin
     @PostMapping("/article/search")
-    ResponseEntity<?> searchArticle(@RequestBody Map<String,String> searchFields) {
+    public ResponseEntity<?> searchArticle(@RequestBody Map<String,String> searchFields) {
         List<? extends Article> resultLsit = this.articleService.search(searchFields);
         //todo catch custom exception and throw bad request "field not provided"
         return ResponseEntity.ok(resultLsit);

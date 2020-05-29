@@ -21,6 +21,9 @@ public class Book extends Article {
     @Column(name = "pages")
     private Long pages;
 
+    public Book() {
+    }
+
     public String getAuthor() {
         return author;
     }
