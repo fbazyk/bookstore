@@ -79,7 +79,7 @@ export class ArticleService implements OnInit {
   // }
 
   findAll() {
-    return this.http.get<Array<Article>>(`${environment.apiUrl}/inventory/articles`).pipe(
+    return this.http.get<Array<Article>>(`${environment.apiUrl}/articles`).pipe(
       tap(x => console.log("Piped from response", x, "Type of X = ", typeof x)),
       map(this.typeArticles),
       tap(x => console.log("Piped from cast", x, "Type of X = ", typeof x)),)
