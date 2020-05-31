@@ -9,44 +9,64 @@
     <div mat-card-avatar class="display-article--card-icon"></div>
     <mat-card-title>
       {{article.title}}</mat-card-title>
-    <mat-card-subtitle>{{article.type | titlecase}}
+    <mat-card-subtitle>{{article.type | titlecase}}:{{article.id}}
     </mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content>
+  <mat-card-content class="edit-article--input-fields__column">
+
     <mat-form-field appearance="fill">
-      <mat-label>Id</mat-label>
-      <input matInput placeholder="Simple placeholder" formControlName="id" >
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="title" >
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Price</mat-label>
+      <input matInput formControlName="price" >
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Supplier Id</mat-label>
+      <input matInput formControlName="supplierId" >
     </mat-form-field>
 
-    TODO ADD ALL FIELDS:
+    <div *ngIf="article.type == 'book'" class="edit-article--input-groups__flattened">
+      <mat-form-field appearance="fill">
+        <mat-label>author</mat-label>
+        <input matInput formControlName="author" >
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>isbn</mat-label>
+        <input matInput formControlName="isbn" >
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>pages</mat-label>
+        <input matInput formControlName="pages" >
+      </mat-form-field>
+    </div>
 
-    COMMON
-    FOR ARTICLE
+    <div *ngIf="article.type == 'game'" class="edit-article--input-groups__flattened">
+      <mat-form-field appearance="fill">
+        <mat-label>Publisher</mat-label>
+        <input matInput formControlName="publisher" >
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Minimum Age</mat-label>
+        <input matInput formControlName="minage" >
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Genre</mat-label>
+        <input matInput formControlName="genre" >
+      </mat-form-field>
+    </div>
 
-    NGIF
-
-    FOR BOOK
-
-    FOR GAME
-
-    FOR LP
-
-    TODO Lookup form validation validate
-    ISBN? YES, you've got a library for this.
-
-    Genre = make a select for each with enum
-
-    Price >=0
-
-    {{article.id}}
-    {{article.type}}
-    {{article.title}}
-    {{article.supplierId}}
-    {{article.price}}
-    {{article.type == 'book' ? article?.author: ""}}
-    {{article.type == 'book'? article?.genre: ""}}
-    {{article.type == 'book'? article?.genre: ""}}
-    {{article.type == 'book'? article?.isbn: ""}}
+    <div *ngIf="article.type == 'lp'" class="edit-article--input-groups__flattened">
+      <mat-form-field appearance="fill">
+        <mat-label>artist</mat-label>
+        <input matInput formControlName="artist" >
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>genre</mat-label>
+        <input matInput formControlName="genre" >
+      </mat-form-field>
+    </div>
 
 
   </mat-card-content>

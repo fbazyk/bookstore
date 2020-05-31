@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ArticleService} from "../service/article.service";
@@ -6,6 +6,7 @@ import {UserService} from "../user.service";
 import {Location} from "@angular/common";
 import {Subscription} from "rxjs";
 import {Article, Book, Game, Lp} from "../model/Articles";
+import {correctISBNValidator} from "../validation/ArticleValidation";
 
 @Component({
   selector: 'app-edit-article',
@@ -27,11 +28,16 @@ export class EditArticleComponent implements OnInit {
   //todo go to back-end, api for article/get/put/post/delete
   //based on the input
   articleForm: FormGroup = this.fb.group({
-    id:['', Validators.min(1)],
-    type:['all'],
-    title:[''],
-    minprice:[''],
-    maxprice:[''],
+    title: [''],
+    price: [''],
+    supplierId: [''],
+    author: [''],
+    isbn: ['', correctISBNValidator()],
+    pages: [''],
+    publisher: [''],
+    minage: [''],
+    genre: [''],
+    artist: [''],
   });
 
   constructor(private route: ActivatedRoute,
@@ -55,10 +61,19 @@ export class EditArticleComponent implements OnInit {
 
 
   submitChanges($event: Event) {
-    console.log("Form Submitted",$event)
+    console.log("Form Submitted", $event)
     //todo process event to produce an object of an Article
-    const submittedArticle: Article = null;
+    const submittedArticle: Article = {
+      id: this.article.id,
+      type: this.article.type,
+      title: this.article.title
+    };
+    if(this.articleForm.valid){
+
+    }
     const valueAtSubmission = this.articleForm.value
+    submittedArticle.id = this.article.id
+    submittedArticle.type = this.article.type
     console.log(valueAtSubmission);
     console.log(this.article)
     this.articleService.submitArticle(submittedArticle)
@@ -74,12 +89,40 @@ export class EditArticleComponent implements OnInit {
    * Has to run after the response from the ArticleService has arrived.
    * Form may be initialized before with empty object.
    * */
-  populateForm(){
+  populateForm() {
     // this.articleForm = this.fb.group({
     //   id:[this.article.id, Validators.min(1)],
     //
     // })
-//todo add more fields
-    this.articleForm.patchValue({id : this.article.id} );
+    this.articleForm.patchValue({
+      id: this.article.id,
+      title: this.article.title,
+      price: this.article.price,
+      supplierId: this.article.supplierId,
+    });
+    switch (this.article.type) {
+      case 'book': {
+        this.articleForm.patchValue({
+          author: this.article.author,
+          isbn: this.article.isbn,
+          pages: this.article.pages
+        });
+        break;
+      }
+      case 'game': {
+        this.articleForm.patchValue({
+          publisher: this.article.publisher,
+          minage: this.article.min_age,
+          genre: this.article.genre
+        });
+        break;
+      }
+      case 'lp': {
+        this.articleForm.patchValue({
+          artist: this.article.artist,
+          genre: this.article.genre
+        })
+      }
+    }
   }
 }

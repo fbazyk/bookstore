@@ -43,9 +43,6 @@ export class Book implements Article {
 
 
 export class Game implements Article {
-  constructor(article: Article) {
-
-  }
 
   type:string = 'game';
   id: number;
@@ -58,7 +55,7 @@ export class Game implements Article {
 }
 
 export class Lp implements Article {
-  type:string = 'game';
+  type:string = 'lp';
   id: number;
   title: string;
   price: number;

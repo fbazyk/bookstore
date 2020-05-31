@@ -29,7 +29,7 @@ providedType: string;
     this.newSearch.subscribe(searchState => {
       //todo feed new search through request into the data display loop
       if(!!!searchState && searchState.engaged) console.log(searchState);
-      if(!!searchState && searchState.engaged) this.searchService.searchArticles(searchState);
+      if(!!searchState && searchState.engaged && !!searchState.fields) this.searchService.searchArticles(searchState);
     })
     // this.articleService.displayedArticlesO.subscribe(value => {
     //   this.displayedArticles = value;

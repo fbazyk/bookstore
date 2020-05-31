@@ -31,9 +31,6 @@ public class ArticleController {
     public List<Article> findAll() {
 
         List<Article> result =this.articleService.findAll();
-        logger.debug("Articles 0: {}", result.get(0).getClass());
-        logger.debug("Articles 0: {}", result.get(4).getClass());
-        logger.error("Articles: {}", result);
         return result;
     }
 
@@ -42,8 +39,8 @@ public class ArticleController {
     public ResponseEntity<?> deleteArticle(@PathVariable String type, @PathVariable long id) {
         try{
             articleService.deleteByTypeById(type, id);
-            String successMessage = "Deleted Article" + type + ":" + id;
-            return ResponseEntity.ok(successMessage);
+            String successMessage = "Deleted Article: " + type + "@" + id;
+            return ResponseEntity.ok().body(successMessage);
         } catch (ArticleNotFoundException ex){
             String errorMessage = "Unable to delete Article" + type + ":" + id;
             return ResponseEntity.badRequest().body(errorMessage);

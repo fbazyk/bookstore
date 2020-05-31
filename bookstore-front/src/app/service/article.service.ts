@@ -1,5 +1,5 @@
 import {Injectable, NgZone, OnInit} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {Article, Book, Game, Lp, articleTypeMapping, Item} from "../model/Articles";
 import {User} from "../model/User";
 import {environment} from "../../environments/environment";
@@ -129,11 +129,10 @@ export class ArticleService implements OnInit {
     let actionSnackBar = this.snackBar.open(`Deleting ${type + ' ' + id} `)
     //send request
     this.isLoading.next(true);
-    this.http.delete(`${environment.apiUrl}/article/${type}/${id}`).subscribe(response => {
+    this.http.delete(`${environment.apiUrl}/article/${type}/${id}`, {observe: 'body', responseType: 'text'}).subscribe(response => {
       console.log(response);
-      if (!!response) {
-        //show a new bar with success
-        let successSnackBar = this.snackBar.open(`Article ${type + ' ' + id} was deleted.`, 'Dismiss', {duration: 2500})
+      //show a new bar with success
+        let successSnackBar = this.snackBar.open(`${response}`,"", {duration: 2500})
 
         //find where it was in currently displayed articles
         let index: number = this.allArticles.getValue().findIndex(value => {
@@ -141,7 +140,9 @@ export class ArticleService implements OnInit {
         });
         this.allArticles.next(this.allArticles.getValue().splice(index, 1));
         this.isLoading.next(false);
-      }
+    }, (error: HttpErrorResponse) => {
+      console.log(error)
+      let failureSnackBar = this.snackBar.open(`Unable to delete! ${error}`, 'Dismiss', {duration: 2500})
     })
 
 

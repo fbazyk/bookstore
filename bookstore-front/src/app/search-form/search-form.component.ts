@@ -26,6 +26,7 @@ export class SearchFormComponent implements OnInit {
 
   searchForm: FormGroup;
   isbn10a = ISBN.parse('4873113369');
+  selectedClass: any;
 
 
   constructor(private fb: FormBuilder) {
@@ -69,6 +70,11 @@ export class SearchFormComponent implements OnInit {
   clearForm() {
     console.log(this.providedState)
     this.providedState = new SearchState();
+    this.searchForm.reset();
     console.log(this.providedState)
+  }
+
+  hideForm() {
+    this.providedState.engaged = true;
   }
 }

@@ -1,40 +1,49 @@
-<div [formGroup]="searchForm">
+<div [formGroup]="searchForm" *ngIf="!providedState.engaged">
 <div class="search-form--inputs__vertical">
-Please enter your search
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="fill" class="search-form--type">
+    <mat-label>Type</mat-label>
+    <input matInput placeholder="Simple placeholder" formControlName="type">
+
+<!--    <mat-label>Toppings</mat-label>-->
+<!--    <mat-select formControlName="typeSelect" multiple>-->
+<!--      <mat-select-trigger>-->
+<!--        {{selectedClass}}-->
+<!--        <span *ngIf="toppings.value?.length > 1" class="example-additional-selection">-->
+<!--        (+{{toppings.value.length - 1}} {{toppings.value?.length === 2 ? 'other' : 'others'}})-->
+<!--      </span>-->
+<!--      </mat-select-trigger>-->
+<!--      <mat-option *ngFor="let topping of articleTypeMapping" [value]="topping">{{topping}}</mat-option>-->
+<!--    </mat-select>-->
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="search-form--id">
     <mat-label>Id</mat-label>
     <input matInput placeholder="Simple placeholder" formControlName="id" >
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Type</mat-label>
-    <input matInput placeholder="Simple placeholder" formControlName="type">
-  </mat-form-field>
 
 
 
-  <mat-form-field appearance="fill">
+
+  <mat-form-field appearance="fill" class="search-form--title">
     <mat-label>Title</mat-label>
     <input matInput placeholder="Simple placeholder" formControlName="title">
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="fill" class="search-form--minprice" >
     <mat-label>Min price</mat-label>
     <input matInput placeholder="Simple placeholder" formControlName="minprice">
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="fill" class="search-form--maxprice">
     <mat-label>Max price</mat-label>
     <input matInput placeholder="Simple placeholder" formControlName="maxprice">
   </mat-form-field>
 </div>
-  Article ID
-  Article TYPE
-  Article THIS
-  Article THAT
-  Anything else?
-
 </div>
+<div class="search-form--actions">
+<button mat-button type="button" (click)="hideForm()" *ngIf="!providedState.engaged">Hide Form</button>
 <button mat-button type="button" (click)="clearForm()">New Search</button>
-<button mat-button type="button" (click)="changeSearch()" [disabled]="!this.providedState.engaged">Change Search</button>
+<button mat-button type="button" (click)="changeSearch()" [disabled]="!this.providedState.engaged" *ngIf="!!this.providedState.fields">Change Search</button>
 <button mat-stroked-button type="button" (click)="search()" *ngIf="!providedState.engaged">Search</button>
+</div>

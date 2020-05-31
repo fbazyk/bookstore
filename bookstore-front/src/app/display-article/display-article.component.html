@@ -21,9 +21,11 @@
 
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button>BUY</button>
+    <button mat-button  (click)="navigate()" >Back</button>
+<!--    <div class="flex-spacer"></div>-->
     <button mat-button (click)="doEdit()" *ngIf="showAdminControls" >EDIT</button>
     <button mat-button (click)="doDelete()" *ngIf="showAdminControls" >DELETE</button>
-    <button mat-button>FAVORITE</button>
+    <button mat-button  *ngIf="!showAdminControls" >BUY</button>
+    <button mat-button  *ngIf="!showAdminControls" >FAVORITE</button>
   </mat-card-actions>
 </mat-card>
