@@ -12,6 +12,7 @@ import {BehaviorSubject, Subscription} from "rxjs";
 import {SearchState, provideEmptySearchState} from "../model/SearchState";
 import {require} from "isbnjs";
 import {articleType, articleTypes} from "../model/Articles";
+import {SearchService} from "../service/search.service";
 
 let ISBN = require('isbnjs');
 declare var require: any;
@@ -43,14 +44,14 @@ export class SearchFormComponent implements OnInit, OnDestroy {
   private subs: Subscription[] = new Array<Subscription>();
 
   articleType = [...articleTypes];
-  newState: SearchState = provideEmptySearchState();
+  newState: SearchState;
 
   searchForm: FormGroup;
   isbn10a = ISBN.parse('4873113369');
   selectedClass: any;
 
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private searchService: SearchService) {
 
 
   }
@@ -59,12 +60,10 @@ export class SearchFormComponent implements OnInit, OnDestroy {
     console.log(this.isbn10a.asIsbn13());
     console.log(this.isbn10a.isIsbn13());
     console.log(this.isbn10a.isIsbn10());
-    this.newSearch.subscribe(next => {
-      this.providedState = next;
-    });
-
+    // this.newSearch.subscribe(next => {
+    //   this.providedState = next;
+    // });
     this.clearForm();
-    this.subscribeToFormChanges();
   }
 
   /**
@@ -73,12 +72,24 @@ export class SearchFormComponent implements OnInit, OnDestroy {
    * One of the sources of Search pipeline
    * */
   private subscribeToFormChanges() {
-    let formSub: Subscription = this.searchForm.valueChanges.subscribe(formValues => {
-      Object.keys(formValues).filter(formField => {
-        return !!formValues[formField];
-      }).forEach(formField => {
-        this.newState.fields.set(formField, formValues[formField])
-      });
+    let formSub: Subscription = this.searchForm.valueChanges.subscribe((formValues: Map<String,String>) => {
+      let fields = new Map<String,String>();
+      console.log(this.newState)
+      console.log(formValues);
+
+      for(let key in formValues){
+        if(formValues[key].trim().length>0){
+          fields.set(key, formValues[key].trim())
+        }
+      }
+      // Object.keys(formValues).filter(formField => {
+      //   let rawString: String = formValues[formField];
+      //   return  rawString.trim().length>0;
+      // }).forEach(formField => {
+      //   fields.set(formField, formValues[formField])
+      // });
+      this.newState.fields = fields;
+      console.log(this.newState)
     });
     this.subs.push(formSub)
   }
@@ -87,23 +98,20 @@ export class SearchFormComponent implements OnInit, OnDestroy {
    * Send existing NewState object to parent component
    * */
   search() {
+    console.log("emitting {}", this.newState)
+    this.newState.engaged=true;
     this.newSearch.emit(this.newState)
   }
-
-  ngOnDestroy(): void {
-    this.subs.forEach(subscription => subscription.unsubscribe())
-  }
-
   /**
    *
    * */
   changeSearch() {
-    this.providedState.engaged = false;
+    this.newState.engaged = false;
   }
 
   clearForm() {
-    this.providedState = new SearchState();
-
+    this.searchService.searchState.next(provideEmptySearchState())
+    this.newState = this.providedState;
     this.searchForm = this.fb.group(this.clearFormValue);
     this.searchForm.controls['type'].setValidators(Validators.required)
     this.searchForm.controls['id'].setValidators(Validators.min(1))
@@ -111,10 +119,17 @@ export class SearchFormComponent implements OnInit, OnDestroy {
     this.searchForm.controls['minprice'].setValidators(Validators.min(1))
     this.searchForm.controls['maxprice'].setValidators(Validators.min(1))
     this.searchForm.setValidators([atLeastTwo]);
+    this.subscribeToFormChanges();
+
   }
 
   hideForm() {
-    this.providedState.engaged = true;
+    this.newState.engaged = true;
+  }
+
+
+  ngOnDestroy(): void {
+    this.subs.forEach(subscription => subscription.unsubscribe())
   }
 
 

@@ -7,6 +7,7 @@ import com.realdolmen.bookstore.service.ArticleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,9 +75,15 @@ public class ArticleController {
 
     @CrossOrigin
     @PostMapping("/article/search")
-    public ResponseEntity<?> searchArticle(@RequestBody Map<String,String> searchFields) {
-        List<? extends Article> resultLsit = this.articleService.search(searchFields);
+    public ResponseEntity<List<Article>> searchArticle(@RequestBody Map<String,String> searchFields) {
+        List<Article> resultLsit = this.articleService.search(searchFields);
         //todo catch custom exception and throw bad request "field not provided"
-        return ResponseEntity.ok(resultLsit);
+        if(resultLsit != null && resultLsit.size()>0){
+            logger.debug("ResultList {}", resultLsit);
+            return new ResponseEntity<List<Article>>(resultLsit, HttpStatus.OK);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+
     }
 }

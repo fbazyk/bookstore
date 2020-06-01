@@ -67,7 +67,7 @@ export class ArticleService implements OnInit {
     const result = combineLatest([list, type]);
     result.subscribe(([articleList, categoryType]) => {
       this.displayedArticles.next(articleList.filter(article => {
-        return article.type == categoryType || categoryType == 'all'
+        return !!article && article.type == categoryType || categoryType == 'all'
       }))
     })
   }

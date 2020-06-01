@@ -2,13 +2,13 @@ export class SearchState {
 
 
   engaged: boolean = false;
-  fields: Map<string, string> = new Map<string, string>();
+  fields: Map<String, String> = new Map<String, String>();
 
 
 }
 export function provideEmptySearchState(): SearchState{
   let state: SearchState = new SearchState()
-  state.engaged = true;
+  state.engaged = false;
   state.fields = new Map<string, string>();
   return state;
 }

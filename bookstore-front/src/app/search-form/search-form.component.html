@@ -1,4 +1,4 @@
-<div [formGroup]="searchForm" *ngIf="!providedState.engaged">
+<div [formGroup]="searchForm" *ngIf="!newState.engaged" (keyup.enter)="search()">
 <div class="search-form--inputs__vertical">
   <mat-form-field appearance="fill" class="search-form--type">
     <mat-label>Type</mat-label>
@@ -37,8 +37,8 @@
   </div>
 </div>
 <div class="search-form--actions">
-<button mat-button type="button" (click)="hideForm()" *ngIf="!providedState.engaged">Hide Form</button>
+<button mat-button type="button" (click)="hideForm()" *ngIf="!newState.engaged">Hide Form</button>
 <button mat-button type="button" (click)="clearForm()">New Search</button>
-<button mat-button type="button" (click)="changeSearch()" [disabled]="!this.providedState.engaged" *ngIf="!!this.providedState.fields">Change Search</button>
-<button mat-stroked-button type="button" (click)="search()" *ngIf="!providedState.engaged">Search</button>
+<button mat-button type="button" (click)="changeSearch()" *ngIf="newState.engaged">Change Search</button>
+<button mat-stroked-button type="button" (click)="search()" (keyup.enter)="search()" *ngIf="!newState.engaged">Search</button>
 </div>

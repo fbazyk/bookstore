@@ -33,6 +33,11 @@ const routes: Routes = [
     component: EditArticleComponent,
     canActivate: [AdminGuardService]
   },
+  {
+    path: 'article',
+    component: EditArticleComponent,
+    canActivate: [AdminGuardService]
+  },
   { path:  'login', component:  LoginComponent},
   { path: '**', redirectTo: '' }
 

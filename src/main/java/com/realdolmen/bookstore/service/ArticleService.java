@@ -2,16 +2,15 @@ package com.realdolmen.bookstore.service;
 
 import com.realdolmen.bookstore.exception.ArticleNotFoundException;
 import com.realdolmen.bookstore.exception.UnableToUpdateArticleException;
-import com.realdolmen.bookstore.jpaclassification.ArticleSpecifications;
 import com.realdolmen.bookstore.model.*;
 import com.realdolmen.bookstore.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +21,8 @@ public class ArticleService {
     private BookRepository bookRepository;
     private GameRepository gameRepository;
     private LpRepository lpRepository;
+
+    Logger logger = LoggerFactory.getLogger(ArticleService.class);
 
     @Autowired
     public ArticleService(ArticleRepository articleRepository,
@@ -45,7 +46,7 @@ public class ArticleService {
     }
 
     public boolean addArticle(String type, Article article) {
-        if(type != null && article != null){
+        if (type != null && article != null) {
             switch (type) {
                 case "book": {
                     this.bookRepository.saveAndFlush((Book) article);
@@ -105,26 +106,26 @@ public class ArticleService {
 
     public boolean updateArticle(Article article) throws UnableToUpdateArticleException {
 
-        if(article.getId()!= null && article.getId()>0){
-            if(article instanceof Book){
-                try{
-                    this.bookRepository.saveAndFlush((Book)article);
+        if (article.getId() != null && article.getId() > 0) {
+            if (article instanceof Book) {
+                try {
+                    this.bookRepository.saveAndFlush((Book) article);
                     return true;
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     throw new UnableToUpdateArticleException();
                 }
-            } else if(article instanceof Game){
-                try{
+            } else if (article instanceof Game) {
+                try {
                     this.gameRepository.saveAndFlush((Game) article);
                     return true;
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     throw new UnableToUpdateArticleException();
                 }
-            } else if(article instanceof LP){
-                try{
+            } else if (article instanceof LP) {
+                try {
                     this.lpRepository.saveAndFlush((LP) article);
                     return true;
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     throw new UnableToUpdateArticleException();
                 }
             } else {
@@ -135,17 +136,70 @@ public class ArticleService {
         }
     }
 
-    public List<? extends Article> search(Map<String, String> searchFields) {
-//        searchFields.entrySet().stream();
-        //todo map searchfields to the search query arguments
-        List<Book> booksByAuthor = this.bookRepository.findAll(ArticleSpecifications.bookHasAuthor2(searchFields.get("author")));
+    public List<Article> search(Map<String, String> searchFields) {
+        Long articleIdV = null;
+        BigDecimal minpriceV = null;
+        BigDecimal maxpriceV = null;
+        String titleV = null;
+        String type = null;
+        String sortV = null;
+        logger.debug(type);
 
-        //todo stream the fields through the function that adds a query parameter
+        for (Map.Entry<String, String> field : searchFields.entrySet()) {
+            if (Objects.equals(field.getKey(), "id")) {
+                articleIdV = Long.valueOf(field.getValue());
+            }
+            if (Objects.equals(field.getKey(), "title")) {
+                titleV = field.getValue();
+            }
+            if (Objects.equals(field.getKey(), "minprice")) {
+                minpriceV = BigDecimal.valueOf(Long.parseLong(field.getValue()));
+            }
+            if (Objects.equals(field.getKey(), "maxprice")) {
+                maxpriceV = BigDecimal.valueOf(Long.parseLong(field.getValue()));
+            }
+            if (Objects.equals(field.getKey(), "type")) {
+                type = field.getValue();
+            }
+        }
 
-        //todo switch through the map and build a query parameter with each field
-        //create a named query in each repository
-        //or should it be some other type of query?
-//        List<Book> bookResults = this.bookRepository.searchallfields();
-        return booksByAuthor;
+        logger.debug(type);
+
+        List<Article> resultList = new ArrayList<Article>();
+
+        switch (type) {
+            case ("all"): {
+                List<Book> listb = this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
+                List<Game> listg = this.gameRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
+                List<LP> listl = this.lpRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
+                if (listb != null) {
+                    resultList.addAll(listb);
+                }
+                if (listg != null) {
+                    resultList.addAll(listg);
+                }
+                if (listl != null) {
+                    resultList.addAll(listl);
+                }
+                break;
+            }
+            case ("book"): {
+                resultList.addAll(this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
+                break;
+
+            }
+            case ("game"): {
+                resultList.addAll(this.gameRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
+                break;
+
+            }
+            case ("lp"): {
+                resultList.addAll(this.lpRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
+                break;
+            }
+        }
+
+
+        return resultList;
     }
 }

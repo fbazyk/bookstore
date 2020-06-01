@@ -1,7 +1,12 @@
 <div class="inventory--container">
-<app-search-form [providedState]="searchState" (newSearch)="newSearch.next($event)"></app-search-form>
-<app-category-select [providedType]="providedType" (selectedType)="doChangeCategory($event)" class="inventory--cat-select__right"></app-category-select>
-<app-display-inventory [providedType]="selectedCategory" class="inventory--table__wide">
+  <app-search-form [providedState]="searchState" (newSearch)="search($event)"></app-search-form>
+  <div class="inventory--top-bar">
+    <button mat-flat-button (click)="findAll()">Reload All</button>
+    <button mat-flat-button (click)="addArticle()" *ngIf="showAdminControls">Add Article</button>
+    <app-category-select [providedType]="providedType" (selectedType)="doChangeCategory($event)"
+                         class="inventory--cat-select__right"></app-category-select>
+  </div>
+  <app-display-inventory [providedType]="selectedCategory" class="inventory--table__wide">
 
-</app-display-inventory>
+  </app-display-inventory>
 </div>

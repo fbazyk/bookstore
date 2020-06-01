@@ -5,8 +5,8 @@ import {ArticleService} from "../service/article.service";
 import {UserService} from "../user.service";
 import {Location} from "@angular/common";
 import {Subscription} from "rxjs";
-import {Article, Book, Game, Lp} from "../model/Articles";
-import {correctISBNValidator} from "../validation/ArticleValidation";
+import {Article, articleTypes, Book, Game, Lp} from "../model/Articles";
+import {correctISBNValidator, correctNewArticleTypeValidator} from "../validation/ArticleValidation";
 
 @Component({
   selector: 'app-edit-article',
@@ -19,25 +19,21 @@ export class EditArticleComponent implements OnInit {
   type: string;
   id: number;
   article: Article;
-  //todo make a form
 
-  //todo make inputs
+  articleType = [...articleTypes];
 
-  //todo make validation
-
-  //todo go to back-end, api for article/get/put/post/delete
-  //based on the input
   articleForm: FormGroup = this.fb.group({
-    title: [''],
-    price: [''],
-    supplierId: [''],
-    author: [''],
+    type: ['', [correctNewArticleTypeValidator(), Validators.required]],
+    title: ['', [Validators.minLength(3), Validators.required]],
+    price: ['', [Validators.min(0), Validators.required]],
+    supplierId:'',
+    author: '',
     isbn: ['', correctISBNValidator()],
-    pages: [''],
-    publisher: [''],
-    minage: [''],
-    genre: [''],
-    artist: [''],
+    pages: ['', Validators.min(0)],
+    publisher: ['', Validators.minLength(3)],
+    minage: '',
+    genre: '',
+    artist: '',
   });
 
   constructor(private route: ActivatedRoute,
@@ -53,7 +49,15 @@ export class EditArticleComponent implements OnInit {
     let routeSub = this.route.params.subscribe(params => {
       this.type = params['type'];
       this.id = +params['id']; // (+) converts string 'id' to a number
-      this.article = this.articleService.getArticle(params['type'], params['id']);
+      console.log(this.type, this.id);
+      if (!!params['type'] && !!params['id']){
+        this.article = this.articleService.getArticle(params['type'], params['id']);
+      } else {
+        this.article = {type : 'all',
+          id : 0,
+          title : 'Please Enter Title'
+        }
+      }
       this.populateForm();
     });
     this.subs.push(routeSub);
@@ -124,5 +128,9 @@ export class EditArticleComponent implements OnInit {
         })
       }
     }
+
+    this.articleForm.controls['type'].valueChanges.subscribe(value => {
+      this.article.type = value;
+    })
   }
 }
