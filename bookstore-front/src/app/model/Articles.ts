@@ -17,6 +17,13 @@ export interface Article{
   genre?: GameGenre|LpGenre;
 }
 
+export enum articleType{
+  book='book',
+  game ='game',
+  lp ='lp',
+}
+
+export const articleTypes: Array<String> = ['all', 'book', 'game', 'lp'];
 
 export class Book implements Article {
   type:string = 'book';

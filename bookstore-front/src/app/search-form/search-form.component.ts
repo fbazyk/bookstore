@@ -1,8 +1,18 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import {BehaviorSubject} from "rxjs";
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from "@angular/forms";
+import {BehaviorSubject, Subscription} from "rxjs";
 import {SearchState, provideEmptySearchState} from "../model/SearchState";
 import {require} from "isbnjs";
+import {articleType, articleTypes} from "../model/Articles";
+
 let ISBN = require('isbnjs');
 declare var require: any;
 
@@ -11,7 +21,7 @@ declare var require: any;
   templateUrl: './search-form.component.html',
   styleUrls: ['./search-form.component.css']
 })
-export class SearchFormComponent implements OnInit {
+export class SearchFormComponent implements OnInit, OnDestroy {
 
   /**
    * Events fire directly to BehaviorSubject of parent component
@@ -22,6 +32,17 @@ export class SearchFormComponent implements OnInit {
   @Input()
   providedState: SearchState;
 
+
+  private clearFormValue = {
+    id: '',
+    type: articleTypes[0],
+    title: '',
+    minprice: '',
+    maxprice: '',
+  };
+  private subs: Subscription[] = new Array<Subscription>();
+
+  articleType = [...articleTypes];
   newState: SearchState = provideEmptySearchState();
 
   searchForm: FormGroup;
@@ -38,43 +59,78 @@ export class SearchFormComponent implements OnInit {
     console.log(this.isbn10a.asIsbn13());
     console.log(this.isbn10a.isIsbn13());
     console.log(this.isbn10a.isIsbn10());
-    this.newSearch.subscribe(next =>{
+    this.newSearch.subscribe(next => {
       this.providedState = next;
-    })
+    });
 
-    this.searchForm = this.fb.group({
-      id:[''],
-      type:['all'],
-      title:[''],
-      minprice:[''],
-      maxprice:[''],
-    })
+    this.clearForm();
+    this.subscribeToFormChanges();
   }
 
+  /**
+   * Produces an event stream every time form is updated,
+   * so the newState object is always up to date.
+   * One of the sources of Search pipeline
+   * */
+  private subscribeToFormChanges() {
+    let formSub: Subscription = this.searchForm.valueChanges.subscribe(formValues => {
+      Object.keys(formValues).filter(formField => {
+        return !!formValues[formField];
+      }).forEach(formField => {
+        this.newState.fields.set(formField, formValues[formField])
+      });
+    });
+    this.subs.push(formSub)
+  }
+
+  /**
+   * Send existing NewState object to parent component
+   * */
   search() {
-    //todo take this form data
-    //todo create a map with fields that are filled in
-    //todo put the map into newState
-    let fields: Map<string, string>  = new Map<string, string>()
-    // let fiels2: Map<string, string>  = new Map<string, string>([["type", 'book']])
-    const newState: SearchState = provideEmptySearchState();
-    this.newSearch.emit(newState)
+    this.newSearch.emit(this.newState)
   }
 
+  ngOnDestroy(): void {
+    this.subs.forEach(subscription => subscription.unsubscribe())
+  }
+
+  /**
+   *
+   * */
   changeSearch() {
-    console.log(this.providedState)
     this.providedState.engaged = false;
-    console.log(this.providedState)
   }
 
   clearForm() {
-    console.log(this.providedState)
     this.providedState = new SearchState();
-    this.searchForm.reset();
-    console.log(this.providedState)
+
+    this.searchForm = this.fb.group(this.clearFormValue);
+    this.searchForm.controls['type'].setValidators(Validators.required)
+    this.searchForm.controls['id'].setValidators(Validators.min(1))
+    this.searchForm.controls['title'].setValidators(Validators.minLength(1))
+    this.searchForm.controls['minprice'].setValidators(Validators.min(1))
+    this.searchForm.controls['maxprice'].setValidators(Validators.min(1))
+    this.searchForm.setValidators([atLeastTwo]);
   }
 
   hideForm() {
     this.providedState.engaged = true;
   }
+
+
+}
+
+function atLeastTwo(formGroup) {
+  console.log(formGroup)
+  console.log(formGroup.value)
+  let fieldsWithData = new Map(Object.entries(formGroup.value))
+  fieldsWithData.forEach((value, key) => {
+    if(!!value){
+
+    } else {
+      fieldsWithData.delete(key);
+    }
+  });
+  console.log(fieldsWithData)
+    return fieldsWithData.size >=2 ? null : {allOrNoneRequired: true};
 }

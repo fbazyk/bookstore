@@ -9,6 +9,6 @@ export class SearchState {
 export function provideEmptySearchState(): SearchState{
   let state: SearchState = new SearchState()
   state.engaged = true;
-  state.fields = null;
+  state.fields = new Map<string, string>();
   return state;
 }

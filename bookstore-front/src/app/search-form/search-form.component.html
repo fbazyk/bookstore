@@ -2,18 +2,9 @@
 <div class="search-form--inputs__vertical">
   <mat-form-field appearance="fill" class="search-form--type">
     <mat-label>Type</mat-label>
-    <input matInput placeholder="Simple placeholder" formControlName="type">
-
-<!--    <mat-label>Toppings</mat-label>-->
-<!--    <mat-select formControlName="typeSelect" multiple>-->
-<!--      <mat-select-trigger>-->
-<!--        {{selectedClass}}-->
-<!--        <span *ngIf="toppings.value?.length > 1" class="example-additional-selection">-->
-<!--        (+{{toppings.value.length - 1}} {{toppings.value?.length === 2 ? 'other' : 'others'}})-->
-<!--      </span>-->
-<!--      </mat-select-trigger>-->
-<!--      <mat-option *ngFor="let topping of articleTypeMapping" [value]="topping">{{topping}}</mat-option>-->
-<!--    </mat-select>-->
+    <mat-select formControlName="type" >
+      <mat-option *ngFor="let type of articleType" [value]="type">{{type}}</mat-option>
+    </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="fill" class="search-form--id">
@@ -40,6 +31,10 @@
     <input matInput placeholder="Simple placeholder" formControlName="maxprice">
   </mat-form-field>
 </div>
+  <div class="search-form--errors">
+    <span *ngIf="!searchForm.valid"> Please fill in at least 2 fields to make a search</span>
+
+  </div>
 </div>
 <div class="search-form--actions">
 <button mat-button type="button" (click)="hideForm()" *ngIf="!providedState.engaged">Hide Form</button>

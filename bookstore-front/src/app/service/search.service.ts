@@ -29,7 +29,7 @@ export class SearchService {
    * */
   searchArticles(searchState: SearchState){
     console.log("Searching for: ", searchState)
-    this.http.post<Array<Article>>(`${environment.apiUrl}/article/search`, searchState).subscribe(foundArticles => {
+    this.http.post<Array<Article>>(`${environment.apiUrl}/article/search`, searchState.fields).subscribe(foundArticles => {
       console.log("Response from Search", foundArticles);
       this.articleService.foundArticles(foundArticles)
     });
