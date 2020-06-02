@@ -1,6 +1,7 @@
 package com.realdolmen.bookstore.repository;
 
 import com.realdolmen.bookstore.model.Book;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -20,5 +21,7 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
             @Param("articleId") Long articleId,
             @Param("title") String title,
             @Param("minprice") BigDecimal minprice,
-            @Param("maxprice") BigDecimal maxprice);
+            @Param("maxprice") BigDecimal maxprice,
+            Sort sort);
+
 }

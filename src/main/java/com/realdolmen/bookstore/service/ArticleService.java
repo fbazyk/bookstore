@@ -7,12 +7,15 @@ import com.realdolmen.bookstore.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Component
 public class ArticleService {
@@ -169,7 +172,9 @@ public class ArticleService {
 
         switch (type) {
             case ("all"): {
-                List<Book> listb = this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
+
+                Sort sort = Sort.by(DESC, "price");
+                List<Book> listb = this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV, sort);
                 List<Game> listg = this.gameRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
                 List<LP> listl = this.lpRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
                 if (listb != null) {
@@ -184,7 +189,7 @@ public class ArticleService {
                 break;
             }
             case ("book"): {
-                resultList.addAll(this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
+                resultList.addAll(this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV, Sort.unsorted()));
                 break;
 
             }
