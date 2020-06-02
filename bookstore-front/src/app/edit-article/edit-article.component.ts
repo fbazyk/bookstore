@@ -78,10 +78,12 @@ export class EditArticleComponent implements OnInit {
   populateForm() {
     this.articleForm.patchValue({
       id: this.article.id,
+      type: this.article.type,
       title: this.article.title,
       price: this.article.price,
       supplierId: this.article.supplierId,
     });
+    this.articleForm.controls['type'].setValidators([Validators.required]);
     switch (this.article.type) {
       case 'book': {
         this.articleForm.patchValue({
