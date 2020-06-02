@@ -49,7 +49,7 @@ public class ArticleController {
     }
 
     @CrossOrigin
-    @PostMapping("/article/{type}/{id}")
+    @PostMapping(value = "/article/{type}/{id}", produces="text/plain")
     public ResponseEntity<?> changeArticle(@PathVariable String type, @PathVariable long id, @RequestBody Article article) {
         try{
             if(article.getId() != id) throw new UnableToUpdateArticleException();
@@ -61,11 +61,16 @@ public class ArticleController {
     }
 
     @CrossOrigin
-    @PutMapping("/article/{type}")
+    @PutMapping(value = "/article/{type}", produces = "text/plain")
     public ResponseEntity<?> addArticle(@RequestBody Article article, @PathVariable String type) {
+        logger.debug("Put Article {}", article.getId());
         logger.debug("Put Article {}", type);
         try{
-            articleService.addArticle(type, article);
+            if(article.getId() == 0){
+                Article noId = article;
+                noId.setId(null);
+                articleService.addArticle(type, noId);
+            }
         } catch (Exception ex){
             String reason = "Article could not be added:" + ex.getMessage();
             return ResponseEntity.unprocessableEntity().body(reason);

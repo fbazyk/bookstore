@@ -7,3 +7,7 @@
 .edit-article--input-groups__flattened{
   display: contents;
 }
+
+.edit-article--container {
+  width: 30vw;
+}

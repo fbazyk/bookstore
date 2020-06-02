@@ -5,8 +5,11 @@ import {ArticleService} from "../service/article.service";
 import {UserService} from "../user.service";
 import {Location} from "@angular/common";
 import {Subscription} from "rxjs";
-import {Article, articleTypes, Book, Game, Lp} from "../model/Articles";
-import {correctISBNValidator, correctNewArticleTypeValidator} from "../validation/ArticleValidation";
+import {Article, articleTypes, Book, Game, gameGenres, Lp, lpGenres} from "../model/Articles";
+import {
+  correctISBNValidator,
+  correctNewArticleTypeValidator
+} from "../validation/ArticleValidation";
 
 @Component({
   selector: 'app-edit-article',
@@ -21,17 +24,19 @@ export class EditArticleComponent implements OnInit {
   article: Article;
 
   articleType = [...articleTypes];
+  gameGenre = [...gameGenres];
+  lpGenre = [...lpGenres];
 
   articleForm: FormGroup = this.fb.group({
-    type: ['', [correctNewArticleTypeValidator(), Validators.required]],
+    type: ['', [correctNewArticleTypeValidator()]],
     title: ['', [Validators.minLength(3), Validators.required]],
     price: ['', [Validators.min(0), Validators.required]],
-    supplierId:'',
+    supplierId: ['', Validators.required],
     author: '',
-    isbn: ['', correctISBNValidator()],
+    isbn: ['', [correctISBNValidator()]],
     pages: ['', Validators.min(0)],
     publisher: ['', Validators.minLength(3)],
-    minage: '',
+    minage: ['', Validators.min(0)],
     genre: '',
     artist: '',
   });
@@ -50,13 +55,15 @@ export class EditArticleComponent implements OnInit {
       this.type = params['type'];
       this.id = +params['id']; // (+) converts string 'id' to a number
       console.log(this.type, this.id);
-      if (!!params['type'] && !!params['id']){
-        this.article = this.articleService.getArticle(params['type'], params['id']);
+      const emptyArticle = {
+        type: 'all',
+        id: 0,
+        title: 'Please Enter Title'
+      };
+      if (!!params['type'] && !!params['id']) {
+        this.article = this.articleService.getArticle(this.type, this.id);
       } else {
-        this.article = {type : 'all',
-          id : 0,
-          title : 'Please Enter Title'
-        }
+        this.article = emptyArticle
       }
       this.populateForm();
     });
@@ -64,40 +71,11 @@ export class EditArticleComponent implements OnInit {
   }
 
 
-  submitChanges($event: Event) {
-    console.log("Form Submitted", $event)
-    //todo process event to produce an object of an Article
-    const submittedArticle: Article = {
-      id: this.article.id,
-      type: this.article.type,
-      title: this.article.title
-    };
-    if(this.articleForm.valid){
-
-    }
-    const valueAtSubmission = this.articleForm.value
-    submittedArticle.id = this.article.id
-    submittedArticle.type = this.article.type
-    console.log(valueAtSubmission);
-    console.log(this.article)
-    this.articleService.submitArticle(submittedArticle)
-  }
-
-  dismissChanges($event: MouseEvent) {
-    console.log("Dismiss Changes:", $event)
-    console.log(this.article)
-    this.router.navigate([`/article/${this.type}/${this.id}`])
-  }
-
   /**
    * Has to run after the response from the ArticleService has arrived.
    * Form may be initialized before with empty object.
    * */
   populateForm() {
-    // this.articleForm = this.fb.group({
-    //   id:[this.article.id, Validators.min(1)],
-    //
-    // })
     this.articleForm.patchValue({
       id: this.article.id,
       title: this.article.title,
@@ -111,14 +89,16 @@ export class EditArticleComponent implements OnInit {
           isbn: this.article.isbn,
           pages: this.article.pages
         });
+        this.articleForm.controls['isbn'].setValidators([correctISBNValidator, Validators.required])
         break;
       }
       case 'game': {
         this.articleForm.patchValue({
           publisher: this.article.publisher,
-          minage: this.article.min_age,
+          minage: this.article.minage,
           genre: this.article.genre
         });
+        this.articleForm.controls['genre'].setValidators(Validators.required)
         break;
       }
       case 'lp': {
@@ -126,11 +106,62 @@ export class EditArticleComponent implements OnInit {
           artist: this.article.artist,
           genre: this.article.genre
         })
+        this.articleForm.controls['genre'].setValidators(Validators.required)
       }
     }
 
+    this.articleForm.controls['price'].setValidators(Validators.required)
+
     this.articleForm.controls['type'].valueChanges.subscribe(value => {
       this.article.type = value;
-    })
+    });
+    this.articleForm.controls['title'].valueChanges.subscribe(value => {
+      this.article.title = value
+    });
+  }
+
+  dismissChanges($event: MouseEvent) {
+    console.log("Dismiss Changes:", $event)
+    console.log(this.article)
+    if (!!this.id) {
+      this.router.navigate([`/article/${this.type}/${this.id}`])
+    } else {
+      this.router.navigate(['/bookstore']);
+    }
+  }
+
+  submitChanges($event: Event) {
+    console.log("form valid", this.articleForm.valid)
+
+    if (this.articleForm.valid) {
+      this.article.title = this.articleForm.get('title').value;
+      this.article.price = this.articleForm.get('price').value;
+      this.article.supplierId = this.articleForm.get('supplierId').value;
+      switch (this.article.type) {
+        case 'book': {
+          this.article.author = this.articleForm.get('author').value;
+          this.article.isbn = this.articleForm.get('isbn').value;
+          this.article.pages = this.articleForm.get('pages').value;
+          break;
+        }
+        case 'game': {
+          this.article.publisher = this.articleForm.get('publisher').value;
+          this.article.minage = this.articleForm.get('minage').value;
+          this.article.genre = this.articleForm.get('genre').value;
+          break;
+        }
+        case 'lp': {
+          this.article.artist = this.articleForm.get('artist').value;
+          this.article.genre = this.articleForm.get('genre').value;
+        }
+      }
+      console.log("Form Submitted", $event)
+      //todo process event to produce an object of an Article
+      const valueAtSubmission = this.articleForm.value
+      console.log(valueAtSubmission);
+      console.log(this.article)
+      this.articleService.submitArticle(this.article)
+    }
+
   }
 }

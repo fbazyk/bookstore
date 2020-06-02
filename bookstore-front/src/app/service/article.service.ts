@@ -1,5 +1,5 @@
 import {Injectable, NgZone, OnInit} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {Article, Book, Game, Lp, articleTypeMapping, Item} from "../model/Articles";
 import {User} from "../model/User";
 import {environment} from "../../environments/environment";
@@ -8,6 +8,7 @@ import {combineLatest} from "rxjs/index";
 import {BehaviorSubject, Observable} from "rxjs";
 import {errorObject} from "rxjs/internal-compatibility";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,7 @@ export class ArticleService implements OnInit {
 
 
   constructor(private http: HttpClient,
+              public router: Router,
               public snackBar: MatSnackBar,
               private zone: NgZone) {
     this.subscribeTo()
@@ -163,21 +165,22 @@ export class ArticleService implements OnInit {
     this.isLoading.next(true);
     // submittedArticle.id == 0 only if it's a new article
     if (submittedArticle.id > 0) {
-      this.http.post(`${environment.apiUrl}/article/${submittedArticle.type}/${submittedArticle.id}`, submittedArticle).subscribe(response => {
+      this.http.post(`${environment.apiUrl}/article/${submittedArticle.type}/${submittedArticle.id}`, submittedArticle, {responseType: "text"}).subscribe(response => {
         console.log(response);
-        //todo maybe manually update all articles with new article data received from the back-end?
-        //todo to know where to put it, I need sorting from the table, or do i, if sorting happens only in the table?
-        //todo i guess it depends in how far the state of the table should get saved between component jumps
         let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type + ' ' + submittedArticle.id} was updated.`, null, {duration: 2500})
         this.isLoading.next(false);
-        this.findAll();
+        this.router.navigateByUrl('/inventory')
+      }, error => {
+        console.log(error)
       });
     } else {
-      this.http.put(`${environment.apiUrl}/article`, submittedArticle).subscribe(response => {
+      this.http.put(`${environment.apiUrl}/article/${submittedArticle.type}`, submittedArticle).subscribe(response => {
         console.log(response);
         let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type + ' ' + submittedArticle.title} was created.`, null, {duration: 2500})
         this.isLoading.next(false);
-        this.findAll();
+        this.router.navigateByUrl('/inventory')
+      },error => {
+        let failureSnackBar = this.snackBar.open(`Not Able To Create! ${submittedArticle.type + ' ' + submittedArticle.title}`, null, {duration: 2500})
       })
     }
   }

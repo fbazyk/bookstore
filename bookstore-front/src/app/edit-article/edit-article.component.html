@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card class="edit-article--container">
   <form [formGroup]="articleForm" (submit)="submitChanges($event)">
 
   <mat-card-header>
@@ -56,7 +56,9 @@
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Genre</mat-label>
-        <input matInput formControlName="genre" >
+        <mat-select formControlName="genre" >
+          <mat-option *ngFor="let genre of gameGenre" [value]="genre">{{genre}}</mat-option>
+        </mat-select>
       </mat-form-field>
     </div>
 
@@ -67,10 +69,16 @@
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>genre</mat-label>
-        <input matInput formControlName="genre" >
+        <mat-select formControlName="genre" >
+          <mat-option *ngFor="let genre of lpGenre" [value]="genre">{{genre}}</mat-option>
+        </mat-select>
       </mat-form-field>
     </div>
+    <div class="search-form--errors">
+      <span *ngIf="!articleForm.valid"> Some data is missing, please check the entries</span>
+      <span *ngIf="!articleForm.controls['isbn'].valid"> Try correct isbn: 4873113369 </span>
 
+    </div>
 
   </mat-card-content>
   <mat-card-actions>

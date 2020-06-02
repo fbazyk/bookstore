@@ -12,7 +12,7 @@ export interface Article{
   isbn?: string;
   pages?: number;
   publisher?: string;
-  min_age?: number;
+  minage?: number;
   artist?: string;
   genre?: GameGenre|LpGenre;
 }
@@ -24,6 +24,8 @@ export enum articleType{
 }
 
 export const articleTypes: Array<String> = ['all', 'book', 'game', 'lp'];
+export const gameGenres: Array<String> = ['MMORPG', 'RPG', 'FPS', 'RTS', 'RACE'];
+export const lpGenres: Array<String> = ['classic', 'pop', 'rock', 'dance', 'rnb', 'hiphop'];
 
 export class Book implements Article {
   type:string = 'book';
@@ -57,7 +59,7 @@ export class Game implements Article {
   price: number;
   supplierId: string;
   publisher: string;
-  min_age: number;
+  minage: number;
   genre: GameGenre
 }
 
