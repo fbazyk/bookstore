@@ -26,7 +26,20 @@ export function correctISBNValidator(): ValidatorFn {
  * Article has to have a type in order to be saved in DB
  * */
 export function correctNewArticleTypeValidator(): ValidatorFn {
+  console.log("type validation calling")
   return (control: AbstractControl): {[key: string]: any} | null => {
-    return control.value !== 'all' ? null : {selectTypeError: true};
+    console.log(control.dirty && control.value !=='all')
+    return  control.value != 'all' ? null : {selectTypeError: true};
+  };
+}
+
+/**
+ * Article has to have a type in order to be saved in DB
+ * */
+export function correctNewArticleTypeValidator2(): ValidatorFn {
+  console.log("type validation calling")
+  return (control: AbstractControl): {[key: string]: any} | null => {
+    console.log(control.dirty && control.value !=='all')
+    return  control.value != 'all' ? null : {selectTypeError: true};
   };
 }

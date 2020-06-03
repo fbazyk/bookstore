@@ -11,8 +11,8 @@ public class Game extends Article {
     @Size(max = 100)
     private String publisher;
 
-    @Column(name = "min_age")
-    private long min_age;
+    @Column(name = "minage")
+    private long minage;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "genre")
@@ -29,12 +29,12 @@ public class Game extends Article {
         this.publisher = publisher;
     }
 
-    public long getMin_age() {
-        return min_age;
+    public long getMinage() {
+        return minage;
     }
 
-    public void setMin_age(long min_age) {
-        this.min_age = min_age;
+    public void setMinage(long min_age) {
+        this.minage = min_age;
     }
 
     public GameGenre getGenre() {

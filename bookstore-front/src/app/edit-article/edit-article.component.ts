@@ -28,16 +28,16 @@ export class EditArticleComponent implements OnInit {
   lpGenre = [...lpGenres];
 
   articleForm: FormGroup = this.fb.group({
-    type: ['', [correctNewArticleTypeValidator()]],
+    type: ['', ],
     title: ['', [Validators.minLength(3), Validators.required]],
     price: ['', [Validators.min(0), Validators.required]],
     supplierId: ['', Validators.required],
     author: '',
     isbn: ['', [correctISBNValidator()]],
     pages: ['', Validators.min(0)],
-    publisher: ['', Validators.minLength(3)],
+    publisher: ['', Validators.minLength(1)],
     minage: ['', Validators.min(0)],
-    genre: '',
+    genre:  ['', ],
     artist: '',
   });
 
@@ -62,12 +62,28 @@ export class EditArticleComponent implements OnInit {
       };
       if (!!params['type'] && !!params['id']) {
         this.article = this.articleService.getArticle(this.type, this.id);
+        this.populateForm();
       } else {
         this.article = emptyArticle
       }
-      this.populateForm();
     });
     this.subs.push(routeSub);
+  }
+
+  subscribeToTypeValueChanges(){
+    this.articleForm.controls['type'].valueChanges.subscribe(value => {
+      this.article.type = value;
+
+      if(value == 'book'){
+
+      }
+      if(value == 'game'){
+
+      }
+      if(value == 'lp'){
+
+      }
+    });
   }
 
 
@@ -76,6 +92,7 @@ export class EditArticleComponent implements OnInit {
    * Form may be initialized before with empty object.
    * */
   populateForm() {
+    // this.articleForm.get('type').setValidators([Validators.required, correctNewArticleTypeValidator]);
     this.articleForm.patchValue({
       id: this.article.id,
       type: this.article.type,
@@ -83,7 +100,11 @@ export class EditArticleComponent implements OnInit {
       price: this.article.price,
       supplierId: this.article.supplierId,
     });
-    this.articleForm.controls['type'].setValidators([Validators.required]);
+
+    console.log(this.articleForm.get('type'))
+    // this.articleForm.controls['type'].setValidators([Validators.required, correctNewArticleTypeValidator]);
+    // this.articleForm.controls['type'].markAsDirty();
+    console.log(this.articleForm.get('type'))
     switch (this.article.type) {
       case 'book': {
         this.articleForm.patchValue({
@@ -91,7 +112,7 @@ export class EditArticleComponent implements OnInit {
           isbn: this.article.isbn,
           pages: this.article.pages
         });
-        this.articleForm.controls['isbn'].setValidators([correctISBNValidator, Validators.required])
+        this.articleForm.controls['isbn'].setValidators([correctISBNValidator(), Validators.required])
         break;
       }
       case 'game': {
@@ -114,9 +135,7 @@ export class EditArticleComponent implements OnInit {
 
     this.articleForm.controls['price'].setValidators(Validators.required)
 
-    this.articleForm.controls['type'].valueChanges.subscribe(value => {
-      this.article.type = value;
-    });
+
     this.articleForm.controls['title'].valueChanges.subscribe(value => {
       this.article.title = value
     });

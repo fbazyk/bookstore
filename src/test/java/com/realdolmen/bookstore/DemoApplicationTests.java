@@ -21,11 +21,10 @@ class DemoApplicationTests {
 	@Autowired
 	ArticleService articleService;
 
-	@Test
+
 	void contextLoads() {
 	}
 
-	@Test
 	void emptySearchEqualsFindAll(){
 		//todo test
 		logger.debug("gotta test search and findall");
@@ -36,7 +35,6 @@ class DemoApplicationTests {
 	}
 
 
-	@Test
 	void checkAddArticle(){
 		Book emptyBook = new Book();
 		Boolean re = articleService.addArticle("book", emptyBook);

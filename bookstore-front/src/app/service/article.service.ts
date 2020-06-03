@@ -174,7 +174,7 @@ export class ArticleService implements OnInit {
         console.log(error)
       });
     } else {
-      this.http.put(`${environment.apiUrl}/article/${submittedArticle.type}`, submittedArticle).subscribe(response => {
+      this.http.put(`${environment.apiUrl}/article/${submittedArticle.type}`, submittedArticle, {responseType: "text"}).subscribe(response => {
         console.log(response);
         let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type + ' ' + submittedArticle.title} was created.`, null, {duration: 2500})
         this.isLoading.next(false);

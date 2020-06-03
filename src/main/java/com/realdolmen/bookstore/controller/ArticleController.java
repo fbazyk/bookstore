@@ -75,7 +75,8 @@ public class ArticleController {
             String reason = "Article could not be added:" + ex.getMessage();
             return ResponseEntity.unprocessableEntity().body(reason);
         }
-            return ResponseEntity.ok(true);
+        String result = "Article added!";
+            return ResponseEntity.ok(result);
     }
 
     @CrossOrigin

@@ -75,8 +75,10 @@
       </mat-form-field>
     </div>
     <div class="search-form--errors">
-      <span *ngIf="!articleForm.valid"> Some data is missing, please check the entries</span>
-      <span *ngIf="!articleForm.controls['isbn'].valid"> Try correct isbn: 4873113369 </span>
+      <div *ngIf="!articleForm.valid"> Some data is missing, please check the entries</div>
+      <div *ngIf="articleForm.controls['type'].value == 'all' || (!articleForm.controls['type'].dirty && articleForm.controls['type'].value == 'all')"> Please select Article type </div>
+      <div *ngIf="(articleForm.controls['type'].value == ('lp' || 'game') && articleForm.controls['genre'].pristine)"> Please Select Genre </div>
+      <div *ngIf="!articleForm.controls['isbn'].valid"> Try correct isbn: 4873113369 </div>
 
     </div>
 
