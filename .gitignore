@@ -2,6 +2,9 @@ HELP.
 bookstore-front/e2e
 bookstore-front/node_modules
 bookstore-front/node/
+bookstore-front/dist/
+bookstore-front/src/main/
+
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**
