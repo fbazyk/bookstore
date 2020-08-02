@@ -1,0 +1,10 @@
+<div>
+  <mat-button-toggle-group #group value='{{providedType}}' (change)="selectedType.next($event)" name="fontStyle" aria-label="Font Style">
+
+    <mat-button-toggle value="all">All</mat-button-toggle>
+    <mat-button-toggle value="book">Books</mat-button-toggle>
+    <mat-button-toggle value="game">Games</mat-button-toggle>
+    <mat-button-toggle value="lp">LPs</mat-button-toggle>
+  </mat-button-toggle-group>
+
+</div>

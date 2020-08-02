@@ -1,0 +1,44 @@
+<div [formGroup]="searchForm" *ngIf="!newState.engaged" (keyup.enter)="search()">
+<div class="search-form--inputs__vertical">
+  <mat-form-field appearance="fill" class="search-form--type">
+    <mat-label>Type</mat-label>
+    <mat-select formControlName="type" >
+      <mat-option *ngFor="let type of articleType" [value]="type">{{type}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="search-form--id">
+    <mat-label>Id</mat-label>
+    <input matInput placeholder="Simple placeholder" formControlName="id" >
+  </mat-form-field>
+
+
+
+
+
+  <mat-form-field appearance="fill" class="search-form--title">
+    <mat-label>Title</mat-label>
+    <input matInput placeholder="Simple placeholder" formControlName="title">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="search-form--minprice" >
+    <mat-label>Min price</mat-label>
+    <input matInput placeholder="Simple placeholder" formControlName="minprice">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="search-form--maxprice">
+    <mat-label>Max price</mat-label>
+    <input matInput placeholder="Simple placeholder" formControlName="maxprice">
+  </mat-form-field>
+</div>
+  <div class="search-form--errors">
+    <span *ngIf="!searchForm.valid"> Please fill in at least 2 fields to make a search</span>
+
+  </div>
+</div>
+<div class="search-form--actions">
+<button mat-button type="button" (click)="hideForm()" *ngIf="!newState.engaged">Hide Form</button>
+<button mat-button type="button" (click)="clearForm()">New Search</button>
+<button mat-button type="button" (click)="changeSearch()" *ngIf="newState.engaged">Change Search</button>
+<button mat-stroked-button type="button" (click)="search()" (keyup.enter)="search()" *ngIf="!newState.engaged">Search</button>
+</div>
