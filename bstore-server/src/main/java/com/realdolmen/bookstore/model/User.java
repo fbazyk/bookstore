@@ -3,6 +3,7 @@ package com.realdolmen.bookstore.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -25,6 +26,10 @@ public class User {
 
     @Column(name = "password")
     private String password;
+
+    @OneToMany (cascade = CascadeType.ALL)
+    @JoinColumn(name = "USER_ID")
+    private Set<Order> userOrders;
 
     public String getFirstName() {
         return firstName;

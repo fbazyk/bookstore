@@ -17,7 +17,7 @@ public class Review {
     private Integer rating;
 
     @Column
-    private String description;
+    private String text;
 
     public Long getId() {
         return id;
@@ -35,12 +35,11 @@ public class Review {
         this.rating = rating;
     }
 
-    public String getDescription() {
-        return description;
+    public String getText() {
+        return text;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setText(String text) {
+        this.text = text;
     }
-
 }

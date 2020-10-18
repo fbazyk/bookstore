@@ -38,8 +38,16 @@ public class Article {
     @Size(max=100)
     private String supplierId;
 
+    public Set<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     @OneToMany
-    @JoinColumn(name = "reviews")
+    @JoinColumn(name = "articleId")
     private Set<Review> reviews;
 
     public Article() {
