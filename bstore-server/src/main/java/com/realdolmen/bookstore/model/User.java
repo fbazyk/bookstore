@@ -31,6 +31,30 @@ public class User {
     @JoinColumn(name = "USER_ID")
     private Set<Order> userOrders;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Order> getUserOrders() {
+        return userOrders;
+    }
+
+    public void setUserOrders(Set<Order> userOrders) {
+        this.userOrders = userOrders;
+    }
+
     public String getFirstName() {
         return firstName;
     }

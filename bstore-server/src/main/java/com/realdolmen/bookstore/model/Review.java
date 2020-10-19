@@ -19,6 +19,17 @@ public class Review {
     @Column
     private String text;
 
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    private User user;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ArticleType articleType;
+
+    @Column
+    private Long articleId;
+
     public Long getId() {
         return id;
     }
@@ -41,5 +52,29 @@ public class Review {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public ArticleType getArticleType() {
+        return articleType;
+    }
+
+    public void setArticleType(ArticleType articleType) {
+        this.articleType = articleType;
+    }
+
+    public Long getArticleId() {
+        return articleId;
+    }
+
+    public void setArticleId(Long articleId) {
+        this.articleId = articleId;
     }
 }
