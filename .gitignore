@@ -5,6 +5,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 /bstore-front/node_modules/*
+/bstore-server/app.log*
 
 ### STS ###
 .apt_generated

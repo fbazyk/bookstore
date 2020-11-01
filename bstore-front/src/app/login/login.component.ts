@@ -53,6 +53,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   login() {
     if(this.loginForm.valid){
+      let user = this.loginForm.value.
       let password = this.loginForm.value.password;
       console.log('password', password);
       console.log("Log In Action Triggered")
