@@ -11,7 +11,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatFormFieldModule} from "@angular/material/form-field";
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import { DisplayInventoryComponent } from './display-inventory/display-inventory.component';
 import {AdminGuardService} from "./security/admin-guard.service";
 import {UserGuardService} from "./security/user-guard.service";
@@ -26,6 +26,7 @@ import {MatCardModule} from "@angular/material/card";
 import { EditArticleComponent } from './edit-article/edit-article.component';
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { SearchFormComponent } from './search-form/search-form.component';
+import {HttpBasicAuthInterceptorService} from "./http-basic-auth-interceptor.service";
 
 @NgModule({
   declarations: [
@@ -59,6 +60,9 @@ import { SearchFormComponent } from './search-form/search-form.component';
   providers: [
     AdminGuardService,
     UserGuardService,
+    {provide: HTTP_INTERCEPTORS,
+      useClass: HttpBasicAuthInterceptorService,
+      multi: true}
   ],
   bootstrap: [AppComponent]
 })

@@ -1,13 +1,18 @@
 Please chose a user to log in with.
 <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form--container">
-<mat-form-field>
-  <mat-label>Select User</mat-label>
-  <mat-select formControlName="userList" placeholder="Select User">
-    <mat-option *ngFor="let user of allUsers" [value]="user">
-      {{user?.firstName}} {{user?.lastName}} {{user?.role}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+<!--<mat-form-field>-->
+<!--  <mat-label>Select User</mat-label>-->
+<!--  <mat-select formControlName="userList" placeholder="Select User">-->
+<!--    <mat-option *ngFor="let user of allUsers" [value]="user">-->
+<!--      {{user?.firstName}} {{user?.lastName}} {{user?.role}}-->
+<!--    </mat-option>-->
+<!--  </mat-select>-->
+<!--</mat-form-field>-->
+  <mat-form-field>
+    <mat-label>Username</mat-label>
+      <input matInput formControlName="username" type="text" >
+
+  </mat-form-field>
   <mat-form-field>
     <mat-label>Password</mat-label>
       <input matInput formControlName="password" type="password" >
