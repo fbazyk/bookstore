@@ -73,7 +73,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       // this.userService.login(selectedUser);
       //TODO DEBUG THIS: only on second button press
       //TODO Enable Debugger from IDEA
-      this.router.navigateByUrl('/inventory');
     }
     else {
       let failureSnackBar = this.snackBar.open(`Please Check Form`,"", {duration: 2500})

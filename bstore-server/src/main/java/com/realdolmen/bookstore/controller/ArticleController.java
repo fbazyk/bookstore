@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4201")
 @RequestMapping
 public class ArticleController {
 
@@ -27,7 +28,6 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
-    @CrossOrigin
     @GetMapping("/articles")
     public List<Article> findAll() {
 
@@ -35,7 +35,6 @@ public class ArticleController {
         return result;
     }
 
-    @CrossOrigin
     @DeleteMapping("/article/{type}/{id}")
     public ResponseEntity<?> deleteArticle(@PathVariable String type, @PathVariable long id) {
         try{
@@ -48,7 +47,6 @@ public class ArticleController {
         }
     }
 
-    @CrossOrigin
     @PostMapping(value = "/article/{type}/{id}", produces="text/plain")
     public ResponseEntity<?> changeArticle(@PathVariable String type, @PathVariable long id, @RequestBody Article article) {
         try{
@@ -60,7 +58,6 @@ public class ArticleController {
         }
     }
 
-    @CrossOrigin
     @PutMapping(value = "/article/{type}", produces = "text/plain")
     public ResponseEntity<?> addArticle(@RequestBody Article article, @PathVariable String type) {
         logger.debug("Put Article {}", article.getId());
@@ -79,7 +76,6 @@ public class ArticleController {
             return ResponseEntity.ok(result);
     }
 
-    @CrossOrigin
     @PostMapping("/article/search")
     public ResponseEntity<List<Article>> searchArticle(@RequestBody Map<String,String> searchFields) {
         List<Article> resultLsit = this.articleService.search(searchFields);

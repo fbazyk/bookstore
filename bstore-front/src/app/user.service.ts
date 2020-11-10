@@ -4,6 +4,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {map} from "rxjs/operators";
 import {environment} from "../environments/environment";
 import {User, UserRole} from "./model/User";
+import {Router} from "@angular/router";
 
 /**
  *
@@ -19,7 +20,7 @@ export class UserService implements OnInit {
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, public router: Router) {
     console.log("USER SERVICE INITIALIZED")
     this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
@@ -41,7 +42,10 @@ export class UserService implements OnInit {
         //TODO Store user in the localstorage to retrieve roles
         console.log(user)
         this.currentUserSubject.next(user)
+        this.router.navigate(['/inventory']);
+
       }, error => {
+        console.log(error);
         localStorage.removeItem("basicAuthString")
       });
     console.log("LOGIN COMMITTED")

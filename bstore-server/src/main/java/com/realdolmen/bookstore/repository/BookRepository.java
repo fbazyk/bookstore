@@ -14,7 +14,7 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
 
     @Query("SELECT b FROM Book b " +
             "WHERE (:articleId is null or b.id = :articleId) " +
-            " and  (:title is null or b.title like %:title%) " +
+            " and  (:title is null or lower(b.title) like lower(concat('%',:title,'%'))) " +
             " and (:minprice is null or b.price >= :minprice) " +
             " and (:maxprice is null or b.price <= :maxprice)")
     List<Book> findByArticleParams(

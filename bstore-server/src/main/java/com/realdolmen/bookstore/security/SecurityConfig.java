@@ -40,7 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers("/articles/**").hasAnyRole("USER", "ADMIN")
+                .antMatchers(HttpMethod.GET, "/articles/**").hasAnyRole("USER", "ADMIN")
+                .antMatchers(HttpMethod.GET, "/articles/**").hasAnyAuthority("USER", "ADMIN")
 //                .antMatchers(HttpMethod.GET,"/admin/**").hasAnyRole(UserRole.ADMIN.name(), UserRole.SUBADMIN.name())
 //                .antMatchers(HttpMethod.DELETE, "/admin/**").hasRole(UserRole.ADMIN.name())
 //                .antMatchers(HttpMethod.PUT, "/admin/**").hasRole(UserRole.ADMIN.name())
@@ -57,7 +58,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    @Bean
     protected UserDetailsService userDetailsService() {
         UserDetails user = User.builder()
                 .username("soren")

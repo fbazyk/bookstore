@@ -13,11 +13,11 @@ import {EditArticleComponent} from "./edit-article/edit-article.component";
 
 const routes: Routes = [
 
-  {
-    path: '',
-    component: InventoryComponent,
-    canActivate: [ UserGuardService]
-  },
+  // {
+  //   path: '',
+  //   component: InventoryComponent,
+  //   canActivate: [ UserGuardService]
+  // },
   {
     path: 'inventory',
     component: InventoryComponent,
@@ -39,7 +39,9 @@ const routes: Routes = [
     canActivate: [AdminGuardService]
   },
   { path:  'login', component:  LoginComponent},
-  { path: '**', redirectTo: '' }
+  { path:  '', redirectTo:  'bookstore', pathMatch:'full'},
+
+  { path: '**', redirectTo: 'bookstore' }
 
 ];
 

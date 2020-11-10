@@ -14,6 +14,11 @@ export class UserGuardService implements CanActivate {
 
   canActivate(): boolean {
     console.log("User Guard")
-    return this.user.isUserOrAdmin();
+    if( this.user.isUserOrAdmin()){
+      return true;
+    } else {
+      this.router.navigate(['login']);
+      return false;
+    }
   }
 }
