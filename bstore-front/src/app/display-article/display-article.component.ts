@@ -80,13 +80,13 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
     this.articleService.delete(this.type, this.id);
     const loadingSub = this.articleService.isLoading.subscribe(loading => {
       if (!loading) {
-        this.router.navigate(['/articles'])
+        this.router.navigate(['/inventory'])
       }
     });
     this.subs.push(loadingSub);
   }
 
   navigate() {
-    this.router.navigate(['/articles']);
+    this.router.navigate(['/inventory']);
   }
 }

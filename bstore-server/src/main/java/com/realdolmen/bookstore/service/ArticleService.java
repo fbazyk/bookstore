@@ -52,6 +52,7 @@ public class ArticleService {
         if (type != null && article != null) {
             switch (type) {
                 case "book": {
+                    //TODO check if the book with the same title exists (tolowercase)
                     this.bookRepository.saveAndFlush((Book) article);
                     return true;
                 }

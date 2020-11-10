@@ -60,6 +60,13 @@ public class ArticleController {
 
     @PutMapping(value = "/article/{type}", produces = "text/plain")
     public ResponseEntity<?> addArticle(@RequestBody Article article, @PathVariable String type) {
+        //TODO unmarshall Article object into correct type
+        //TODO Create ArticleDTO with explicitly stated type
+        //TODO read https://stackabuse.com/data-transfer-object-pattern-in-java-implementation-and-mapping/
+        //TODO check if the object with the same type and
+        //TODO call respective repository based on the result of the conversion
+
+
         logger.debug("Put Article {}", article.getId());
         logger.debug("Put Article {}", type);
         try{
