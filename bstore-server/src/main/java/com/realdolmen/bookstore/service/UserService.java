@@ -1,10 +1,12 @@
 package com.realdolmen.bookstore.service;
 
+import com.realdolmen.bookstore.dto.NewUserDTO;
 import com.realdolmen.bookstore.model.User;
 import com.realdolmen.bookstore.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,11 +16,13 @@ import java.util.Optional;
 public class UserService {
 
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
     }
 
@@ -40,5 +44,16 @@ public class UserService {
         //todo check optional usage
         return currentUser.get();
 
+    }
+
+    public void create(NewUserDTO newUserDTO) {
+        User newUser = new User();
+        newUser.setPassword(this.passwordEncoder.encode(newUserDTO.getPassword()));
+        newUser.setUserName(newUserDTO.getUsername());
+        newUser.setRole("USER");
+        newUser.setFirstName(newUserDTO.getFirstName());
+        newUser.setLastName(newUserDTO.getLastName());
+        newUser.setEnabled(true);
+        this.userRepository.saveAndFlush(newUser);
     }
 }
