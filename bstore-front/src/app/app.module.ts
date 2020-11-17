@@ -27,6 +27,8 @@ import { EditArticleComponent } from './edit-article/edit-article.component';
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { SearchFormComponent } from './search-form/search-form.component';
 import {HttpBasicAuthInterceptorService} from "./http-basic-auth-interceptor.service";
+import { ToolbarComponent } from './toolbar/toolbar.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,8 @@ import {HttpBasicAuthInterceptorService} from "./http-basic-auth-interceptor.ser
     DisplayArticleComponent,
     EditArticleComponent,
     SearchFormComponent,
+    ToolbarComponent,
+    RegisterComponent,
   ],
     imports: [
         BrowserModule,

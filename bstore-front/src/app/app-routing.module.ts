@@ -9,6 +9,7 @@ import {InventoryComponent} from "./inventory/inventory.component";
 import {DisplayArticleComponent} from "./display-article/display-article.component";
 import {Article} from "./model/Articles";
 import {EditArticleComponent} from "./edit-article/edit-article.component";
+import {RegisterComponent} from "./register/register.component";
 
 
 const routes: Routes = [
@@ -39,9 +40,10 @@ const routes: Routes = [
     canActivate: [AdminGuardService]
   },
   { path:  'login', component:  LoginComponent},
-  { path:  '', redirectTo:  'bookstore', pathMatch:'full'},
+  { path:  'register', component:  RegisterComponent},
+  { path:  '', redirectTo:  '/inventory', pathMatch:'full'},
 
-  { path: '**', redirectTo: 'bookstore' }
+  { path: '**', redirectTo: '/inventory' }
 
 ];
 

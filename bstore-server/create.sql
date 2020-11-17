@@ -74,7 +74,7 @@ create table users (
                        last_name varchar(100) not null,
                        password varchar(255),
                        role varchar(255),
-                       username varchar(255),
+                       username varchar(255) unique,
                        primary key (id)
 )
 
