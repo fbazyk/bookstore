@@ -14,7 +14,8 @@ public class Order {
     @GeneratedValue
     private Long orderId;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
     @JoinColumn(name = "ORDER_ID")
     private Set<OrderItem> orderItems;
 
@@ -50,6 +51,9 @@ public class Order {
     }
 
     public Set<OrderItem> getOrderItems() {
+        if(orderItems == null){
+            orderItems = new HashSet<>();
+        }
         return orderItems;
     }
 

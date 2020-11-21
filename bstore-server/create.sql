@@ -41,7 +41,7 @@ create table lps (
 create table order_item (
                             id int8 not null,
                             article_id int8,
-                            article_type int4,
+                            article_type varchar(255),
                             price numeric(19, 2),
                             quantity int8,
                             order_id int8,

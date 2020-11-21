@@ -208,4 +208,31 @@ public class ArticleService {
 
         return resultList;
     }
+
+    public Article findByTypeAndId(ArticleType articleType, Long articleId) throws Exception {
+        Article result = null;
+        switch (articleType) {
+            case BOOK: {
+                result = (Article) this.bookRepository.findById(articleId).orElseThrow(() -> {
+                            return new Exception("book not found");
+                        }
+                );
+                break;
+            }
+            case GAME: {
+                result = this.gameRepository.findById(articleId).orElseThrow(() -> {
+                    return new Exception("game not found");
+                });
+                break;
+            }
+            case LP: {
+                result = this.lpRepository.findById(articleId).orElseThrow(() -> {
+                    return new Exception("lp not found");
+                });
+                break;
+            }
+        }
+
+        return result;
+    }
 }

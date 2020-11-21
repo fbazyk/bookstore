@@ -14,6 +14,7 @@ public class OrderItem {
     private Long articleId;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private ArticleType articleType;
 
     @Column
