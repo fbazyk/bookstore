@@ -31,6 +31,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { RegisterComponent } from './register/register.component';
 import { AddArticleComponent } from './add-article/add-article.component';
 import { AddUserSignupComponent } from './add-user-signup/add-user-signup.component';
+import { CartComponent } from './cart/cart.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { AddUserSignupComponent } from './add-user-signup/add-user-signup.compon
     ToolbarComponent,
     ToolbarComponent,
     RegisterComponent,
+    CartComponent,
   ],
     imports: [
         BrowserModule,

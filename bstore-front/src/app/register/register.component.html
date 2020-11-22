@@ -5,7 +5,8 @@
       <input matInput id="username" formControlName="username">
 
     </mat-form-field>
-    <span *ngIf="registerForm.controls.username.errors?.required
+    <span *ngIf="(registerForm.controls.username.errors?.required
+    || registerForm.controls.username.errors?.minLength)
 && (registerForm.controls.username.dirty
 || registerForm.controls.username.touched)"> Username is required</span>
 

@@ -1,5 +1,6 @@
 package com.realdolmen.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,6 +39,7 @@ public class User implements UserDetails {
 
     @OneToMany (cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_ID")
+    @JsonManagedReference
     private Set<Order> userOrders;
 
     @Column(name = "enabled")

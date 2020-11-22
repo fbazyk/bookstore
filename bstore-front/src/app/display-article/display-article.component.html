@@ -8,15 +8,15 @@
   </mat-card-header>
   <mat-card-content>
 
-    {{article.id}}
-    {{article.type}}
-    {{article.title}}
-    {{article.supplierId}}
-    {{article.price}}
-    {{article.type == 'book' ? article?.author: ""}}
-    {{article.type == 'book'? article?.genre: ""}}
-    {{article.type == 'book'? article?.genre: ""}}
-    {{article.type == 'book'? article?.isbn: ""}}
+    <div>{{article.id}}</div>
+    <div>{{article.type}}</div>
+    <div>{{article.title}}</div>
+    <div>{{article.supplierId}}</div>
+    <div>{{article.price}}</div>
+    <div>{{article.type == 'book' ? article?.author: ""}}</div>
+    <div>{{article.type == 'book'? article?.genre: ""}}</div>
+    <div>{{article.type == 'book'? article?.genre: ""}}</div>
+    <div>{{article.type == 'book'? article?.isbn: ""}}</div>
 
 
   </mat-card-content>
@@ -25,7 +25,7 @@
 <!--    <div class="flex-spacer"></div>-->
     <button mat-button (click)="doEdit()" *ngIf="showAdminControls" >EDIT</button>
     <button mat-button (click)="doDelete()" *ngIf="showAdminControls" >DELETE</button>
-    <button mat-button  *ngIf="!showAdminControls" >BUY</button>
-    <button mat-button  *ngIf="!showAdminControls" >FAVORITE</button>
+    <button mat-button  (click)="addToCart()" *ngIf="!showAdminControls" >BUY</button>
+    <button mat-button  (click)="addToFavorites()" *ngIf="!showAdminControls" >FAVORITE</button>
   </mat-card-actions>
 </mat-card>

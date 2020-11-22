@@ -1,22 +1,16 @@
 package com.realdolmen.bookstore.controller;
 
 import com.realdolmen.bookstore.dto.OrderItemDTO;
-import com.realdolmen.bookstore.model.Article;
 import com.realdolmen.bookstore.model.Order;
-import com.realdolmen.bookstore.model.OrderItem;
 import com.realdolmen.bookstore.service.ArticleService;
 import com.realdolmen.bookstore.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+@CrossOrigin(origins = "http://localhost:4201")
 @RestController
 public class OrderController {
 
@@ -31,47 +25,46 @@ public class OrderController {
     }
 
     /**
-     * Add order item
-     * Check Article Exists, otherwise throw Exception
-     * Check open order exists
-     * Check order has same article already, then add quantity
-     * Else create OrderItem and add to the open order
-     */
-    @PostMapping(path = "/addorderitem")
-    public void addOrderItem(@RequestBody OrderItemDTO orderItemDTO) {
-        //TODO find article by type and id
-        Article articleToOrder = null;
+     * Get Cart
+     * */
+    @GetMapping(path = "/cart")
+    public ResponseEntity<Order> getCart(){
         Order openOrder;
-        OrderItem itemToAdd = new OrderItem();
         try {
-            articleToOrder = this.articleService.findByTypeAndId(orderItemDTO.getArticleType(), orderItemDTO.getArticleId());
-
-        } catch (Exception exception) {
-            logger.debug("Article Not Found", exception);
+            openOrder= this.orderService.findOpenOrder();
+            return ResponseEntity.ok(openOrder);
+        } catch (Exception exception){
+            logger.debug("GET CART::Something went wrong {}", exception.getMessage());
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
         }
+    }
 
-        openOrder = this.orderService.findOpenOrder();
+    /**
+     * Add/update order item
+     */
+    @PostMapping(path = "/orderitem")
+    public ResponseEntity<Boolean> addOrderItem(@RequestBody OrderItemDTO orderItemDTO) {
+        try{
+            this.orderService.addUpdateOrderItem(orderItemDTO);
+            return ResponseEntity.ok(true);
+        } catch (Exception exception) {
+            logger.debug("ADD ORDERITEM::Something went wrong {}", exception.getMessage());
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(false);
+        }
+    }
 
-        final Article finalArticleToOrder = articleToOrder;
-        //check openOrderItems if the item already exists
-        openOrder.getOrderItems().stream().filter(existingItem -> {
-            return existingItem.getArticleType().equals(orderItemDTO.getArticleType()) &&
-                    existingItem.getArticleId().equals(orderItemDTO.getArticleId());
-        })
-                //if exists - add quantity & save
-                .findFirst().ifPresentOrElse(presentItem -> {
-            presentItem.setQuantity(presentItem.getQuantity() + orderItemDTO.getQuantity());
-        }, () -> {
-            //else populate item to add
-            itemToAdd.setArticleType(orderItemDTO.getArticleType());
-            itemToAdd.setArticleId(finalArticleToOrder.getId());
-            itemToAdd.setQuantity(orderItemDTO.getQuantity());
-            itemToAdd.setPrice(finalArticleToOrder.getPrice());
-
-        });
-        openOrder.getOrderItems().add(itemToAdd);
-        this.orderService.saveOrder(openOrder);
-        logger.debug("addOrderItem executed");
+    /**
+     * Delete order item
+     * */
+    @DeleteMapping(path = "/orderitem")
+    public ResponseEntity<Boolean> deleteOrderItem(@RequestBody OrderItemDTO orderItemDTO){
+        try{
+            this.orderService.deleteOrderItem(orderItemDTO);
+            return ResponseEntity.ok(true);
+        } catch (Exception exception) {
+            logger.debug("DELETE ORDERITEM::Something went wrong {}", exception.getMessage());
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(false);
+        }
     }
 
 

@@ -10,6 +10,7 @@ import {DisplayArticleComponent} from "./display-article/display-article.compone
 import {Article} from "./model/Articles";
 import {EditArticleComponent} from "./edit-article/edit-article.component";
 import {RegisterComponent} from "./register/register.component";
+import {CartComponent} from "./cart/cart.component";
 
 
 const routes: Routes = [
@@ -22,6 +23,11 @@ const routes: Routes = [
   {
     path: 'inventory',
     component: InventoryComponent,
+    canActivate: [UserGuardService]
+  },
+  {
+    path: 'cart',
+    component: CartComponent,
     canActivate: [UserGuardService]
   },
   {

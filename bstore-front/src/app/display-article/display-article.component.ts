@@ -6,6 +6,9 @@ import {Form, FormBuilder, FormGroup} from "@angular/forms";
 import {UserService} from "../user.service";
 import {Location} from '@angular/common';
 import {Subscription} from "rxjs";
+import {OrderItemDTO} from "../model/OrderItemDTO";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-display-article',
@@ -25,6 +28,7 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute,
               private articleService: ArticleService,
               private fb: FormBuilder,
+              private http: HttpClient,
               private router: Router,
               private user: UserService,
               private location: Location) {
@@ -88,5 +92,27 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
 
   navigate() {
     this.router.navigate(['/inventory']);
+  }
+
+  addToCart() {
+    //TODO POST to `${environment.apiUrl}/orderitem` with OrderItemDTO
+    let orderItem: OrderItemDTO = {
+      articleType: this.article.type.toUpperCase(),
+      articleId: this.article.id,
+      quantity: 1
+    };
+    this.http.post(`${environment.apiUrl}/orderitem`, orderItem, {observe: "response", responseType:"json"}).subscribe(response => {
+      console.log("OrderItemDTO Response")
+      console.log(response)
+      this.router.navigate(['/inventory'])
+    }, (error: HttpErrorResponse) => {
+      console.log(error)
+    })
+    console.log("AddToCart Posted")
+    console.log(orderItem)
+  }
+
+  addToFavorites() {
+
   }
 }

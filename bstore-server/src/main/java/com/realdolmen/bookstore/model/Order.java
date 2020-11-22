@@ -1,5 +1,7 @@
 package com.realdolmen.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -15,12 +17,14 @@ public class Order {
     private Long orderId;
 
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY,
+            orphanRemoval=true)
     @JoinColumn(name = "ORDER_ID")
     private Set<OrderItem> orderItems;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
+    @JsonBackReference
     private User user;
 
     @Column

@@ -4,6 +4,7 @@ import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {debounceTime} from "rxjs/operators";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-register',
@@ -13,10 +14,15 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private http: HttpClient, public snackBar: MatSnackBar,) {
+  constructor(private formBuilder: FormBuilder,
+              private http: HttpClient,
+              public router: Router,
+              public snackBar: MatSnackBar,) {
   }
 
   ngOnInit(): void {
+    console.log(environment.apiUrl)
+    console.log(environment.production)
     this.registerForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(2)]],
       password: ['', [Validators.required, Validators.minLength(4)]],
@@ -28,19 +34,19 @@ export class RegisterComponent implements OnInit {
       this.registerForm.controls.username.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(usernameToCheck => {
+          console.log(usernameToCheck)
           this.http.get(`${environment.apiUrl}/register/${usernameToCheck}`, {responseType: "text"})
+          // this.http.get(`http://localhost:8081/bookstore/register/${usernameToCheck}`, {responseType: "text"})
             .subscribe(value1 => {
               console.log(value1)
               this.registerForm.controls.username.setErrors(null)
-            }, (error: HttpErrorResponse) => {
+            }, (error: any) => {
+              console.log(error.message)
               let errorSnackBar = this.snackBar.open(`User already exists`,"", {duration: 2500})
               this.registerForm.controls.username.setErrors({'userExists': true})
-              console.log(error)
-              console.log(error.message)
             },() => {
               console.log("request complete")
             })
-          console.log(usernameToCheck)
         })
     console.log(subscription)
   }
@@ -55,6 +61,7 @@ export class RegisterComponent implements OnInit {
         "firstName": this.registerForm.controls.firstName.value,
         "lastName": this.registerForm.controls.lastName.value
       }).subscribe(value => {
+      this.router.navigate(["/login"])
         console.log(value)
     })
   }
