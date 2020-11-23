@@ -32,6 +32,7 @@ import { RegisterComponent } from './register/register.component';
 import { AddArticleComponent } from './add-article/add-article.component';
 import { AddUserSignupComponent } from './add-user-signup/add-user-signup.component';
 import { CartComponent } from './cart/cart.component';
+import { EditQuantityComponent } from './edit-quantity/edit-quantity.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { CartComponent } from './cart/cart.component';
     ToolbarComponent,
     RegisterComponent,
     CartComponent,
+    EditQuantityComponent,
   ],
     imports: [
         BrowserModule,

@@ -54,6 +54,11 @@ public class OrderController {
     }
 
     /**
+     * Post: SetQuantity
+     * accepts OrderItemDTO, sets quantity
+     * */
+
+    /**
      * Delete order item
      * */
     @DeleteMapping(path = "/orderitem")

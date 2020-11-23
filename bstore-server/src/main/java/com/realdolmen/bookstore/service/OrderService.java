@@ -125,9 +125,8 @@ public class OrderService {
                 //if exists - add quantity & save
                 .findFirst().ifPresentOrElse(presentItem -> {
             // Check quantity is positive, if negative set quantity to 1
-            Long totalQuantity = presentItem.getQuantity() + orderItemDTO.getQuantity();
-            if (totalQuantity >= 1l) {
-                presentItem.setQuantity(totalQuantity);
+            if (orderItemDTO.getQuantity() >= 1l) {
+                presentItem.setQuantity(orderItemDTO.getQuantity());
             } else {
                 presentItem.setQuantity(1l);
             }

@@ -1,0 +1,11 @@
+:host {
+  width: 90%;
+}
+
+.mat-column-articleId{
+  width: 10rem;
+}
+
+.mat-column-articleType{
+  width: 10% !important;
+}

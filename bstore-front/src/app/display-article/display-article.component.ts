@@ -95,7 +95,6 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
   }
 
   addToCart() {
-    //TODO POST to `${environment.apiUrl}/orderitem` with OrderItemDTO
     let orderItem: OrderItemDTO = {
       articleType: this.article.type.toUpperCase(),
       articleId: this.article.id,
