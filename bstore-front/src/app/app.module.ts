@@ -30,7 +30,6 @@ import {HttpBasicAuthInterceptorService} from "./http-basic-auth-interceptor.ser
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { RegisterComponent } from './register/register.component';
 import { AddArticleComponent } from './add-article/add-article.component';
-import { AddUserSignupComponent } from './add-user-signup/add-user-signup.component';
 import { CartComponent } from './cart/cart.component';
 import { EditQuantityComponent } from './edit-quantity/edit-quantity.component';
 
@@ -45,7 +44,6 @@ import { EditQuantityComponent } from './edit-quantity/edit-quantity.component';
     EditArticleComponent,
     SearchFormComponent,
     AddArticleComponent,
-    AddUserSignupComponent,
     ToolbarComponent,
     ToolbarComponent,
     RegisterComponent,

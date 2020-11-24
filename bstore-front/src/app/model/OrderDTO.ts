@@ -12,4 +12,5 @@ export interface OrderItem{
   id: number
   price: number
   quantity: number
+  editQuantity?: boolean
 }

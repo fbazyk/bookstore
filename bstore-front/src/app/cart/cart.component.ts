@@ -22,6 +22,7 @@ export class CartComponent implements OnInit {
   openOrder: OrderDTO;
   dataSource: MatTableDataSource<OrderItem>;
   displayedColumns: string[] = ["articleId", "articleType", "price", "quantity"]
+  displayQuantity: boolean = true;
 
   constructor(private http: HttpClient,
               private router: Router,
@@ -34,7 +35,10 @@ export class CartComponent implements OnInit {
     this.cartService.openOrder.subscribe(value => {
       if(!!value){
         this.openOrder = value;
-        this.dataSource.data = this.openOrder?.orderItems;
+        this.openOrder.orderItems.forEach(orderItem => {
+          orderItem.editQuantity = false;
+          this.dataSource.data = this.openOrder?.orderItems;
+        })
       }
     })
     this.dataSource = new MatTableDataSource<OrderItem>()
@@ -53,4 +57,11 @@ export class CartComponent implements OnInit {
   //TODO Adjust Quantity button (in a separate component)
   //TODO from ArticleService get the information about products:
   //TODO Title
+  updateQuantity($event: any) {
+    console.log($event)
+  }
+
+  editQuantity(orderItem: OrderItem) {
+    orderItem.editQuantity = true;
+  }
 }

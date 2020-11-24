@@ -1,4 +1,8 @@
-<p>edit-quantity works!</p>
+<form [formGroup]="editQuantityForm" (ngSubmit)="submit()">
+  <mat-form-field>
+    <input matInput #quantity autofocus  formControlName="quantity" type="number" (blur)="dismiss()">
+  </mat-form-field>
+</form>
 <!--TODO input field number-->
 <!--TODO submit icon button-->
 <!--TODO dismiss icon button-->
