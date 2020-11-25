@@ -23,9 +23,12 @@
 
     <ng-container matColumnDef="quantity" (show)="displayQuantity">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Quantity</th>
-      <td mat-cell *matCellDef="let orderItem" (click)="editQuantity(orderItem)">
+      <td mat-cell *matCellDef="let orderItem" >
 
-        <span *ngIf="!orderItem.editQuantity">{{orderItem?.quantity}}</span>
+        <span *ngIf="!orderItem.editQuantity" (click)="editQuantity(orderItem)">{{orderItem?.quantity}}</span>
+        <button *ngIf="!orderItem.editQuantity" class="button" mat-icon-button type="button" (click)="editQuantity(orderItem)">
+          <mat-icon>edit</mat-icon>
+        </button>
         <app-edit-quantity
           *ngIf="orderItem.editQuantity"
           [providedItem]="orderItem"

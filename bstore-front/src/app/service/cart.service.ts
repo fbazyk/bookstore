@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {environment} from "../../environments/environment";
-import {OrderDTO} from "../model/OrderDTO";
+import {OrderDTO, OrderItem} from "../model/OrderDTO";
 import {BehaviorSubject, Observable} from "rxjs";
 
 @Injectable({
@@ -26,4 +26,14 @@ export class CartService {
       })
   }
 
+  updateQuantity(orderItem: OrderItem) {
+    console.log("CART-SERVICE::Update Quantity")
+    console.log(orderItem)
+    this.http.post(`${environment.apiUrl}/orderitem`, orderItem)
+      .subscribe(value => {
+        console.log(value)
+      }, error => {
+        console.log(error)
+      })
+  }
 }

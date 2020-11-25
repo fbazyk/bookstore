@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
+  EventEmitter, HostListener,
   Input,
   OnInit,
   Output,
@@ -14,8 +14,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 @Component({
   selector: 'app-edit-quantity',
   templateUrl: './edit-quantity.component.html',
-  styleUrls: ['./edit-quantity.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./edit-quantity.component.css']
 })
 export class EditQuantityComponent implements OnInit {
 
@@ -23,9 +22,11 @@ export class EditQuantityComponent implements OnInit {
   @Input()
   providedItem: OrderItem;
   @Output()
-  newItemEvent = new EventEmitter<string>();
+  newItemEvent = new EventEmitter<OrderItem>();
 
   @ViewChild('quantity') inputQuantity: ElementRef;
+
+  asdf: boolean;
 
   currentValue: number;
   editQuantityForm: FormGroup
@@ -46,19 +47,28 @@ export class EditQuantityComponent implements OnInit {
     this.editQuantityForm.controls.quantity.patchValue(this.currentValue);
   }
 
-  ngAfterViewChecked(){
-    // this.inputQuantity.nativeElement.focus();
-
-  }
 
   submit(){
-    console.log("this.editQuantityForm.controls.quantity.value");
     this.providedItem.editQuantity = false;
-    this.newItemEvent.emit(this.editQuantityForm.controls.quantity.value);
+    this.providedItem.quantity = this.editQuantityForm.controls.quantity.value
+    this.newItemEvent.emit(this.providedItem);
   }
 
   dismiss(){
     this.providedItem.editQuantity = false;
+    // this.providedItem.quantity = 0
+    // this.newItemEvent.emit(this.providedItem)
   }
+
+
+  // @HostListener('document:click', ['$event'])
+  // public documentClick(event: Event): void {
+  //   console.log(event)
+  //
+  //   if(!!this.providedItem.editQuantity){
+  //     this.inputQuantity.nativeElement.focus();
+  //   }
+  //
+  //   }
 
 }

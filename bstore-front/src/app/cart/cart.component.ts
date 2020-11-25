@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {environment} from "../../environments/environment";
@@ -8,6 +8,7 @@ import {MatTableDataSource} from "@angular/material/table";
 import {Article} from "../model/Articles";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-cart',
@@ -26,6 +27,7 @@ export class CartComponent implements OnInit {
 
   constructor(private http: HttpClient,
               private router: Router,
+              private snackBar: MatSnackBar,
               private cartService: CartService) {
   }
 
@@ -57,11 +59,24 @@ export class CartComponent implements OnInit {
   //TODO Adjust Quantity button (in a separate component)
   //TODO from ArticleService get the information about products:
   //TODO Title
-  updateQuantity($event: any) {
-    console.log($event)
+  updateQuantity(orderItem: OrderItem) {
+    if(orderItem.quantity >= 1){
+      this.cartService.updateQuantity(orderItem);
+    } else{
+      let actionSnackBar = this.snackBar.open(`Quantity should be positive`, "",{duration: 2500})
+    }
   }
 
+
+
   editQuantity(orderItem: OrderItem) {
+    console.log("Edit Quantity")
+
+    this.openOrder.orderItems.forEach(value => {
+      value.editQuantity = false;
+    })
     orderItem.editQuantity = true;
   }
+
+
 }

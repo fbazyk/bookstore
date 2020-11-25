@@ -32,6 +32,7 @@ import { RegisterComponent } from './register/register.component';
 import { AddArticleComponent } from './add-article/add-article.component';
 import { CartComponent } from './cart/cart.component';
 import { EditQuantityComponent } from './edit-quantity/edit-quantity.component';
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { EditQuantityComponent } from './edit-quantity/edit-quantity.component';
         MatPaginatorModule,
         MatButtonToggleModule,
         MatCardModule,
-      MatSnackBarModule
+        MatSnackBarModule,
+        MatIconModule
     ],
   providers: [
     AdminGuardService,
