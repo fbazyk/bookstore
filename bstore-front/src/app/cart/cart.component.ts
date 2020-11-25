@@ -53,16 +53,16 @@ export class CartComponent implements OnInit {
   private getCart() {
     this.cartService.getCart();
   }
-  //TODO Display OrderTotal, CartDate
-  //TODO Display Table with OrderItems and buttons to adjust quantity and delete item
+  //TODO Beautify OrderTotal,
+  // TODO Format CartDate
   //TODO DELETE button
-  //TODO Adjust Quantity button (in a separate component)
-  //TODO from ArticleService get the information about products:
   //TODO Title
   updateQuantity(orderItem: OrderItem) {
     if(orderItem.quantity >= 1){
       this.cartService.updateQuantity(orderItem);
     } else{
+      orderItem.quantity = 1
+      this.cartService.updateQuantity(orderItem);
       let actionSnackBar = this.snackBar.open(`Quantity should be positive`, "",{duration: 2500})
     }
   }

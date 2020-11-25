@@ -3,9 +3,17 @@
 }
 
 .mat-column-articleId{
-  width: 10rem;
+  width: 10%;
 }
 
 .mat-column-articleType{
-  width: 10% !important;
+  width: 10%;
+}
+
+.mat-column-quantity{
+  width: 10%;
+}
+
+.mat-column-price{
+  width: 10%;
 }
