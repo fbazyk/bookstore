@@ -30,6 +30,12 @@ public class Review {
     @Column
     private Long articleId;
 
+    public Review(ArticleType articleType, Long articleId, User user) {
+        this.articleType = articleType;
+        this.articleId = articleId;
+        this.user = user;
+    }
+
     public Long getId() {
         return id;
     }

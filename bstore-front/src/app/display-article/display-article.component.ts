@@ -9,6 +9,8 @@ import {Subscription} from "rxjs";
 import {OrderItemDTO} from "../model/OrderItemDTO";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {environment} from "../../environments/environment";
+import {ReviewService} from "../service/review.service";
+import {Review} from "../model/Review";
 
 @Component({
   selector: 'app-display-article',
@@ -21,9 +23,11 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
   type: string;
   id: number;
   article: Article;
+  reviews: Review[];
   form: Form;
 
   showAdminControls: boolean = false;
+  showAddReview: boolean = false;
 
   constructor(private route: ActivatedRoute,
               private articleService: ArticleService,
@@ -31,6 +35,7 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
               private http: HttpClient,
               private router: Router,
               private user: UserService,
+              private review: ReviewService,
               private location: Location) {
   }
 
@@ -39,10 +44,17 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
       this.type = params['type'];
       this.id = +params['id']; // (+) converts string 'id' to a number
       this.article = this.articleService.getArticle(params['type'], params['id']);
+      this.review.getReviews(params['type'], params['id']);
     });
     let userSub = this.user.isAdmin().subscribe(isAdmin => {
       this.showAdminControls = isAdmin
     });
+    let reviewSub = this.review.reviews.subscribe(value => {
+      if(!!value){
+        this.reviews = value;
+      }
+    })
+    this.subs.push(reviewSub);
     this.subs.push(routeSub);
     this.subs.push(userSub);
   }
@@ -113,5 +125,9 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
 
   addToFavorites() {
 
+  }
+
+  displayAddReview() {
+    this.showAddReview = true;
   }
 }

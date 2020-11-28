@@ -33,6 +33,8 @@ import { AddArticleComponent } from './add-article/add-article.component';
 import { CartComponent } from './cart/cart.component';
 import { EditQuantityComponent } from './edit-quantity/edit-quantity.component';
 import {MatIconModule} from "@angular/material/icon";
+import { DisplayReviewComponent } from './display-review/display-review.component';
+import { AddReviewComponent } from './add-review/add-review.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +52,8 @@ import {MatIconModule} from "@angular/material/icon";
     RegisterComponent,
     CartComponent,
     EditQuantityComponent,
+    DisplayReviewComponent,
+    AddReviewComponent,
   ],
     imports: [
         BrowserModule,

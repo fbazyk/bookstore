@@ -14,7 +14,8 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 export class SearchService {
   searchState: BehaviorSubject<SearchState> = new BehaviorSubject<SearchState>(provideEmptySearchState());
 
-  constructor(private articleService: ArticleService, private http: HttpClient,
+  constructor(private articleService: ArticleService,
+              private http: HttpClient,
               public snackBar: MatSnackBar) {
     this.searchState.subscribe(value => {
       console.log(value)

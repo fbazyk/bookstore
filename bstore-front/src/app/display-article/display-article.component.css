@@ -5,3 +5,7 @@
 .flex-spacer {
   width: auto;
 }
+
+.review-card--margin {
+  margin-top: 1rem;
+}
