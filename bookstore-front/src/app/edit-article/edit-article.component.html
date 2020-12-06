@@ -1,0 +1,95 @@
+<mat-card class="edit-article--container">
+  <form [formGroup]="articleForm" (submit)="submitChanges($event)">
+
+  <mat-card-header>
+    <div mat-card-avatar class="display-article--card-icon"></div>
+    <mat-card-title>
+      {{article.title}}</mat-card-title>
+    <mat-card-subtitle>{{article.type | titlecase}}:{{article.id}}
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content class="edit-article--input-fields__column">
+
+    <mat-form-field appearance="fill" class="search-form--type" *ngIf="article.id == 0">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="type" >
+        <mat-option *ngFor="let type of articleType" [value]="type">{{type}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="title" >
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Price</mat-label>
+      <input matInput formControlName="price" >
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Supplier Id</mat-label>
+      <input matInput formControlName="supplierId" >
+    </mat-form-field>
+
+    <div *ngIf="article.type == 'book'" class="edit-article--input-groups__flattened">
+      <mat-form-field appearance="fill">
+        <mat-label>author</mat-label>
+        <input matInput formControlName="author" >
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>isbn</mat-label>
+        <input matInput formControlName="isbn" >
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>pages</mat-label>
+        <input matInput formControlName="pages" >
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="article.type == 'game'" class="edit-article--input-groups__flattened">
+      <mat-form-field appearance="fill">
+        <mat-label>Publisher</mat-label>
+        <input matInput formControlName="publisher" >
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Minimum Age</mat-label>
+        <input matInput formControlName="minage" >
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Genre</mat-label>
+        <mat-select formControlName="genre" >
+          <mat-option *ngFor="let genre of gameGenre" [value]="genre">{{genre}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="article.type == 'lp'" class="edit-article--input-groups__flattened">
+      <mat-form-field appearance="fill">
+        <mat-label>artist</mat-label>
+        <input matInput formControlName="artist" >
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>genre</mat-label>
+        <mat-select formControlName="genre" >
+          <mat-option *ngFor="let genre of lpGenre" [value]="genre">{{genre}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="search-form--errors">
+      <div *ngIf="!articleForm.valid"> Some data is missing, please check the entries</div>
+      <div *ngIf="articleForm.controls['type'].value == 'all' || (!articleForm.controls['type'].dirty && articleForm.controls['type'].value == 'all')"> Please select Article type </div>
+      <div *ngIf="(articleForm.controls['type'].value == ('lp' || 'game') && articleForm.controls['genre'].pristine)"> Please Select Genre </div>
+      <div *ngIf="!articleForm.controls['isbn'].valid"> Try correct isbn: 4873113369 </div>
+
+    </div>
+
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button type="button" (click)="dismissChanges($event)">Dismiss</button>
+<!--    <button mat-button (click)="doEdit()" *ngIf="showAdminControls" >EDIT</button>-->
+<!--    <button mat-button (click)="doDelete()" *ngIf="showAdminControls" >DELETE</button>-->
+    <button mat-button type="submit">Save</button>
+  </mat-card-actions>
+  </form>
+</mat-card>
+
+
