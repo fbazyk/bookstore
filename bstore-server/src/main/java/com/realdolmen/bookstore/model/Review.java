@@ -1,7 +1,6 @@
 package com.realdolmen.bookstore.model;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "reviews")
@@ -17,11 +16,10 @@ public class Review {
     private Integer rating;
 
     @Column
-    private String text;
+    private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    @Column(name = "USER_ID")
+    private Long userId;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -30,10 +28,13 @@ public class Review {
     @Column
     private Long articleId;
 
-    public Review(ArticleType articleType, Long articleId, User user) {
+    public Review() {
+    }
+
+    public Review(ArticleType articleType, Long articleId, Long userId) {
         this.articleType = articleType;
         this.articleId = articleId;
-        this.user = user;
+        this.userId = userId;
     }
 
     public Long getId() {
@@ -52,20 +53,20 @@ public class Review {
         this.rating = rating;
     }
 
-    public String getText() {
-        return text;
+    public String getDescription() {
+        return description;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public ArticleType getArticleType() {

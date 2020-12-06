@@ -17,3 +17,17 @@
 .mat-column-price{
   width: 10%;
 }
+
+.cart--header-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  height: 15rem;
+}
+.cart--header-item{
+  height: 3rem;
+  margin-top: 1rem;
+  box-sizing: border-box;
+  max-width: 50%;
+}

@@ -11,6 +11,8 @@ import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {ReviewService} from "../service/review.service";
 import {Review} from "../model/Review";
+import {ExistingUserDTO} from "../model/ExistingUserDTO";
+import {UserRole as UserRole} from "../model/User"
 
 @Component({
   selector: 'app-display-article',
@@ -25,6 +27,7 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
   article: Article;
   reviews: Review[];
   form: Form;
+  reviewsExist: boolean;
 
   showAdminControls: boolean = false;
   showAddReview: boolean = false;
@@ -34,8 +37,8 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
               private fb: FormBuilder,
               private http: HttpClient,
               private router: Router,
-              private user: UserService,
-              private review: ReviewService,
+              private userService: UserService,
+              private reviewService: ReviewService,
               private location: Location) {
   }
 
@@ -44,14 +47,24 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
       this.type = params['type'];
       this.id = +params['id']; // (+) converts string 'id' to a number
       this.article = this.articleService.getArticle(params['type'], params['id']);
-      this.review.getReviews(params['type'], params['id']);
+      this.reviewService.getReviews(params['type'], params['id']);
     });
-    let userSub = this.user.isAdmin().subscribe(isAdmin => {
+    let userSub = this.userService.isAdmin().subscribe(isAdmin => {
       this.showAdminControls = isAdmin
     });
-    let reviewSub = this.review.reviews.subscribe(value => {
-      if(!!value){
-        this.reviews = value;
+    let reviewSub = this.reviewService.reviews.subscribe(reviews => {
+      if(!!reviews){
+        console.log(reviews)
+        this.reviews = reviews;
+        this.reviewsExist = reviews.length>0;
+        this.reviews.forEach(review => {
+          console.log(review)
+          if(!!review){
+          this.userService.getUserName(review.userId).subscribe((existingUserDTO: ExistingUserDTO) => {
+            console.log(existingUserDTO);
+            review.userName = existingUserDTO.username;
+          });}
+        })
       }
     })
     this.subs.push(reviewSub);
@@ -61,6 +74,7 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy(): void {
+    this.reviewService.reviews.next(null)
     this.subs.forEach(subscription => subscription.unsubscribe())
   }
 
@@ -129,5 +143,9 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
 
   displayAddReview() {
     this.showAddReview = true;
+  }
+
+  _reviewsExist(){
+    return !!this.reviews && this.reviews.length>0;
   }
 }

@@ -1,7 +1,17 @@
 package com.realdolmen.bookstore.model;
 
 public enum ArticleType {
-    BOOK,
-    GAME,
-    LP
+    BOOK ("BOOK"),
+    GAME ("GAME"),
+    LP("LP");
+
+    private String type;
+
+    ArticleType(String type) {
+        this.type = type;
+    }
+
+    public static ArticleType getByType(String type){
+        return   ArticleType.valueOf(type.toUpperCase());
+    }
 }

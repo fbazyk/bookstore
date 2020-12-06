@@ -142,13 +142,7 @@ export class EditArticleComponent implements OnInit {
   }
 
   dismissChanges($event: MouseEvent) {
-    console.log("Dismiss Changes:", $event)
-    console.log(this.article)
-    if (!!this.id) {
-      this.router.navigate([`/article/${this.type}/${this.id}`])
-    } else {
-      this.router.navigate(['/bookstore']);
-    }
+    this.location.back();
   }
 
   submitChanges($event: Event) {

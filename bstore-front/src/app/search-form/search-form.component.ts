@@ -40,10 +40,14 @@ export class SearchFormComponent implements OnInit, OnDestroy {
     title: '',
     minprice: '',
     maxprice: '',
+    sortby: '',
+    sortorder: ''
   };
   private subs: Subscription[] = new Array<Subscription>();
 
   articleType = [...articleTypes];
+  searchFields = ['type', 'id', 'title', 'price'];
+  sortOrder = ['ASC', 'DESC']
   newState: SearchState;
 
   searchForm: FormGroup;
@@ -136,8 +140,8 @@ export class SearchFormComponent implements OnInit, OnDestroy {
 }
 
 function atLeastTwo(formGroup) {
-  console.log(formGroup)
-  console.log(formGroup.value)
+  // console.log(formGroup)
+  // console.log(formGroup.value)
   let fieldsWithData = new Map(Object.entries(formGroup.value))
   fieldsWithData.forEach((value, key) => {
     if(!!value){
@@ -146,6 +150,6 @@ function atLeastTwo(formGroup) {
       fieldsWithData.delete(key);
     }
   });
-  console.log(fieldsWithData)
+  // console.log(fieldsWithData)
     return fieldsWithData.size >=2 ? null : {allOrNoneRequired: true};
 }

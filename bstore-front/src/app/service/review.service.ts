@@ -4,31 +4,54 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {environment} from "../../environments/environment";
 import {BehaviorSubject} from "rxjs";
 import {Review} from "../model/Review";
+import {AddReviewDTO} from "../model/AddReviewDTO";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReviewService {
 
-  public reviews: BehaviorSubject<Review[]> = new BehaviorSubject<Review[]>([{
-    description: "asdf",
-    rating: 10,
-  }]);
+  public reviews: BehaviorSubject<Review[]> = new BehaviorSubject<Review[]>(null);
+
   constructor(private http: HttpClient,
               public snackBar: MatSnackBar) {
-  console.log("REVIEW SERVICE INITIALIZED")
+    console.log("REVIEW SERVICE INITIALIZED")
   }
 
   //TODO
   //TODO
 
   getReviews(type: string, id: number) {
-    this.http.get(`${environment.apiUrl}/reviews/${type}/${id}`, {observe: "body", responseType:"json"})
-      .subscribe((reviews:Review[]) => {
+    console.log()
+    this.http.get(`${environment.apiUrl}/reviews/${type}/${id}`, {observe: "body", responseType: "json"})
+      .subscribe((reviews: Review[]) => {
         console.log(reviews)
-        this.reviews.next(reviews);
-    },error => {
+        if(!!reviews){
+          this.reviews.next(reviews);
+
+        }
+      }, error => {
         console.log(error);
+      })
+  }
+
+  submit(formgroup: any, articleType: string, articleId: number) {
+    console.log(formgroup.review);
+    console.log(formgroup.rating)
+    let addReview: AddReviewDTO = {
+      articleId: articleId,
+      articleType: articleType,
+      rating: formgroup.rating,
+      description: formgroup.review,
+    }
+    this.http.post(`${environment.apiUrl}/reviews/add`,
+      addReview,
+      {observe: "response", responseType: "json"})
+      .subscribe(value => {
+        console.log("AddReview Success")
+        console.log(value)
+      }, error => {
+        console.log("SOMETHING WENT WRONG")
       })
   }
 }

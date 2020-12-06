@@ -35,6 +35,7 @@ import { EditQuantityComponent } from './edit-quantity/edit-quantity.component';
 import {MatIconModule} from "@angular/material/icon";
 import { DisplayReviewComponent } from './display-review/display-review.component';
 import { AddReviewComponent } from './add-review/add-review.component';
+import { IfRoleDirective } from './if-role.directive';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { AddReviewComponent } from './add-review/add-review.component';
     EditQuantityComponent,
     DisplayReviewComponent,
     AddReviewComponent,
+    IfRoleDirective,
   ],
     imports: [
         BrowserModule,

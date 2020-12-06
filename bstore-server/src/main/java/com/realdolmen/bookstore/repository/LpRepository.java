@@ -2,6 +2,7 @@ package com.realdolmen.bookstore.repository;
 
 import com.realdolmen.bookstore.model.Book;
 import com.realdolmen.bookstore.model.LP;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

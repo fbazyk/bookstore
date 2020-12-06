@@ -5,6 +5,8 @@ import {map} from "rxjs/operators";
 import {environment} from "../environments/environment";
 import {User, UserRole} from "./model/User";
 import {Router} from "@angular/router";
+import {ExistingUserDTO} from "./model/ExistingUserDTO";
+import {Location} from "@angular/common";
 
 /**
  *
@@ -20,10 +22,21 @@ export class UserService implements OnInit {
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
 
-  constructor(private http: HttpClient, public router: Router) {
+  constructor(private http: HttpClient,
+              private location: Location,
+              public router: Router) {
+    this.location.subscribe(value => {
+      console.log(value);
+    })
     console.log("USER SERVICE INITIALIZED")
     this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
+    this.currentUser.subscribe((user: User) =>{
+      if(!!user){
+        console.log(user)
+        console.log(user.role)
+      }
+    })
   }
 
   public get currentUserValue(): User {
@@ -41,7 +54,9 @@ export class UserService implements OnInit {
       .subscribe(user => {
         //TODO Store user in the localstorage to retrieve roles
         console.log(user)
-        this.currentUserSubject.next(user)
+        let classUser = Object.assign(new User(), user)
+        console.log(classUser)
+        this.currentUserSubject.next(classUser)
         this.router.navigate(['/inventory']);
 
       }, error => {
@@ -66,6 +81,7 @@ export class UserService implements OnInit {
   logout() {
     // remove user from local storage and set current user to null
     localStorage.removeItem('currentUser');
+    localStorage.removeItem("basicAuthString");
     this.currentUserSubject.next(null);
   }
 
@@ -112,5 +128,9 @@ export class UserService implements OnInit {
       console.log(this.currentUserSubject.getValue().role);
       return of(true);
     } else return of(false);
+  }
+
+  getUserName(userId: number) {
+    return this.http.get(`${environment.apiUrl}/users/id/${userId}`)
   }
 }

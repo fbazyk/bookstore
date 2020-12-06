@@ -46,7 +46,7 @@ public class Article {
         this.reviews = reviews;
     }
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name = "articleId")
     private Set<Review> reviews;
 

@@ -9,6 +9,7 @@ export interface OrderDTO{
 export interface OrderItem{
   articleId: number
   articleType: string
+  title?: string
   id: number
   price: number
   quantity: number

@@ -11,6 +11,7 @@ import {Article} from "./model/Articles";
 import {EditArticleComponent} from "./edit-article/edit-article.component";
 import {RegisterComponent} from "./register/register.component";
 import {CartComponent} from "./cart/cart.component";
+import {AddArticleComponent} from "./add-article/add-article.component";
 
 
 const routes: Routes = [
@@ -42,7 +43,7 @@ const routes: Routes = [
   },
   {
     path: 'article',
-    component: EditArticleComponent,
+    component: AddArticleComponent,
     canActivate: [AdminGuardService]
   },
   { path:  'login', component:  LoginComponent},

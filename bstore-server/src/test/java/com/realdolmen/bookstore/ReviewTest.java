@@ -15,7 +15,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = BookstoreApplication.class)
@@ -39,16 +43,30 @@ public class ReviewTest {
         sorenReview.setRating(5);
         sorenReview.setArticleType(ArticleType.BOOK);
         sorenReview.setArticleId(1L);
-        sorenReview.setText("Masterpiece");
-        sorenReview.setUser(user);
+        sorenReview.setDescription("Masterpiece");
+        sorenReview.setUserId(user.getId());
 
         this.reviewRepository.saveAndFlush(sorenReview);
 
         List<Review> addedReviews = this.reviewRepository.findAll();
         addedReviews.forEach(review -> {
-            logger.debug(review.getText());
+            logger.debug(review.getDescription());
         });
 
+    }
+
+    @Test
+    public void findAllReviews(){
+        List<Review> foundReviews = this.reviewRepository.findAll();
+        assertFalse(foundReviews.isEmpty());
+    }
+
+    @Test
+    public void findReviewsForUser(){
+        Set<Review> foundReviews = this.reviewRepository.findAllByArticleTypeAndArticleId(ArticleType.GAME, 2L);
+        foundReviews.stream().findFirst().ifPresent(review -> {
+            logger.debug("Found Reviews: {}", review.getDescription());
+        });
     }
 
     private void createUser() {

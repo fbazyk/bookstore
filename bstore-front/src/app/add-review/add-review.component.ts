@@ -1,5 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Form, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {ReviewService} from "../service/review.service";
+import {ActivatedRoute, ActivatedRouteSnapshot} from "@angular/router";
 
 @Component({
   selector: 'app-add-review',
@@ -14,8 +16,12 @@ export class AddReviewComponent implements OnInit {
 
   @Output()
   dismissEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output()
+  submitEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder,
+              private route: ActivatedRoute,
+              private reviewService: ReviewService) { }
 
   ngOnInit(): void {
     this.reviewForm = this.fb.group({
@@ -30,7 +36,11 @@ export class AddReviewComponent implements OnInit {
 
   submit() {
     console.log("ReviewForm submit")
-    console.log(this.reviewForm.controls.rating.value)
-    console.log(this.reviewForm.controls.review.value)
+    console.log(this.reviewForm.value)
+    console.log(this.route.snapshot.params.type)
+    let articleType = this.route.snapshot.params.type.toUpperCase();
+    let articleId = this.route.snapshot.params.id;
+    this.reviewService.submit(this.reviewForm.value, articleType, articleId);
+    this.dismissEvent.emit(this.reviewForm.value)
   }
 }

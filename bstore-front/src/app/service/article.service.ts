@@ -113,7 +113,7 @@ export class ArticleService implements OnInit {
   getArticle(type: string, id: number): Article {
     console.log('getting article ', type, id)
     let articleFound = this.allArticles.getValue().filter(article => {
-      return article.type == type && article.id == id;
+      return article.type == type.toLowerCase()  && article.id == id;
     })[0]
     if (!!articleFound) {
       return articleFound;
@@ -161,13 +161,13 @@ export class ArticleService implements OnInit {
    * For now see above: reload all articles.
    * */
   submitArticle(submittedArticle: Article) {
-    let actionSnackBar = this.snackBar.open(`Submitting ${submittedArticle.type + ' ' + submittedArticle.id + submittedArticle.title} `);
+    let actionSnackBar = this.snackBar.open(
+      `Submitting ${submittedArticle.type} ${submittedArticle.id} ${submittedArticle.title}`);
     this.isLoading.next(true);
     // submittedArticle.id == 0 only if it's a new article
     if (submittedArticle.id > 0) {
       this.http.post(`${environment.apiUrl}/article/${submittedArticle.type}/${submittedArticle.id}`, submittedArticle, {responseType: "text"}).subscribe(response => {
-        console.log(response);
-        let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type + ' ' + submittedArticle.id} was updated.`, null, {duration: 2500})
+        let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type} ${submittedArticle.id} was updated.`, null, {duration: 2500})
         this.isLoading.next(false);
         this.router.navigateByUrl('/inventory')
       }, error => {

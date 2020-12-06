@@ -1,6 +1,7 @@
 package com.realdolmen.bookstore.service;
 
 import com.realdolmen.bookstore.dto.OrderItemDTO;
+import com.realdolmen.bookstore.exception.QuantityNotAvailableException;
 import com.realdolmen.bookstore.model.Article;
 import com.realdolmen.bookstore.model.Order;
 import com.realdolmen.bookstore.model.OrderItem;
@@ -8,6 +9,7 @@ import com.realdolmen.bookstore.model.User;
 import com.realdolmen.bookstore.repository.OrderItemRepository;
 import com.realdolmen.bookstore.repository.OrderRepository;
 import com.realdolmen.bookstore.repository.UserRepository;
+import org.hibernate.boot.model.relational.QualifiedName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,24 +26,28 @@ public class OrderService {
     private UserService userService;
     private ArticleService articleService;
     private OrderItemRepository orderItemRepository;
+    private MockSupplierService mockSupplierService;
 
     Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     public OrderService(OrderRepository orderRepository,
                         UserService userService,
                         ArticleService articleService,
+                        MockSupplierService mockSupplierService,
                         OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
         this.userService = userService;
         this.articleService = articleService;
         this.orderItemRepository = orderItemRepository;
+        this.mockSupplierService = mockSupplierService;
     }
 
     /**
      * Find open order
+     * where cart date <= LocalDate.now() && orderDate == null
      */
     public Order findOpenOrder() {
-        //TODO find an order where cart date <= LocalDate.now() && orderDate == null
+        //
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails) {
@@ -83,13 +89,45 @@ public class OrderService {
         for (OrderItem item : order.getOrderItems()) {
             orderTotal = orderTotal.add(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
         }
+        if(order.getOrderItems().size() == 0){
+            orderTotal = BigDecimal.ZERO;
+        }
         logger.debug("OrderTotal calculated: {}", orderTotal.toString());
         return orderTotal;
     }
 
+    public Order placeOrder(User user) throws Exception {
+        Order order = this.findOpenOrder();
+        if(order.getOrderItems().size() > 0){
+            order.setOrderDate(Instant.now());
+            this.saveOrder(order);
+            try{
+                this.mockSupplierService.placeOrder(order);
+            } catch (QuantityNotAvailableException exception){
+                order.setOrderDate(null);
+                exception.getItemSet().forEach(orderItem -> {
+                    order.getOrderItems().remove(orderItem);
+                });
+                order.setOrderTotal(this.calcTotal(order));
 
-    public void saveOrder(Order openOrder) {
-        this.orderRepository.saveAndFlush(openOrder);
+                this.saveOrder(order);
+                throw exception;
+            }
+        } else throw new Exception ("Order should have items");
+
+        return order;
+    }
+
+    public boolean emptyCart(){
+        Order order = this.findOpenOrder();
+        this.orderRepository.delete(order);
+
+        return true;
+    }
+
+
+    public Order saveOrder(Order openOrder) {
+        return this.orderRepository.saveAndFlush(openOrder);
     }
 
     /**

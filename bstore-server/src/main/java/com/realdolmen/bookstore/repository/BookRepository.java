@@ -21,7 +21,6 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
             @Param("articleId") Long articleId,
             @Param("title") String title,
             @Param("minprice") BigDecimal minprice,
-            @Param("maxprice") BigDecimal maxprice,
-            Sort sort);
+            @Param("maxprice") BigDecimal maxprice);
 
 }

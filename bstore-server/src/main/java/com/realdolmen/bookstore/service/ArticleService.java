@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Component
@@ -144,9 +145,10 @@ public class ArticleService {
         Long articleIdV = null;
         BigDecimal minpriceV = null;
         BigDecimal maxpriceV = null;
-        String titleV = null;
+        String titleV = "";
         String type = null;
-        String sortV = null;
+        String sortby = null;
+        String sortorder = null;
         logger.debug(type);
 
         for (Map.Entry<String, String> field : searchFields.entrySet()) {
@@ -165,6 +167,16 @@ public class ArticleService {
             if (Objects.equals(field.getKey(), "type")) {
                 type = field.getValue();
             }
+            if (Objects.equals(field.getKey(), "sortby")) {
+                sortby = field.getValue();
+            }
+            if (Objects.equals(field.getKey(), "sortorder")) {
+                sortorder = field.getValue();
+            }
+        }
+        Sort sort = Sort.by(ASC, "id");
+        if(sortby != null && sortorder != null){
+            sort = Sort.by(sortorder, sortby);
         }
 
         logger.debug(type);
@@ -174,8 +186,7 @@ public class ArticleService {
         switch (type) {
             case ("all"): {
 
-                Sort sort = Sort.by(DESC, "price");
-                List<Book> listb = this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV, sort);
+                List<Book> listb = this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
                 List<Game> listg = this.gameRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
                 List<LP> listl = this.lpRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
                 if (listb != null) {
@@ -190,7 +201,7 @@ public class ArticleService {
                 break;
             }
             case ("book"): {
-                resultList.addAll(this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV, Sort.unsorted()));
+                resultList.addAll(this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
                 break;
 
             }

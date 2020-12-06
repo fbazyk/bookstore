@@ -30,6 +30,18 @@
     <mat-label>Max price</mat-label>
     <input matInput placeholder="Simple placeholder" formControlName="maxprice">
   </mat-form-field>
+  <mat-form-field appearance="fill" class="search-form--type">
+    <mat-label>Sort By</mat-label>
+    <mat-select formControlName="sortby" >
+      <mat-option *ngFor="let field of searchFields" [value]="field">{{field}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill" class="search-form--type">
+    <mat-label>Sort Order</mat-label>
+    <mat-select formControlName="sortorder" >
+      <mat-option *ngFor="let sort of sortOrder" [value]="sort">{{sort}}</mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>
   <div class="search-form--errors">
     <span *ngIf="!searchForm.valid"> Please fill in at least 2 fields to make a search</span>

@@ -7,4 +7,5 @@ export interface Review {
   rating?: number;
   description?: string;
   userId?: number;
+  userName?: string;
 }

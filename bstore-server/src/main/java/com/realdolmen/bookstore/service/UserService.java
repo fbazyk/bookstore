@@ -56,4 +56,11 @@ public class UserService {
         newUser.setEnabled(true);
         this.userRepository.saveAndFlush(newUser);
     }
+
+    public User findById(long id) throws Exception{
+        logger.debug("Finding user by ID {}", id);
+        return this.userRepository.findById(id).orElseThrow(() -> {
+            return new Exception("Something went wrong");
+        });
+    }
 }
