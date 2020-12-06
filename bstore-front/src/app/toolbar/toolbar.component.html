@@ -1,0 +1,22 @@
+<div class="toolbar--logo">
+  Welcome
+</div>
+<div class="toolbar--spacer"></div>
+<div>
+  <a mat-button color="primary" routerLink="/inventory" *ifRole="['USER', 'ADMIN']">Inventory</a>
+</div>
+<div>
+  <a mat-button color="primary" routerLink="/login" *ifRole="[]">LOGIN</a>
+</div>
+<div>
+  <a mat-button color="primary" routerLink="/register" *ifRole="[]">Register</a>
+</div>
+<div>
+  <a mat-button color="primary" routerLink="/cart" *ifRole="['USER']">Cart</a>
+</div>
+<div>
+  <a mat-button color="primary" routerLink="/article" *ifRole="['ADMIN']">Add Article</a>
+</div>
+<div>
+  <a mat-button color="primary" routerLink="/login" (click)="logout()" *ifRole="['USER', 'ADMIN']">Logout</a>
+</div>

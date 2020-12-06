@@ -1,0 +1,16 @@
+<form [formGroup]="editQuantityForm" (ngSubmit)="submit()">
+  <mat-form-field>
+    <input matInput #quantity autofocus formControlName="quantity" type="number">
+  </mat-form-field>
+  <button class="button" mat-icon-button type="submit" >
+    <mat-icon>done</mat-icon>
+  </button>
+  <button class="button" mat-icon-button type="button" (click)="dismiss()">
+    <mat-icon>cancel</mat-icon>
+  </button>
+
+
+</form>
+<!--TODO input field number-->
+<!--TODO submit icon button-->
+<!--TODO dismiss icon button-->

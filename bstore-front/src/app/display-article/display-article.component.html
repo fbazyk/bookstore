@@ -1,0 +1,43 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar class="display-article--card-icon"></div>
+    <mat-card-title>
+      {{article.title}}</mat-card-title>
+    <mat-card-subtitle>{{article.type | titlecase}}
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+
+    <div>Type: {{article.type}}</div>
+    <div>Title: {{article.title}}</div>
+    <div>Supplier: {{article.supplierId}}</div>
+    <div>Price EUR: {{article.price}}</div>
+    <div *ngIf="article.type == 'book'">Author: {{article.type == 'book' ? article?.author: ""}}</div>
+    <div *ngIf="article.type == 'book'">ISBN: {{article.type == 'book'? article?.isbn: ""}}</div>
+    <div *ngIf="article.type == 'lp'">Genre: {{article.type == 'lp'? article?.genre: ""}}</div>
+    <div *ngIf="article.type == 'game'">Genre: {{article.type == 'game'? article?.genre: ""}}</div>
+
+    <app-add-review *ngIf="showAddReview"
+                    (dismissEvent)="showAddReview = false"></app-add-review>
+
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button  (click)="navigate()" >Back</button>
+<!--    <div class="flex-spacer"></div>-->
+    <button mat-button (click)="doEdit()" *ifRole="['ADMIN']">EDIT</button>
+    <button mat-button (click)="doDelete()" *ifRole="['ADMIN']">DELETE</button>
+    <button mat-button  (click)="addToCart()" *ifRole="['USER']">BUY</button>
+    <button mat-button  (click)="addToFavorites()" *ifRole="['USER']">FAVORITE</button>
+    <button mat-button  (click)="displayAddReview()" *ifRole="['USER']">REVIEW</button>
+  </mat-card-actions>
+</mat-card>
+<div *ngIf="reviewsExist"><h3 class="review-card--margin" > Reviews </h3></div>
+
+<mat-card *ngFor="let review of reviews" class="review-card--margin">
+  <mat-card-header>
+    <mat-card-title>By User: {{review.userName}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <app-display-review [review]="review"></app-display-review>
+  </mat-card-content>
+</mat-card>

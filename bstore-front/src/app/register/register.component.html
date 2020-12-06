@@ -1,0 +1,45 @@
+<mat-card>
+  <form [formGroup]="registerForm" class="register--form">
+    <mat-form-field><label for="username">Username</label>
+
+      <input matInput id="username" formControlName="username">
+
+    </mat-form-field>
+    <span *ngIf="(registerForm.controls.username.errors?.required
+    || registerForm.controls.username.errors?.minLength)
+&& (registerForm.controls.username.dirty
+|| registerForm.controls.username.touched)"> Username is required</span>
+
+    <span *ngIf="registerForm.controls.username.errors?.userExists
+&& (registerForm.controls.username.dirty
+|| registerForm.controls.username.touched)"> Username is taken</span>
+
+
+    <mat-form-field>
+      <label for="password">Password</label>
+
+      <input matInput id="password" type="password" formControlName="password">
+
+    </mat-form-field>
+    <span *ngIf="(registerForm.controls.password.dirty
+    || registerForm.controls.password.touched)
+    && registerForm.controls.password.errors">
+      Password is required and should be at least 4 characters</span>
+    <mat-form-field><label for="confirmPassword">Confirm Password</label>
+
+      <input matInput id="confirmPassword" type="password" formControlName="confirmPassword">
+
+
+    </mat-form-field>
+    <span *ngIf="registerForm.controls.confirmPassword.touched &&
+      !(registerForm.controls.confirmPassword.value
+      == registerForm.controls.password.value)"> Passwords do not match</span>
+    <mat-form-field><label for="firstName">First Name</label>
+      <input matInput id="firstName" formControlName="firstName">
+    </mat-form-field>
+    <mat-form-field><label for="lastName">Last Name</label>
+      <input matInput id="lastName" formControlName="lastName">
+    </mat-form-field>
+    <button (click)="submit()" mat-button [disabled]="registerForm.invalid">Submit</button>
+  </form>
+</mat-card>

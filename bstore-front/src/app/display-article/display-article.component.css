@@ -1,0 +1,11 @@
+:host {
+  width: 90%;
+}
+
+.flex-spacer {
+  width: auto;
+}
+
+.review-card--margin {
+  margin-top: 1rem;
+}

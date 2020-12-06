@@ -1,0 +1,79 @@
+<mat-card>
+  <mat-card-content>
+    <div class="cart--header-container">
+      <p class="cart--header-item">Order ID: {{openOrder?.orderId}}</p>
+      <p class="cart--header-item">Cart Date:  {{cartDateFormatted}}</p>
+      <p class="cart--header-item">Cart Total: {{openOrder?.orderTotal}}</p>
+      <div class="cart--header-item" *ngIf="booksQuantity>0">
+        <p>Quantity of Books: {{booksQuantity}}</p>
+        <p>Total for Books: {{booksTotal}}</p>
+      </div>
+      <div class="cart--header-item" *ngIf="gamesQuantity>0">
+        <p>Quantity of Games: {{gamesQuantity}}</p>
+        <p>Total for Games: {{gamesTotal}}</p>
+      </div>
+      <div class="cart--header-item" *ngIf="lpsQuantity>0">
+        <p>Quantity of LPs: {{lpsQuantity}}</p>
+        <p>Total for LPs: {{lpsTotal}}</p>
+      </div>
+    </div>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" matSort>
+
+        <ng-container matColumnDef="articleId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Article ID</th>
+          <td mat-cell *matCellDef="let orderItem"> {{orderItem.articleId}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="articleType">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Type</th>
+          <td mat-cell *matCellDef="let orderItem"> {{orderItem.articleType}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Title</th>
+          <td mat-cell *matCellDef="let orderItem"> {{orderItem.title}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Price</th>
+          <td mat-cell *matCellDef="let orderItem"> {{orderItem.price}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity" (show)="displayQuantity">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Quantity</th>
+          <td mat-cell *matCellDef="let orderItem">
+
+            <span *ngIf="!orderItem.editQuantity" (click)="editQuantity(orderItem)">{{orderItem?.quantity}}</span>
+            <button *ngIf="!orderItem.editQuantity" class="button" mat-icon-button type="button"
+                    (click)="editQuantity(orderItem)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <app-edit-quantity
+              *ngIf="orderItem.editQuantity"
+              [providedItem]="orderItem"
+              (newItemEvent)="updateQuantity($event)">
+            </app-edit-quantity>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="itemtotal">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Total</th>
+          <td mat-cell *matCellDef="let orderItem"> {{orderItem.quantity * orderItem.price}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+        </tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <div class="">
+      <button mat-button (click)="emptyCart()">Empty Cart</button>
+      <button mat-button (click)="placeOrder()">Place Order</button>
+    </div>
+  </mat-card-actions>
+</mat-card>

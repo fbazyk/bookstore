@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>com.realdolmen</groupId>
+    <artifactId>bookstore</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>bookstore-front</artifactId>
+  <properties>
+    <node-version>v12.16.3</node-version>
+    <npm-version>v6.13.7</npm-version>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <type>maven-plugin</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <resources>
+      <resource>
+        <directory>dist</directory>
+      </resource>
+    </resources>
+    <plugins>
+
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.10.0</version>
+        <configuration>
+          <nodeVersion>${node-version}</nodeVersion>
+          <npmVersion>${npm-version}</npmVersion>
+          <installDirectory>./</installDirectory>
+          <workingDirectory>./</workingDirectory>
+
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <skip>true</skip>
+              <npmDownloadRoot>http://registry.npmjs.org/npm/</npmDownloadRoot>
+            </configuration>
+          </execution>
+          <!--          <execution>-->
+          <!--            <id>node install</id>-->
+          <!--            <goals>-->
+          <!--              <goal>install-node-and-npm</goal>-->
+          <!--            </goals>-->
+          <!--            <configuration>-->
+          <!--              <downloadRoot>https://nodejs.org/dist/v12.16.3/</downloadRoot>-->
+          <!--            </configuration>-->
+          <!--            <phase>generate-resources</phase>-->
+          <!--          </execution>-->
+
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+            <phase>generate-resources</phase>
+          </execution>
+          <execution>
+            <id>npm run build</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run build</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm run start</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run start</arguments>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
