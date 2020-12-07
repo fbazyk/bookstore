@@ -4,6 +4,7 @@ bstore-front/node_modules
 bstore-front/node
 bstore-front/dist
 bstore-front/src/main
+bstore-server/app.log*
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**

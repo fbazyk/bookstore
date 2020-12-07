@@ -36,6 +36,7 @@ import {MatIconModule} from "@angular/material/icon";
 import { DisplayReviewComponent } from './display-review/display-review.component';
 import { AddReviewComponent } from './add-review/add-review.component';
 import { IfRoleDirective } from './if-role.directive';
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @NgModule({
   declarations: [
@@ -74,7 +75,8 @@ import { IfRoleDirective } from './if-role.directive';
         MatButtonToggleModule,
         MatCardModule,
         MatSnackBarModule,
-        MatIconModule
+        MatIconModule,
+        MatSlideToggleModule
     ],
   providers: [
     AdminGuardService,

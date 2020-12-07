@@ -6,6 +6,8 @@ import com.realdolmen.bookstore.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -62,5 +64,19 @@ public class UserService {
         return this.userRepository.findById(id).orElseThrow(() -> {
             return new Exception("Something went wrong");
         });
+    }
+
+    public User currentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication(). getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+
+        }
+        logger.debug(username);
+        User foundUser = this.findByUserName(username);
+        return foundUser;
     }
 }

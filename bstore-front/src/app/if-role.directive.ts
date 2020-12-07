@@ -25,6 +25,7 @@ export class IfRoleDirective {
         if ((!!user && this.ifRole.indexOf(user.role) >= 0)
           || (!user && this.ifRole.length == 0)) {
           //show content
+          this.viewContainerRef.clear();
           this.viewContainerRef.createEmbeddedView(this.templateRef)
         } else {
           //hide content

@@ -13,6 +13,7 @@ import {ReviewService} from "../service/review.service";
 import {Review} from "../model/Review";
 import {ExistingUserDTO} from "../model/ExistingUserDTO";
 import {UserRole as UserRole} from "../model/User"
+import {MatSlideToggleChange} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-display-article',
@@ -28,6 +29,7 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
   reviews: Review[];
   form: Form;
   reviewsExist: boolean;
+  isFavorite: boolean = false;
 
   showAdminControls: boolean = false;
   showAddReview: boolean = false;
@@ -47,23 +49,46 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
       this.type = params['type'];
       this.id = +params['id']; // (+) converts string 'id' to a number
       this.article = this.articleService.getArticle(params['type'], params['id']);
+      switch (this.article.type.toUpperCase()) {
+        case 'BOOK': {
+          // this.isFavorite = this.userService.currentUserValue.favoriteBooks.find((value: Article) => {
+          //   return value.id == this.article.id;
+          // })
+          console.log(this.article.type)
+
+          this.isFavorite = this.userService.currentUserValue.favoriteBooks.map((value: Article) => value.id).includes(this.article.id)
+          break;
+        }
+
+        case 'GAME': {
+          this.isFavorite = this.userService.currentUserValue.favoriteGames.map((value: Article) => value.id).includes(this.article.id)
+          break;
+        }
+        case 'LP': {
+          this.isFavorite = this.userService.currentUserValue.favoriteLps.map((value: Article) => value.id).includes(this.article.id);
+          break;
+        }
+      }
+
+
       this.reviewService.getReviews(params['type'], params['id']);
     });
     let userSub = this.userService.isAdmin().subscribe(isAdmin => {
       this.showAdminControls = isAdmin
     });
     let reviewSub = this.reviewService.reviews.subscribe(reviews => {
-      if(!!reviews){
+      if (!!reviews) {
         console.log(reviews)
         this.reviews = reviews;
-        this.reviewsExist = reviews.length>0;
+        this.reviewsExist = reviews.length > 0;
         this.reviews.forEach(review => {
           console.log(review)
-          if(!!review){
-          this.userService.getUserName(review.userId).subscribe((existingUserDTO: ExistingUserDTO) => {
-            console.log(existingUserDTO);
-            review.userName = existingUserDTO.username;
-          });}
+          if (!!review) {
+            this.userService.getUserName(review.userId).subscribe((existingUserDTO: ExistingUserDTO) => {
+              console.log(existingUserDTO);
+              review.userName = existingUserDTO.username;
+            });
+          }
         })
       }
     })
@@ -126,7 +151,10 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
       articleId: this.article.id,
       quantity: 1
     };
-    this.http.post(`${environment.apiUrl}/orderitem`, orderItem, {observe: "response", responseType:"json"}).subscribe(response => {
+    this.http.post(`${environment.apiUrl}/orderitem`, orderItem, {
+      observe: "response",
+      responseType: "json"
+    }).subscribe(response => {
       console.log("OrderItemDTO Response")
       console.log(response)
       this.router.navigate(['/inventory'])
@@ -137,15 +165,31 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
     console.log(orderItem)
   }
 
-  addToFavorites() {
-
-  }
-
   displayAddReview() {
     this.showAddReview = true;
   }
 
-  _reviewsExist(){
-    return !!this.reviews && this.reviews.length>0;
+  _reviewsExist() {
+    return !!this.reviews && this.reviews.length > 0;
+  }
+
+  favorite($event: MatSlideToggleChange, article: Article) {
+    console.log($event)
+    console.log(article)
+    if ($event.checked) {
+      this.http.post(`${environment.apiUrl}/favorite/${article.type}/${article.id}`, article).subscribe(value => {
+        console.log(value)
+        //TODO Update User object on success
+        this.userService.updateUserInfo();
+      })
+    } else {
+      this.http.post(`${environment.apiUrl}/unfavorite/${article.type}/${article.id}`, article).subscribe(value => {
+        console.log(value)
+        this.userService.updateUserInfo();
+
+
+      })
+    }
+
   }
 }

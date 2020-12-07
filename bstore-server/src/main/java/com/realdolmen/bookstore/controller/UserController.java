@@ -45,10 +45,12 @@ public class UserController {
 
     @GetMapping(value = "/id/{id}")
     @CrossOrigin(origins = "http://localhost:4201")
-    public ResponseEntity<ExistingUserDTO> userById(@PathVariable long id){
+    public ResponseEntity<User> userById(@PathVariable long id){
         logger.debug("User for, id {}", id);
         try{
-            ExistingUserDTO foundUser = ExistingUserDTO.from(this.userService.findById(id));
+//            ExistingUserDTO foundUser = ExistingUserDTO.from(this.userService.findById(id));
+            User foundUser = this.userService.findById(id);
+            foundUser.setPassword(null);
             return ResponseEntity.ok().body(foundUser);
 
         }catch (Exception ex){

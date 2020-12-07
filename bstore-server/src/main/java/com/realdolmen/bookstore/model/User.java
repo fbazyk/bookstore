@@ -42,8 +42,45 @@ public class User implements UserDetails {
     @JsonManagedReference
     private Set<Order> userOrders;
 
+    @ManyToMany()
+    @JoinColumn(name = "FAV_BOOKS")
+    @JsonManagedReference
+    private Set<Book> favoriteBooks;
+    @ManyToMany()
+    @JoinColumn(name = "FAV_GAMES")
+    @JsonManagedReference
+    private Set<Game> favoriteGames;
+    @ManyToMany()
+    @JoinColumn(name = "FAV_LPS")
+    @JsonManagedReference
+    private Set<LP> favoriteLps;
+
     @Column(name = "enabled")
     private Boolean enabled;
+
+    public Set<Book> getFavoriteBooks() {
+        return favoriteBooks;
+    }
+
+    public void setFavoriteBooks(Set<Book> favoriteBooks) {
+        this.favoriteBooks = favoriteBooks;
+    }
+
+    public Set<Game> getFavoriteGames() {
+        return favoriteGames;
+    }
+
+    public void setFavoriteGames(Set<Game> favoriteGames) {
+        this.favoriteGames = favoriteGames;
+    }
+
+    public Set<LP> getFavoriteLps() {
+        return favoriteLps;
+    }
+
+    public void setFavoriteLps(Set<LP> favoriteLps) {
+        this.favoriteLps = favoriteLps;
+    }
 
     public Long getId() {
         return id;

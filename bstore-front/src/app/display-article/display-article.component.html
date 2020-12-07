@@ -27,8 +27,8 @@
     <button mat-button (click)="doEdit()" *ifRole="['ADMIN']">EDIT</button>
     <button mat-button (click)="doDelete()" *ifRole="['ADMIN']">DELETE</button>
     <button mat-button  (click)="addToCart()" *ifRole="['USER']">BUY</button>
-    <button mat-button  (click)="addToFavorites()" *ifRole="['USER']">FAVORITE</button>
     <button mat-button  (click)="displayAddReview()" *ifRole="['USER']">REVIEW</button>
+    <mat-slide-toggle (change)="favorite($event, article)" [checked]="isFavorite" *ifRole="['USER']">Favorite</mat-slide-toggle>
   </mat-card-actions>
 </mat-card>
 <div *ngIf="reviewsExist"><h3 class="review-card--margin" > Reviews </h3></div>

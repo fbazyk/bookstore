@@ -6,6 +6,9 @@ export class User {
   firstName?: string;
   lastName?: string;
   role?: UserRole;
+  favoriteBooks?: number[]
+  favoriteGames?: number[]
+  favoriteLps?: number[]
 }
 
 export enum UserRole {
