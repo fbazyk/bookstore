@@ -1,5 +1,7 @@
 package com.realdolmen.bookstore.model;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,6 +13,8 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    private Integer version;
 
     @Column
     private Integer rating;
@@ -28,6 +32,17 @@ public class Review {
     @Column
     private Long articleId;
 
+    @Embedded
+    private Audit audit;
+
+    public Audit getAudit() {
+        return audit;
+    }
+
+    public void setAudit(Audit audit) {
+        this.audit = audit;
+    }
+
     public Review() {
     }
 
@@ -35,6 +50,14 @@ public class Review {
         this.articleType = articleType;
         this.articleId = articleId;
         this.userId = userId;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public Long getId() {

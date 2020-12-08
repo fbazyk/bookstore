@@ -1,6 +1,7 @@
 package com.realdolmen.bookstore.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -27,6 +28,10 @@ public class Order {
     @JsonBackReference
     private User user;
 
+
+    @Version
+    private Integer version;
+
     @Column
     private Instant cartDate;
 
@@ -36,6 +41,17 @@ public class Order {
     @Column
     private BigDecimal orderTotal;
 
+    @Embedded
+    private Audit audit;
+
+    public Audit getAudit() {
+        return audit;
+    }
+
+    public void setAudit(Audit audit) {
+        this.audit = audit;
+    }
+
     public Set<OrderItem> addItem(OrderItem item){
         if(this.orderItems == null){
             this.orderItems = new HashSet<>();
@@ -44,6 +60,14 @@ public class Order {
             this.orderItems.add(item);
         }
         return this.orderItems;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public Long getOrderId() {

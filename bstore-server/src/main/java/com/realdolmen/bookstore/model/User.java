@@ -1,6 +1,7 @@
 package com.realdolmen.bookstore.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +21,10 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column (name = "username", unique=true)
+    @Version
+    private Integer version;
+
+    @Column(name = "username", unique = true)
     private String userName;
 
     @NotNull
@@ -37,7 +41,7 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @OneToMany (cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_ID")
     @JsonManagedReference
     private Set<Order> userOrders;
@@ -58,6 +62,17 @@ public class User implements UserDetails {
     @Column(name = "enabled")
     private Boolean enabled;
 
+    @Embedded
+    private Audit audit;
+
+    public Audit getAudit() {
+        return audit;
+    }
+
+    public void setAudit(Audit audit) {
+        this.audit = audit;
+    }
+
     public Set<Book> getFavoriteBooks() {
         return favoriteBooks;
     }
@@ -68,6 +83,14 @@ public class User implements UserDetails {
 
     public Set<Game> getFavoriteGames() {
         return favoriteGames;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public void setFavoriteGames(Set<Game> favoriteGames) {

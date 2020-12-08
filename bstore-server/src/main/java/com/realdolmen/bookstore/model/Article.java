@@ -2,6 +2,8 @@ package com.realdolmen.bookstore.model;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.realdolmen.bookstore.service.AuditListener;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,6 +21,7 @@ import java.util.Set;
         @JsonSubTypes.Type(value = LP.class, name = "lp"),
 })
 @MappedSuperclass
+@EntityListeners(AuditListener.class)
 public class Article {
 
 //TODO Add Validation
@@ -29,6 +32,8 @@ public class Article {
     @NotNull
     @Size(max = 255)
     private String title;
+
+    private String searchTitle;
 
     @NotNull
     private BigDecimal price;
@@ -41,19 +46,30 @@ public class Article {
     @Size(max=100)
     private String supplierId;
 
-    public Set<Review> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(Set<Review> reviews) {
-        this.reviews = reviews;
-    }
-
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
     @JoinColumn(name = "articleId")
     private Set<Review> reviews;
 
+    @Embedded
+    private Audit audit;
+
+    public Audit getAudit() {
+        return audit;
+    }
+
+    public void setAudit(Audit audit) {
+        this.audit = audit;
+    }
+
     public Article() {
+    }
+
+    public String getSearchTitle() {
+        return searchTitle;
+    }
+
+    public void setSearchTitle(String searchTitle) {
+        this.searchTitle = searchTitle;
     }
 
     public Long getId() {
@@ -62,6 +78,22 @@ public class Article {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Set<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public String getTitle() {

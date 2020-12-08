@@ -1,5 +1,7 @@
 package com.realdolmen.bookstore.model;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -13,6 +15,9 @@ public class OrderItem {
     @Column
     private Long articleId;
 
+    @Version
+    private Integer version;
+
     @Column
     @Enumerated(EnumType.STRING)
     private ArticleType articleType;
@@ -23,12 +28,31 @@ public class OrderItem {
     @Column
     private Long quantity;
 
+    @Embedded
+    private Audit audit;
+
+    public Audit getAudit() {
+        return audit;
+    }
+
+    public void setAudit(Audit audit) {
+        this.audit = audit;
+    }
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public ArticleType getArticleType() {
