@@ -21,17 +21,20 @@ import java.util.Set;
 @MappedSuperclass
 public class Article {
 
-
+//TODO Add Validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    @Size(max = 100)
+    @Size(max = 255)
     private String title;
 
     @NotNull
     private BigDecimal price;
+
+    @Version
+    private Integer version;
 
     @NotNull
     @Column

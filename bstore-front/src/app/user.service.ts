@@ -33,8 +33,8 @@ export class UserService implements OnInit {
     this.currentUser = this.currentUserSubject.asObservable();
     this.currentUser.subscribe((user: User) =>{
       if(!!user){
-        console.log(user)
         console.log(user.role)
+        console.log(user)
       }
     })
   }
@@ -136,6 +136,7 @@ export class UserService implements OnInit {
 
   updateUserInfo() {
     this.http.get(`${environment.apiUrl}/users/id/${this.currentUserValue.id}`).subscribe((value: User) => {
+      console.log(value)
       this.currentUserSubject.next(value)
     })
   }

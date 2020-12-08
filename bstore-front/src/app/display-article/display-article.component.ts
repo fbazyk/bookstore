@@ -49,6 +49,15 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
       this.type = params['type'];
       this.id = +params['id']; // (+) converts string 'id' to a number
       this.article = this.articleService.getArticle(params['type'], params['id']);
+
+
+
+      this.reviewService.getReviews(params['type'], params['id']);
+    });
+    let userSub = this.userService.isAdmin().subscribe(isAdmin => {
+      this.showAdminControls = isAdmin
+    });
+    this.userService.currentUser.subscribe(value => {
       switch (this.article.type.toUpperCase()) {
         case 'BOOK': {
           // this.isFavorite = this.userService.currentUserValue.favoriteBooks.find((value: Article) => {
@@ -69,23 +78,19 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
           break;
         }
       }
+    })
 
 
-      this.reviewService.getReviews(params['type'], params['id']);
-    });
-    let userSub = this.userService.isAdmin().subscribe(isAdmin => {
-      this.showAdminControls = isAdmin
-    });
     let reviewSub = this.reviewService.reviews.subscribe(reviews => {
       if (!!reviews) {
-        console.log(reviews)
+        // console.log(reviews)
         this.reviews = reviews;
         this.reviewsExist = reviews.length > 0;
         this.reviews.forEach(review => {
-          console.log(review)
+          // console.log(review)
           if (!!review) {
             this.userService.getUserName(review.userId).subscribe((existingUserDTO: ExistingUserDTO) => {
-              console.log(existingUserDTO);
+              // console.log(existingUserDTO);
               review.userName = existingUserDTO.username;
             });
           }
@@ -176,6 +181,7 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
   favorite($event: MatSlideToggleChange, article: Article) {
     console.log($event)
     console.log(article)
+    console.log($event.checked)
     if ($event.checked) {
       this.http.post(`${environment.apiUrl}/favorite/${article.type}/${article.id}`, article).subscribe(value => {
         console.log(value)
@@ -185,11 +191,10 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
     } else {
       this.http.post(`${environment.apiUrl}/unfavorite/${article.type}/${article.id}`, article).subscribe(value => {
         console.log(value)
-        this.userService.updateUserInfo();
 
+        this.userService.updateUserInfo();
 
       })
     }
-
   }
 }

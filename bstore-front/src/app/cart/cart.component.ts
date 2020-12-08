@@ -167,7 +167,7 @@ export class CartComponent implements OnInit {
         console.log(error);
         this.cartService.getCart();
         this.updateDisplayedQuantity();
-        let actionSnackBar = this.snackBar.open(`Some items were not available at supplier and were removed, please try again`, "", {duration: 5000})
+        let actionSnackBar = this.snackBar.open(`Some items were not available at supplier and were removed`, "", {duration: 5000})
       }
     })
   }

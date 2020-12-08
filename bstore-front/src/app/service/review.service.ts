@@ -25,7 +25,7 @@ export class ReviewService {
     console.log()
     this.http.get(`${environment.apiUrl}/reviews/${type}/${id}`, {observe: "body", responseType: "json"})
       .subscribe((reviews: Review[]) => {
-        console.log(reviews)
+        // console.log(reviews)
         if(!!reviews){
           this.reviews.next(reviews);
 

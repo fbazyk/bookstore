@@ -1,3 +1,5 @@
+import {Article} from "./Articles";
+
 export class User {
   id?: number;
   username: string;
@@ -6,9 +8,9 @@ export class User {
   firstName?: string;
   lastName?: string;
   role?: UserRole;
-  favoriteBooks?: number[]
-  favoriteGames?: number[]
-  favoriteLps?: number[]
+  favoriteBooks?: Article[]
+  favoriteGames?: Article[]
+  favoriteLps?: Article[]
 }
 
 export enum UserRole {
