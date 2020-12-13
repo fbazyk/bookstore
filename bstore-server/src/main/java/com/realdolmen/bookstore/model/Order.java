@@ -1,7 +1,7 @@
 package com.realdolmen.bookstore.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import org.hibernate.envers.Audited;
+import com.realdolmen.bookstore.service.AuditListener;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,7 +11,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "ORDERS")
-public class Order {
+@EntityListeners(AuditListener.class)
+public class Order implements Auditable{
 
     @Id
     @GeneratedValue

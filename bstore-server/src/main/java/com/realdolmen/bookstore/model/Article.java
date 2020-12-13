@@ -3,7 +3,6 @@ package com.realdolmen.bookstore.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.realdolmen.bookstore.service.AuditListener;
-import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -22,7 +21,7 @@ import java.util.Set;
 })
 @MappedSuperclass
 @EntityListeners(AuditListener.class)
-public class Article {
+public class Article implements Auditable {
 
 //TODO Add Validation
     @Id
@@ -38,8 +37,8 @@ public class Article {
     @NotNull
     private BigDecimal price;
 
-    @Version
-    private Integer version;
+//    @Version
+//    private Integer version;
 
     @NotNull
     @Column
@@ -47,13 +46,16 @@ public class Article {
     private String supplierId;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
-    @JoinColumn(name = "articleId")
+    @JoinColumn(name = "article_id")
     private Set<Review> reviews;
 
     @Embedded
     private Audit audit;
 
     public Audit getAudit() {
+        if(audit == null) {
+            audit = new Audit();
+        }
         return audit;
     }
 
@@ -88,13 +90,13 @@ public class Article {
         this.reviews = reviews;
     }
 
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
+//    public Integer getVersion() {
+//        return version;
+//    }
+//
+//    public void setVersion(Integer version) {
+//        this.version = version;
+//    }
 
     public String getTitle() {
         return title;

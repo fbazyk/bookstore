@@ -1,20 +1,21 @@
 package com.realdolmen.bookstore.model;
 
-import org.hibernate.envers.Audited;
+import com.realdolmen.bookstore.service.AuditListener;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "reviews")
-public class Review {
+@EntityListeners(AuditListener.class)
+public class Review implements Auditable{
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Version
-    private Integer version;
+//
+//    @Version
+//    private Integer version;
 
     @Column
     private Integer rating;
@@ -29,13 +30,16 @@ public class Review {
     @Enumerated(EnumType.STRING)
     private ArticleType articleType;
 
-    @Column
+    @Column (name = "article_id")
     private Long articleId;
 
     @Embedded
     private Audit audit;
 
     public Audit getAudit() {
+        if(audit == null) {
+            audit = new Audit();
+        }
         return audit;
     }
 
@@ -51,14 +55,14 @@ public class Review {
         this.articleId = articleId;
         this.userId = userId;
     }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
+//
+//    public Integer getVersion() {
+//        return version;
+//    }
+//
+//    public void setVersion(Integer version) {
+//        this.version = version;
+//    }
 
     public Long getId() {
         return id;

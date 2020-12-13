@@ -9,14 +9,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.springframework.data.domain.Sort.Direction.ASC;
-import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Component
 public class ArticleService {
@@ -25,6 +29,11 @@ public class ArticleService {
     private BookRepository bookRepository;
     private GameRepository gameRepository;
     private LpRepository lpRepository;
+    private UserRepository userRepository;
+
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     Logger logger = LoggerFactory.getLogger(ArticleService.class);
 
@@ -32,11 +41,12 @@ public class ArticleService {
     public ArticleService(ArticleRepository articleRepository,
                           BookRepository bookRepository,
                           GameRepository gameRepository,
-                          LpRepository lpRepository) {
+                          LpRepository lpRepository, UserRepository userRepository) {
         this.articleRepository = articleRepository;
         this.bookRepository = bookRepository;
         this.gameRepository = gameRepository;
         this.lpRepository = lpRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Article> findAll() {
@@ -72,11 +82,23 @@ public class ArticleService {
         return true;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean deleteByTypeById(String type, long id) throws ArticleNotFoundException {
         if (type != null && id > 0) {
             switch (type) {
                 case "book": {
                     try {
+                        Book book = new Book();
+                        //TODO query users favorite books:
+
+
+                        Query query = entityManager.createNativeQuery("delete from users_favorite_books ufb where ufb.favorite_books_id = "+ id);
+                        query.executeUpdate();
+
+//                        this.bookRepository.deleteAllFavoriteBooksById(id);
+//                        Set<User> users = this.userRepository.findByFavoriteBooksId(1l);
+//                        user.getFavoriteBooks().remove(id);
+//                        this.userRepository.save(user);
                         this.bookRepository.deleteById(id);
                         this.bookRepository.flush();
                     } catch (Exception ex) {
@@ -114,9 +136,17 @@ public class ArticleService {
         if (article.getId() != null && article.getId() > 0) {
             if (article instanceof Book) {
                 try {
-                    this.bookRepository.saveAndFlush((Book) article);
+                    Book existingBook = this.bookRepository.findById(article.getId()).get();
+                    existingBook.setAuthor(((Book) article).getAuthor());
+                    existingBook.setIsbn(((Book) article).getIsbn());
+                    existingBook.setPages(((Book) article).getPages());
+                    existingBook.setPrice(article.getPrice());
+                    existingBook.setTitle(article.getTitle());
+                    existingBook.setSupplierId(article.getSupplierId());
+                    this.bookRepository.saveAndFlush(existingBook);
                     return true;
                 } catch (Exception ex) {
+                       logger.debug(ex.getMessage());
                     throw new UnableToUpdateArticleException();
                 }
             } else if (article instanceof Game) {

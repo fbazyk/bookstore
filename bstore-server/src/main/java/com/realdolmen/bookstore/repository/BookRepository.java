@@ -23,4 +23,7 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
             @Param("minprice") BigDecimal minprice,
             @Param("maxprice") BigDecimal maxprice);
 
+    @Query(name = "deleteFavorites", value = "delete from users_favorite_books ufb where ufb.favorite_books_id = :bookId", nativeQuery = true)
+    public void deleteAllFavoriteBooksById(@Param("bookId") long bookId);
+
 }

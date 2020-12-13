@@ -1,7 +1,5 @@
 package com.realdolmen.bookstore.model;
 
-import org.hibernate.envers.Audited;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

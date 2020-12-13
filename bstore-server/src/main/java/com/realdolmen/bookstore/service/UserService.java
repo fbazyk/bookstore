@@ -79,4 +79,17 @@ public class UserService {
         User foundUser = this.findByUserName(username);
         return foundUser;
     }
+
+    public String currentUserName(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication(). getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+
+        }
+        logger.debug(username);
+        return username;
+    }
 }

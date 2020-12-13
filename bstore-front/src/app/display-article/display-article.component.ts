@@ -58,6 +58,7 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
       this.showAdminControls = isAdmin
     });
     this.userService.currentUser.subscribe(value => {
+      if(!!value){
       switch (this.article.type.toUpperCase()) {
         case 'BOOK': {
           // this.isFavorite = this.userService.currentUserValue.favoriteBooks.find((value: Article) => {
@@ -77,6 +78,9 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
           this.isFavorite = this.userService.currentUserValue.favoriteLps.map((value: Article) => value.id).includes(this.article.id);
           break;
         }
+      }
+      }else {
+        console.log(value);
       }
     })
 

@@ -1,7 +1,7 @@
 package com.realdolmen.bookstore.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.hibernate.envers.Audited;
+import com.realdolmen.bookstore.service.AuditListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,8 +21,8 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Version
-    private Integer version;
+//    @Version
+//    private Integer version;
 
     @Column(name = "username", unique = true)
     private String userName;
@@ -47,7 +47,10 @@ public class User implements UserDetails {
     private Set<Order> userOrders;
 
     @ManyToMany()
-    @JoinColumn(name = "FAV_BOOKS")
+//    @JoinColumn(name = "FAV_BOOKS")
+    @JoinTable(name="users_favorite_books",
+            joinColumns=@JoinColumn(name = "user_id"),
+            inverseJoinColumns=@JoinColumn(name = "favorite_books_id"))
     @JsonManagedReference
     private Set<Book> favoriteBooks;
     @ManyToMany()
@@ -62,17 +65,6 @@ public class User implements UserDetails {
     @Column(name = "enabled")
     private Boolean enabled;
 
-    @Embedded
-    private Audit audit;
-
-    public Audit getAudit() {
-        return audit;
-    }
-
-    public void setAudit(Audit audit) {
-        this.audit = audit;
-    }
-
     public Set<Book> getFavoriteBooks() {
         return favoriteBooks;
     }
@@ -85,13 +77,13 @@ public class User implements UserDetails {
         return favoriteGames;
     }
 
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
+//    public Integer getVersion() {
+//        return version;
+//    }
+//
+//    public void setVersion(Integer version) {
+//        this.version = version;
+//    }
 
     public void setFavoriteGames(Set<Game> favoriteGames) {
         this.favoriteGames = favoriteGames;

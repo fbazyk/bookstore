@@ -1,12 +1,10 @@
 package com.realdolmen.bookstore.model;
 
-import org.hibernate.envers.Audited;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-public class OrderItem {
+public class OrderItem implements Auditable{
 
     @Id
     @GeneratedValue

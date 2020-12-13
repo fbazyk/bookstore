@@ -48,9 +48,10 @@ export class ReviewService {
       addReview,
       {observe: "response", responseType: "json"})
       .subscribe(value => {
-        console.log("AddReview Success")
-        console.log(value)
+        this.getReviews(articleType, articleId)
+        this.snackBar.open("Success", '', {duration:5000})
       }, error => {
+        this.snackBar.open("Unable to update review", '', {duration:5000})
         console.log("SOMETHING WENT WRONG")
       })
   }
