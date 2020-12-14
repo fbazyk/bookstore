@@ -29,12 +29,12 @@ export class AddArticleComponent implements OnInit {
   lpGenre = [...lpGenres];
 
   articleForm: FormGroup = this.fb.group({
-    type: ['', ],
+    type: ['', [Validators.required]],
     title: ['', [Validators.minLength(3), Validators.required]],
     price: ['', [Validators.min(0), Validators.required]],
     supplierId: ['', Validators.required],
     author: '',
-    isbn: ['', [correctISBNValidator()]],
+    isbn: ['', [correctISBNValidator(), Validators.required]],
     pages: ['', Validators.min(0)],
     publisher: ['', Validators.minLength(1)],
     minage: ['', Validators.min(0)],

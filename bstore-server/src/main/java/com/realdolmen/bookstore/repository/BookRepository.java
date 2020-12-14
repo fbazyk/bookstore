@@ -4,8 +4,10 @@ import com.realdolmen.bookstore.model.Book;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,7 +25,9 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
             @Param("minprice") BigDecimal minprice,
             @Param("maxprice") BigDecimal maxprice);
 
-    @Query(name = "deleteFavorites", value = "delete from users_favorite_books ufb where ufb.favorite_books_id = :bookId", nativeQuery = true)
-    public void deleteAllFavoriteBooksById(@Param("bookId") long bookId);
+    @Modifying
+    @Transactional
+    @Query(name = "deleteBooksFavorites", value = "delete from users_favorite_books ufb where ufb.favorite_books_id = :bookId", nativeQuery = true)
+    public void deleteAllFavoriteRelationsByArticleId(@Param("bookId") long bookId);
 
 }

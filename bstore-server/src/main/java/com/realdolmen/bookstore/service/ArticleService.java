@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -92,10 +91,10 @@ public class ArticleService {
                         //TODO query users favorite books:
 
 
-                        Query query = entityManager.createNativeQuery("delete from users_favorite_books ufb where ufb.favorite_books_id = "+ id);
-                        query.executeUpdate();
+//                        Query query = entityManager.createNativeQuery("delete from users_favorite_books ufb where ufb.favorite_books_id = "+ id);
+//                        query.executeUpdate();
 
-//                        this.bookRepository.deleteAllFavoriteBooksById(id);
+                        this.bookRepository.deleteAllFavoriteRelationsByArticleId(id);
 //                        Set<User> users = this.userRepository.findByFavoriteBooksId(1l);
 //                        user.getFavoriteBooks().remove(id);
 //                        this.userRepository.save(user);
@@ -109,6 +108,7 @@ public class ArticleService {
                 }
                 case "game": {
                     try {
+                        this.gameRepository.deleteAllFavoriteRelationsByArticleId(id);
                         this.gameRepository.deleteById(id);
                         this.gameRepository.flush();
                     } catch (Exception ex) {
@@ -118,6 +118,7 @@ public class ArticleService {
                 }
                 case "lp": {
                     try {
+                        this.lpRepository.deleteAllFavoriteRelationsByArticleId(id);
                         this.lpRepository.deleteById(id);
                         this.lpRepository.flush();
                     } catch (Exception ex) {

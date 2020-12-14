@@ -1,316 +1,307 @@
-create sequence hibernate_sequence start 1 increment 1
+create sequence hibernate_sequence start 1 increment 1;
 
-create table books (
+create table books (id bigserial      not null,
+    created_by   varchar(255),
+    created_on   timestamp,
 
+    updated_by   varchar(255),
 
-                       id  bigserial not null,
-                       created_by varchar(255),
-                       created_on timestamp,
+    updated_on   timestamp,
 
-                       updated_by varchar(255),
+    price        numeric(19, 2) not null,
 
-                       updated_on timestamp,
+    search_title varchar(255),
 
-                       price numeric(19, 2) not null,
+    supplier_id  varchar(100)   not null,
 
-                       search_title varchar(255),
+    title        varchar(255)   not null,
 
-                       supplier_id varchar(100) not null,
+    version      int4,
 
-                       title varchar(255) not null,
+    author       varchar(100),
 
-                       version int4,
+    isbn         varchar(255)   not null,
 
-                       author varchar(100),
+    pages        int8,
 
-                       isbn varchar(255) not null,
+    primary key (id)
 
-                       pages int8,
+);
 
-                       primary key (id)
+create table games
+(
 
-)
 
-create table games (
+    id           bigserial      not null,
+    created_by   varchar(255),
+    created_on   timestamp,
 
+    updated_by   varchar(255),
 
-                       id  bigserial not null,
-                       created_by varchar(255),
-                       created_on timestamp,
+    updated_on   timestamp,
 
-                       updated_by varchar(255),
+    price        numeric(19, 2) not null,
 
-                       updated_on timestamp,
+    search_title varchar(255),
 
-                       price numeric(19, 2) not null,
+    supplier_id  varchar(100)   not null,
 
-                       search_title varchar(255),
+    title        varchar(255)   not null,
 
-                       supplier_id varchar(100) not null,
+    version      int4,
 
-                       title varchar(255) not null,
+    genre        varchar(255),
 
-                       version int4,
+    minage       int8,
 
-                       genre varchar(255),
+    publisher    varchar(100),
 
-                       minage int8,
+    primary key (id)
 
-                       publisher varchar(100),
+);
 
-                       primary key (id)
+create table generic_entity
+(
 
-)
 
-create table generic_entity (
+    id    int8 not null,
 
+    value varchar(255),
 
-                                id int8 not null,
+    primary key (id)
 
-                                value varchar(255),
+);
 
-                                primary key (id)
+create table lps
+(
 
-)
 
-create table lps (
+    id           bigserial      not null,
+    created_by   varchar(255),
+    created_on   timestamp,
 
+    updated_by   varchar(255),
 
-                     id  bigserial not null,
-                     created_by varchar(255),
-                     created_on timestamp,
+    updated_on   timestamp,
 
-                     updated_by varchar(255),
+    price        numeric(19, 2) not null,
 
-                     updated_on timestamp,
+    search_title varchar(255),
 
-                     price numeric(19, 2) not null,
+    supplier_id  varchar(100)   not null,
 
-                     search_title varchar(255),
+    title        varchar(255)   not null,
 
-                     supplier_id varchar(100) not null,
+    version      int4,
 
-                     title varchar(255) not null,
+    artist       varchar(100)   not null,
 
-                     version int4,
+    genre        varchar(255),
 
-                     artist varchar(100) not null,
+    primary key (id)
 
-                     genre varchar(255),
+);
 
-                     primary key (id)
+create table order_item
+(
 
-)
 
-create table order_item (
+    id           int8 not null,
 
+    article_id   int8,
 
-                            id int8 not null,
+    article_type varchar(255),
+    created_by   varchar(255),
+    created_on   timestamp,
 
-                            article_id int8,
+    updated_by   varchar(255),
 
-                            article_type varchar(255),
-                            created_by varchar(255),
-                            created_on timestamp,
+    updated_on   timestamp,
 
-                            updated_by varchar(255),
+    price        numeric(19, 2),
 
-                            updated_on timestamp,
+    quantity     int8,
 
-                            price numeric(19, 2),
+    version      int4,
 
-                            quantity int8,
+    order_id     int8,
 
-                            version int4,
+    primary key (id)
 
-                            order_id int8,
+);
 
-                            primary key (id)
+create table orders
+(
 
-)
 
-create table orders (
+    order_id    int8 not null,
+    created_by  varchar(255),
+    created_on  timestamp,
 
+    updated_by  varchar(255),
 
-                        order_id int8 not null,
-                        created_by varchar(255),
-                        created_on timestamp,
+    updated_on  timestamp,
 
-                        updated_by varchar(255),
+    cart_date   timestamp,
 
-                        updated_on timestamp,
+    order_date  timestamp,
 
-                        cart_date timestamp,
+    order_total numeric(19, 2),
 
-                        order_date timestamp,
+    version     int4,
 
-                        order_total numeric(19, 2),
+    user_id     int8,
 
-                        version int4,
+    primary key (order_id)
 
-                        user_id int8,
+);
 
-                        primary key (order_id)
+create table reviews
+(
 
-)
 
-create table reviews (
+    id           bigserial not null,
 
+    article_id   int8,
 
-                         id  bigserial not null,
+    article_type varchar(255),
+    created_by   varchar(255),
+    created_on   timestamp,
 
-                         article_id int8,
+    updated_by   varchar(255),
 
-                         article_type varchar(255),
-                         created_by varchar(255),
-                         created_on timestamp,
+    updated_on   timestamp,
 
-                         updated_by varchar(255),
+    description  varchar(255),
 
-                         updated_on timestamp,
+    rating       int4,
 
-                         description varchar(255),
+    user_id      int8,
 
-                         rating int4,
+    version      int4,
 
-                         user_id int8,
+    primary key (id)
 
-                         version int4,
+);
 
-                         primary key (id)
+create table users
+(
 
-)
 
-create table users (
+    id         bigserial    not null,
+    created_by varchar(255),
+    created_on timestamp,
 
+    updated_by varchar(255),
 
-                       id  bigserial not null,
-                       created_by varchar(255),
-                       created_on timestamp,
+    updated_on timestamp,
 
-                       updated_by varchar(255),
+    enabled    boolean,
 
-                       updated_on timestamp,
+    first_name varchar(100) not null,
 
-                       enabled boolean,
+    last_name  varchar(100) not null,
 
-                       first_name varchar(100) not null,
+    password   varchar(255),
 
-                       last_name varchar(100) not null,
+    role       varchar(255),
 
-                       password varchar(255),
+    username   varchar(255),
 
-                       role varchar(255),
+    version    int4,
 
-                       username varchar(255),
+    primary key (id)
 
-                       version int4,
+);
 
-                       primary key (id)
+create table users_favorite_books
+(
 
-)
 
-create table users_favorite_books (
+    user_id           int8 not null,
 
+    favorite_books_id int8 not null,
 
-                                      user_id int8 not null,
+    primary key (user_id, favorite_books_id)
 
-                                      favorite_books_id int8 not null,
+);
 
-                                      primary key (user_id, favorite_books_id)
+create table users_favorite_games
+(
 
-)
 
-create table users_favorite_games (
+    user_id           int8 not null,
 
+    favorite_games_id int8 not null,
 
-                                      user_id int8 not null,
+    primary key (user_id, favorite_games_id)
 
-                                      favorite_games_id int8 not null,
+);
 
-                                      primary key (user_id, favorite_games_id)
+create table users_favorite_lps
+(
 
-)
 
-create table users_favorite_lps (
+    user_id         int8 not null,
 
+    favorite_lps_id int8 not null,
 
-                                    user_id int8 not null,
+    primary key (user_id, favorite_lps_id)
 
-                                    favorite_lps_id int8 not null,
-
-                                    primary key (user_id, favorite_lps_id)
-
-)
+);
 
 alter table books
 
-    add constraint books_unique unique (isbn)
+    add constraint books_unique unique (isbn);
 
 alter table users
 
-    add constraint UK_r43af9ap4edm43mmtq01oddj6 unique (username)
+    add constraint UK_r43af9ap4edm43mmtq01oddj6 unique (username);
 
 alter table order_item
 
     add constraint FKt4dc2r9nbvbujrljv3e23iibt
-
         foreign key (order_id)
-
-            references orders
+            references orders;
 
 alter table orders
 
     add constraint FK32ql8ubntj5uh44ph9659tiih
-
         foreign key (user_id)
-
-            references users
+            references users;
 
 alter table users_favorite_books
 
     add constraint FK4ws24swp37m2husfd3a0hk4ia
-
         foreign key (favorite_books_id)
-
-            references books
+            references books;
 
 alter table users_favorite_books
 
     add constraint FKri1qgsos75704kfd7wylun5kg
-
         foreign key (user_id)
-
-            references users
+            references users;
 
 alter table users_favorite_games
 
     add constraint FK6w6cc5d6w0dhlxsuxnhrwrbxj
-
         foreign key (favorite_games_id)
-
-            references games
+            references games;
 
 alter table users_favorite_games
 
     add constraint FKmwhmaosfoa3gulfr4mpm7akwj
-
         foreign key (user_id)
-
-            references users
+            references users;
 
 alter table users_favorite_lps
 
     add constraint FKfkrftqcrsc8eals21vvw6tdc
-
         foreign key (favorite_lps_id)
-
-            references lps
+            references lps;
 
 alter table users_favorite_lps
 
     add constraint FKkvvvh03rrkdjp6qig2rdtlbcj
-
         foreign key (user_id)
-
-            references users
+            references users;
