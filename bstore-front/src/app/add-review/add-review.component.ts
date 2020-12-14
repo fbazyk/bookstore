@@ -41,6 +41,7 @@ export class AddReviewComponent implements OnInit {
     let articleType = this.route.snapshot.params.type.toUpperCase();
     let articleId = this.route.snapshot.params.id;
     this.reviewService.submit(this.reviewForm.value, articleType, articleId);
+    // this.reviewService.getReviews(articleType, articleId);
     this.dismissEvent.emit(this.reviewForm.value)
   }
 }

@@ -99,7 +99,3 @@ alter table reviews
         foreign key (user_id)
             references users;
 
-alter table reviews
-    add constraint FK1li3ueh13an941teugj8bh2xb
-        foreign key (article_id)
-            references lps;
