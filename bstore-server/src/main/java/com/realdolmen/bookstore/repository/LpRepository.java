@@ -15,7 +15,7 @@ import java.util.List;
 public interface LpRepository extends JpaRepository<LP, Long> {
     @Query("SELECT l FROM LP l " +
             "WHERE (:articleId is null or l.id = :articleId) " +
-            " and  (:title is null or lower(l.title) like lower(concat('%',:title,'%'))) " +
+            " and  (:title is null or lower(l.searchTitle) like lower(concat('%',:title,'%'))) " +
             " and (:minprice is null or l.price >= :minprice) " +
             " and (:maxprice is null or l.price <= :maxprice)")
     List<LP> findByArticleParams(

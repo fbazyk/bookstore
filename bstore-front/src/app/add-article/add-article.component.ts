@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Subscription} from "rxjs";
 import {Article, articleTypes, gameGenres, lpGenres} from "../model/Articles";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {correctISBNValidator} from "../validation/ArticleValidation";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ArticleService} from "../service/article.service";
@@ -20,9 +20,16 @@ export class AddArticleComponent implements OnInit {
   //TODO 3 Send a post request with the generated objects
 
   private subs: Subscription[] = new Array<Subscription>();
-  type: string;
-  id: number;
-  article: Article;
+  // type: string;
+  // id: number;
+  article: Article = {
+    id: 0,
+    type: 'all',
+    title: 'Please Enter Title',
+  };
+  bookForm: boolean = false;
+  gameForm: boolean = false;
+  lpForm: boolean = false;
 
   articleType = [...articleTypes];
   gameGenre = [...gameGenres];
@@ -52,40 +59,78 @@ export class AddArticleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let routeSub = this.route.params.subscribe(params => {
-      this.type = params['type'];
-      this.id = +params['id']; // (+) converts string 'id' to a number
-      console.log(this.type, this.id);
-      const emptyArticle = {
-        type: 'all',
-        id: 0,
-        title: 'Please Enter Title'
-      };
-      if (!!params['type'] && !!params['id']) {
-        this.article = this.articleService.getArticle(this.type, this.id);
-        this.populateForm();
-      } else {
-        this.article = emptyArticle
-      }
-    });
-    this.subs.push(routeSub);
     this.subscribeToTypeValueChanges()
   }
 
   subscribeToTypeValueChanges(){
-    this.articleForm.controls['type'].valueChanges.subscribe(value => {
-      this.article.type = value;
+    this.articleForm.controls.type.valueChanges.subscribe(type => {
+      console.log(type)
+      this.article.type = type;
 
-      if(value == 'book'){
-
+      if(type == 'all'){
+        this.bookForm = false;
+        this.gameForm = false;
+        this.lpForm = false;
       }
-      if(value == 'game'){
 
+      if(type == 'book'){
+        this.populateBookForm()
       }
-      if(value == 'lp'){
-
+      if(type == 'game'){
+        this.populateGameForm()
+      }
+      if(type == 'lp'){
+        this.populateLPForm()
       }
     });
+  }
+
+  populateBookForm(){
+    this.bookForm = true;
+    this.gameForm = false;
+    this.lpForm = false;
+
+    this.articleForm = this.fb.group({
+      type: [this.article.type, [Validators.required]],
+      title: [this.article.title, [Validators.minLength(3), Validators.required]],
+      price: ['', [Validators.min(0), Validators.required]],
+      supplierId: ['', Validators.required],
+      author: '',
+      isbn: ['', [correctISBNValidator(), Validators.required]],
+      pages: ['', Validators.min(0)],
+    });
+    this.subscribeToTypeValueChanges()
+  }
+
+  populateGameForm(){
+    this.bookForm = false;
+    this.gameForm = true;
+    this.lpForm = false;
+    this.articleForm = this.fb.group({
+      type: [this.article.type, [Validators.required]],
+      title: [this.article.title, [Validators.minLength(3), Validators.required]],
+      price: ['', [Validators.min(0), Validators.required]],
+      supplierId: ['', Validators.required],
+      publisher: ['', Validators.minLength(1)],
+      minage: ['', Validators.min(0)],
+      genre:  ['', [Validators.required]],
+    });
+    this.subscribeToTypeValueChanges()
+  }
+
+  populateLPForm(){
+    this.bookForm = false;
+    this.gameForm = false;
+    this.lpForm = true;
+    this.articleForm = this.fb.group({
+      type: [this.article.type, [Validators.required]],
+      title: [this.article.title, [Validators.minLength(3), Validators.required]],
+      price: [this.article.price, [Validators.min(0), Validators.required]],
+      supplierId: ['', Validators.required],
+      genre:  ['', [Validators.required]],
+      artist: '',
+    });
+    this.subscribeToTypeValueChanges()
   }
 
 
@@ -123,6 +168,8 @@ export class AddArticleComponent implements OnInit {
           minage: this.article.minage,
           genre: this.article.genre
         });
+        // this.articleForm.controls['isbn'].setValidators([])
+        this.articleForm.controls['isbn'].clearValidators()
         this.articleForm.controls['genre'].setValidators(Validators.required)
         break;
       }
@@ -131,6 +178,7 @@ export class AddArticleComponent implements OnInit {
           artist: this.article.artist,
           genre: this.article.genre
         })
+        this.articleForm.controls['isbn'].clearValidators()
         this.articleForm.controls['genre'].setValidators(Validators.required)
       }
     }

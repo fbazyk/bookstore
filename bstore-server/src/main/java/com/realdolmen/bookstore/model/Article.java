@@ -3,6 +3,7 @@ package com.realdolmen.bookstore.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.realdolmen.bookstore.service.AuditListener;
+import com.realdolmen.bookstore.service.SearchTitleListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -20,7 +21,7 @@ import java.util.Set;
         @JsonSubTypes.Type(value = LP.class, name = "lp"),
 })
 @MappedSuperclass
-@EntityListeners(AuditListener.class)
+@EntityListeners({AuditListener.class, SearchTitleListener.class})
 public class Article implements Auditable {
 
 //TODO Add Validation

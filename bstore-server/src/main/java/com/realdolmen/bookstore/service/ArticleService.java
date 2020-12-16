@@ -88,16 +88,7 @@ public class ArticleService {
                 case "book": {
                     try {
                         Book book = new Book();
-                        //TODO query users favorite books:
-
-
-//                        Query query = entityManager.createNativeQuery("delete from users_favorite_books ufb where ufb.favorite_books_id = "+ id);
-//                        query.executeUpdate();
-
                         this.bookRepository.deleteAllFavoriteRelationsByArticleId(id);
-//                        Set<User> users = this.userRepository.findByFavoriteBooksId(1l);
-//                        user.getFavoriteBooks().remove(id);
-//                        this.userRepository.save(user);
                         this.bookRepository.deleteById(id);
                         this.bookRepository.flush();
                     } catch (Exception ex) {
@@ -187,7 +178,7 @@ public class ArticleService {
                 articleIdV = Long.valueOf(field.getValue());
             }
             if (Objects.equals(field.getKey(), "title")) {
-                titleV = field.getValue();
+                titleV = field.getValue().replaceAll("[^a-zA-Z0-9]", " ").toLowerCase();
             }
             if (Objects.equals(field.getKey(), "minprice")) {
                 minpriceV = BigDecimal.valueOf(Long.parseLong(field.getValue()));
