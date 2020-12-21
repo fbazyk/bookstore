@@ -1,6 +1,9 @@
 import {AbstractControl, FormGroup, ValidatorFn} from "@angular/forms";
 import {require} from "isbnjs";
-let ISBN = require('isbnjs');
+// let ISBN = require('isbnjs');
+const ISBN = require('isbn-validate');
+var isbnIsValid = require('isbn-validator');
+const { validate, generate } = require('isbn-util');
 declare var require: any;
 
 /**
@@ -11,13 +14,13 @@ declare var require: any;
  * since isbnjs returns null with wrong isbn, it has to be checked for
  * */
 export function correctISBNValidator(): ValidatorFn {
-  return (control: AbstractControl): {[key: string]: any} | null => {
+  return (control: AbstractControl): { [key: string]: any } | null => {
     // ISBN entry is valid when
-    if(!!control.value && control.parent.controls['type'].value == 'book'){
-      let result = ISBN.parse(control.value);
-      if(!!result){
-        return (result?.isIsbn10() || result?.isIsbn13())? null : {badisbn: true};
-      } else return  {noisbn: true}
+    if (!!control.value) {
+      let result = new ISBN(control.value);
+      console.log(result)
+      return result ? null : {badisbn: true};
+
     } else return null;
   };
 }
@@ -27,9 +30,9 @@ export function correctISBNValidator(): ValidatorFn {
  * */
 export function correctNewArticleTypeValidator(): ValidatorFn {
   console.log("type validation calling")
-  return (control: AbstractControl): {[key: string]: any} | null => {
-    console.log(control.dirty && control.value !=='all')
-    return  control.value != 'all' ? null : {selectTypeError: true};
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    console.log(control.dirty && control.value !== 'all')
+    return control.value != 'all' ? null : {selectTypeError: true};
   };
 }
 
@@ -38,8 +41,8 @@ export function correctNewArticleTypeValidator(): ValidatorFn {
  * */
 export function correctNewArticleTypeValidator2(): ValidatorFn {
   console.log("type validation calling")
-  return (control: AbstractControl): {[key: string]: any} | null => {
-    console.log(control.dirty && control.value !=='all')
-    return  control.value != 'all' ? null : {selectTypeError: true};
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    console.log(control.dirty && control.value !== 'all')
+    return control.value != 'all' ? null : {selectTypeError: true};
   };
 }

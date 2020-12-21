@@ -57,19 +57,14 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
     let userSub = this.userService.isAdmin().subscribe(isAdmin => {
       this.showAdminControls = isAdmin
     });
-    this.userService.currentUser.subscribe(value => {
-      if(!!value){
+    this.userService.currentUser.subscribe(user => {
+      if(!!user){
       switch (this.article.type.toUpperCase()) {
         case 'BOOK': {
-          // this.isFavorite = this.userService.currentUserValue.favoriteBooks.find((value: Article) => {
-          //   return value.id == this.article.id;
-          // })
           console.log(this.article.type)
-
           this.isFavorite = this.userService.currentUserValue.favoriteBooks.map((value: Article) => value.id).includes(this.article.id)
           break;
         }
-
         case 'GAME': {
           this.isFavorite = this.userService.currentUserValue.favoriteGames.map((value: Article) => value.id).includes(this.article.id)
           break;
@@ -80,7 +75,7 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
         }
       }
       }else {
-        console.log(value);
+        console.log(user);
       }
     })
 
@@ -183,21 +178,20 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
   }
 
   favorite($event: MatSlideToggleChange, article: Article) {
-    console.log($event)
-    console.log(article)
-    console.log($event.checked)
     if ($event.checked) {
       this.http.post(`${environment.apiUrl}/favorite/${article.type}/${article.id}`, article).subscribe(value => {
         console.log(value)
-        //TODO Update User object on success
+        //Update User object on success
         this.userService.updateUserInfo();
+      }, error => {
+        console.log(error);
       })
     } else {
       this.http.post(`${environment.apiUrl}/unfavorite/${article.type}/${article.id}`, article).subscribe(value => {
         console.log(value)
-
         this.userService.updateUserInfo();
-
+      }, error => {
+        console.log(error);
       })
     }
   }

@@ -84,7 +84,8 @@
           && articleForm.controls.genre.pristine"> Please Select Genre
         </div>
         <div *ngIf="this.bookForm
-          && articleForm.controls.isbn.invalid"> Try correct isbn: 4873113369
+          && (articleForm.controls.isbn.invalid || articleForm.controls.isbn.errors?.badisbn)"> Try correct isbn: 9780140445770 or 9788371815102 or 9780137081073
+
         </div>
 
       </div>

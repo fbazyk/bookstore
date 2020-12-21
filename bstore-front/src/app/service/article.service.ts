@@ -170,7 +170,13 @@ export class ArticleService implements OnInit {
         let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type} ${submittedArticle.id} was updated.`, null, {duration: 2500})
         this.isLoading.next(false);
         this.router.navigateByUrl('/inventory')
-      }, error => {
+      }, (error: HttpErrorResponse) => {
+        if(error.status == 417){
+          this.snackBar.open("ISBN did not pass Back-End validation", "", {duration: 5000})
+        } if (error.status == 422){
+          this.snackBar.open("Book with the same ISBN already exists", "", {duration: 5000})
+        }
+
         console.log(error)
       });
     } else {
@@ -179,8 +185,13 @@ export class ArticleService implements OnInit {
         let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type + ' ' + submittedArticle.title} was created.`, null, {duration: 2500})
         this.isLoading.next(false);
         this.router.navigateByUrl('/inventory')
-      },error => {
-        let failureSnackBar = this.snackBar.open(`Not Able To Create! ${submittedArticle.type + ' ' + submittedArticle.title}`, null, {duration: 2500})
+      },(error: HttpErrorResponse) => {
+        if(error.status == 417){
+          this.snackBar.open("ISBN did not pass Back-End validation", "", {duration: 5000})
+        } if (error.status == 422){
+          this.snackBar.open("Book with the same ISBN already exists", "", {duration: 5000})
+        }
+        // let failureSnackBar = this.snackBar.open(`Not Able To Create! ${submittedArticle.type + ' ' + submittedArticle.title}`, null, {duration: 2500})
       })
     }
   }
