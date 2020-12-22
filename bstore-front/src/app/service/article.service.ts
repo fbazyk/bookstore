@@ -91,6 +91,10 @@ export class ArticleService implements OnInit {
       })
   }
 
+  findPaged(page, psize){
+    return this.http.get<Array<Article>>(`${environment.apiUrl}/articlespaged?page=${page}&psize=${psize}`)
+  }
+
 
   /**
    * Apply types to incoming JSON based on the "type" field.
