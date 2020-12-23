@@ -8,6 +8,7 @@ import {Article, Book, Game, Lp} from "../model/Articles";
 import {BehaviorSubject, Subscription} from "rxjs";
 import {Router} from "@angular/router";
 import {UserService} from "../user.service";
+import {ArticlesPage} from "../model/ArticlesPage";
 
 /**
  * @title Data table with sorting, pagination, and filtering.
@@ -20,6 +21,9 @@ import {UserService} from "../user.service";
 export class DisplayInventoryComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['id', 'title', 'type', 'price'];
   dataSource: MatTableDataSource<Article>;
+  totalArticles: number = 0;
+  currentPage: number = 1;
+  totalPages: number;
   displayedColumnsMap: Map<string, string[]> = new Map<string, string[]>();
   private subscriptions: Subscription[] = [];
   paginationOptions: MatPaginatorDefaultOptions = {
@@ -42,15 +46,48 @@ export class DisplayInventoryComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
+  ngOnInit() {
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
+    // this.dataSource.paginator.pageSize = 5;
+    // this.dataSource.connect();
+    this.articleService.pagedArticles.subscribe((value:ArticlesPage) => {
+      console.log(value);
+      if(!!value){
+        this.dataSource.data = value.articles;
+        this.totalArticles = value.totalArticles;
+        this.currentPage = value.currentPage-1;
+        this.totalPages = value.totalPages;
+      } else {
+        console.log(value)
+      }
+
+    })
+
+    this.providedType.subscribe(type => {
+      this.displayedColumns = this.displayedColumnsMap.get(type);
+    })
+    console.log("BEFORE SUBSCRIPTION")
+    this.paginator.page.subscribe(value => {
+      console.log("IN SUBSCRIPTION")
+      console.log(value)
+      this.articleService.pageRequest.next({pageIndex: value.pageIndex+1, pageSize: this.paginator.pageSize })
+      // this.articleService.findPaged(value.pageIndex+1, this.paginator.pageSize)
+    })
+
+
+  }
+
   constructor(private articleService: ArticleService, private router: Router,
   ) {
 
     this.provideDisplayedColumns();
     // // Assign the data to the data source for the table to render
     this.dataSource = new MatTableDataSource();
-    this.articleService.displayedArticlesO.subscribe(value => {
-      this.dataSource.data = value;
-    })
+
+    // this.articleService.displayedArticlesO.subscribe(value => {
+    //   this.dataSource.data = value;
+    // })
 
   }
 
@@ -61,16 +98,11 @@ export class DisplayInventoryComponent implements OnInit, OnDestroy {
     this.displayedColumnsMap.set('lp', ['title', 'artist', 'genre', 'price']);
   }
 
-  ngOnInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator.pageSize = 9;
-    this.dataSource.connect();
-
-    this.providedType.subscribe(type => {
-      this.displayedColumns = this.displayedColumnsMap.get(type);
+  ngAfterViewInit(){
+    this.paginator.page.subscribe(value => {
+      // console.log(value)
+      // this.articleService.findPaged(value.pageIndex+1, this.dataSource.paginator.pageSize)
     })
-
   }
 
   applyFilter(event: Event) {
@@ -83,13 +115,19 @@ export class DisplayInventoryComponent implements OnInit, OnDestroy {
   }
 
   displayArticle(article: Article) {
-
-    console.log(article)
     this.router.navigate(['/article', article.type, article.id])
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe())
 
+  }
+
+  getNext($event){
+    console.log($event)
+    if(!!$event) {
+
+      // this.articleService.findPaged($event.pageIndex+1, $event.pageSize)
+    }
   }
 }

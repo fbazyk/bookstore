@@ -12,6 +12,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Set;
 
+/**
+ * https://stackoverflow.com/questions/16396489/named-query-on-a-mapped-superclass
+ *
+ * A mapped superclass, unlike an entity, is not queryable
+ * and must not be passed as an argument to EntityManager or Query operations.
+ * */
+
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
         property = "type")
@@ -24,7 +31,6 @@ import java.util.Set;
 @EntityListeners({AuditListener.class, SearchTitleListener.class})
 public class Article implements Auditable {
 
-//TODO Add Validation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

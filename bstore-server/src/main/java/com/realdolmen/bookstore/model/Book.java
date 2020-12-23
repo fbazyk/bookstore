@@ -1,9 +1,14 @@
 package com.realdolmen.bookstore.model;
 
+
+import org.hibernate.validator.constraints.ISBN;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+//TODO ISBN VALIDATOR https://stackoverflow.com/questions/37878992/custom-jpa-validation-in-spring-boot
+// https://codereview.stackexchange.com/questions/133698/isbn-validation-with-hibernate-validator
 @Entity
 @Table(name = "books", uniqueConstraints={
         @UniqueConstraint( name = "books_unique",  columnNames ={"isbn"})
@@ -15,7 +20,8 @@ public class Book extends Article {
     private String author;
 
     @NotNull
-    @Column(name = "isbn")
+    @ISBN
+    @Column(name = "isbn", unique = true)
     private String isbn;
 
     @Column(name = "pages")

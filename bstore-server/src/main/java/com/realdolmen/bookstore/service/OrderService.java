@@ -76,6 +76,7 @@ public class OrderService {
         Order openOrder = new Order();
         openOrder.setUser(user);
         openOrder.setCartDate(Instant.now());
+        openOrder = this.saveOrder(openOrder);
         logger.debug("OpenOrder executed {}", openOrder.getOrderId());
         return openOrder;
     }
@@ -100,17 +101,19 @@ public class OrderService {
         Order order = this.findOpenOrder();
         if(order.getOrderItems().size() > 0){
             order.setOrderDate(Instant.now());
-            this.saveOrder(order);
+//            this.saveOrder(order);
+            this.orderRepository.save(order);
             try{
                 this.mockSupplierService.placeOrder(order);
             } catch (QuantityNotAvailableException exception){
+                order = this.orderRepository.findById(order.getOrderId()).get();
                 order.setOrderDate(null);
-                exception.getItemSet().forEach(orderItem -> {
+                for (OrderItem orderItem : exception.getItemSet() ){
                     order.getOrderItems().remove(orderItem);
-                });
+                }
                 order.setOrderTotal(this.calcTotal(order));
-
-                this.saveOrder(order);
+                this.orderRepository.save(order);
+//                this.saveOrder(order);
                 throw exception;
             }
         } else throw new Exception ("Order should have items");

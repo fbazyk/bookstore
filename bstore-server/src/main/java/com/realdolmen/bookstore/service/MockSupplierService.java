@@ -6,7 +6,10 @@ import com.realdolmen.bookstore.model.Order;
 import com.realdolmen.bookstore.model.OrderItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,12 +21,13 @@ public class MockSupplierService {
 
     /**
      *◦ When placing an order,
-     *  the quantity of the each ordered article
+     *  the quantity of each article
      *  should be forwarded to a Mock Supplier Service
      *◦ If an exception is thrown when forwarding an order of a specific article
-     *  This article should be removed of the order and an error message should be shown. (Mock this by throwing an exception when the quantity is a multiple of 3)
+     *  This article should be removed of the order and an error message should be shown.
+     *  (Mock this by throwing an exception when the quantity is a multiple of 3)
      * */
-    public void placeOrder(Order order) throws Exception{
+    public boolean placeOrder(Order order) throws Exception{
         Order processingOrder = order;
 
         Set<OrderItem> itemsQuantity3 = order.getOrderItems().stream().filter(orderItem -> {
@@ -33,7 +37,13 @@ public class MockSupplierService {
 
             throw new QuantityNotAvailableException("Some items are not available", itemsQuantity3);
         } else {
-            logger.debug("PLACE ORDER::All items are ordered");
+            RestTemplate restTemplate = new RestTemplate();
+            String mockSupplierURL
+                    = "http://localhost:8089/supplier/order";
+            HttpEntity<Order> request = new HttpEntity<>(processingOrder);
+            String result = restTemplate.postForObject(mockSupplierURL, request, String.class);
+            logger.debug("PLACE ORDER::All items are ordered {}", result);
+            return true;
         }
     }
 }

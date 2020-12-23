@@ -52,10 +52,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(userSub);
 
-    this.articleService.findAll()
-    this.articleService.selectedCategory.subscribe(category => {
+    // this.articleService.findAll()
+    // this.articleService.findPaged(1, 5)
 
-    })
     this.selectedCategory.subscribe(value => this.providedType = value);
     this.searchService.searchState.subscribe(value => this.searchState = value)
     this.newSearch.subscribe(searchState => {
@@ -83,7 +82,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
 
   findAll() {
-    this.articleService.findAll();
+    // this.articleService.findAll();
   }
 
   addArticle() {

@@ -3,6 +3,7 @@ package com.realdolmen.bookstore.controller;
 import com.realdolmen.bookstore.exception.ArticleNotFoundException;
 import com.realdolmen.bookstore.exception.UnableToUpdateArticleException;
 import com.realdolmen.bookstore.model.Article;
+import com.realdolmen.bookstore.model.ArticlesPage;
 import com.realdolmen.bookstore.service.ArticleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +36,26 @@ public class ArticleController {
         List<Article> result =this.articleService.findAll();
         return result;
     }
+
+    @GetMapping("/articlespaged")
+    public ArticlesPage findAllPaged(@RequestParam Long page, @RequestParam Long psize) {
+        ArticlesPage articlesPage = new ArticlesPage();
+        articlesPage =this.articleService.findAllPaged(page, psize);
+        return articlesPage;
+    }
+
+    @GetMapping("/articlescatpaged")
+    public ArticlesPage findCategoryPaged(@RequestParam Long page,
+                                          @RequestParam Long psize,
+                                          @RequestParam String category
+    ) {
+        ArticlesPage articlesPage = new ArticlesPage();
+        logger.debug("Category is {}", category);
+        articlesPage =this.articleService.findCatPaged(page, psize, category);
+        return articlesPage;
+    }
+
+
 
     @DeleteMapping("/article/{type}/{id}")
     public ResponseEntity<?> deleteArticle(@PathVariable String type, @PathVariable long id) {
@@ -75,7 +97,12 @@ public class ArticleController {
                 noId.setId(null);
                 articleService.addArticle(type, noId);
             }
-        } catch (Exception ex){
+        } catch (ConstraintViolationException constraintViolationException){
+            logger.debug("Constraint Violation Exception: {}", constraintViolationException.getConstraintViolations());
+            logger.debug("Constraint Violation Exception: {}", constraintViolationException.getMessage());
+            String reason = "Article could not be added:" + constraintViolationException.getMessage();
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(reason);
+        }         catch (Exception ex){
             String reason = "Article could not be added:" + ex.getMessage();
             return ResponseEntity.unprocessableEntity().body(reason);
         }

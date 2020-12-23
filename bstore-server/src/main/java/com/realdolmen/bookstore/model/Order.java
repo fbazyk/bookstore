@@ -21,7 +21,7 @@ public class Order implements Auditable{
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
             orphanRemoval=true)
-    @JoinColumn(name = "ORDER_ID")
+    @JoinColumn(name = "order_id")
     private Set<OrderItem> orderItems;
 
     @ManyToOne(fetch = FetchType.LAZY)

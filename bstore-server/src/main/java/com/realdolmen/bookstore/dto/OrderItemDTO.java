@@ -9,6 +9,12 @@ public class OrderItemDTO {
     private Long articleId;
     private Long quantity;
 
+    public OrderItemDTO(ArticleType articleType, Long articleId, Long quantity) {
+        this.articleType = articleType;
+        this.articleId = articleId;
+        this.quantity = quantity;
+    }
+
     public Long getQuantity() {
         return quantity;
     }

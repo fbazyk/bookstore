@@ -9,12 +9,13 @@ import {BehaviorSubject, Observable} from "rxjs";
 import {errorObject} from "rxjs/internal-compatibility";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
+import {ArticlesPage, PageRequest} from "../model/ArticlesPage";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArticleService implements OnInit {
-  provideState: string = "all";
+  providedCategoryState: string = "all";
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   private allArticles: BehaviorSubject<Array<Article>> = new BehaviorSubject<Array<Article | Book | Game | Lp>>([{
@@ -27,25 +28,71 @@ export class ArticleService implements OnInit {
     isbn: '123123123',
     pages: 100
   }]);
+  public pagedArticles: BehaviorSubject<ArticlesPage> = new BehaviorSubject<ArticlesPage>(null);
 
   private displayedArticles: BehaviorSubject<Array<Article>> = new BehaviorSubject<Array<Article>>(this.allArticles.getValue());
   public allArticlesO: Observable<Array<Article>> = this.allArticles.asObservable();
   public displayedArticlesO: Observable<Array<Article>> = this.displayedArticles.asObservable();
 
-  public selectedCategory: BehaviorSubject<string> = new BehaviorSubject<string>(this.provideState);
+  public selectedCategory: BehaviorSubject<string> = new BehaviorSubject<string>(this.providedCategoryState);
 
   // public lastCategory: BehaviorSubject<string> = new BehaviorSubject<string>(this.provideState);
+  pageRequest: BehaviorSubject<PageRequest> =
+    new BehaviorSubject<PageRequest>({pageIndex: 1, pageSize: 5});
 
 
   constructor(private http: HttpClient,
               public router: Router,
               public snackBar: MatSnackBar,
               private zone: NgZone) {
-    this.subscribeTo()
+    // this.combineSubscriptions()
+    this.combineWTF()
+
+    this.selectedCategory.subscribe(value => {
+      this.findPagedCategory(1, this.pageRequest.value.pageSize, value);
+    })
   }
 
-  currentArticles() {
-    return this.allArticles.getValue();
+  combineSubscriptions() {
+    const type = this.selectedCategory;
+    const pageRequest = this.pageRequest;
+    const result = combineLatest([pageRequest, type]);
+    result.subscribe(([pageRequest, categoryType]) => {
+      this.findPagedCategory(pageRequest.pageIndex, pageRequest.pageSize, type.value)
+    })
+  }
+
+  combineWTF() {
+    const result = this.pageRequest.pipe(withLatestFrom(this.selectedCategory))
+
+    // const result2 = combineLatest([pageRequest, type]);
+    result.subscribe(([pageRequest, categoryType]) => {
+      this.findPagedCategory(pageRequest.pageIndex, pageRequest.pageSize, categoryType)
+    })
+  }
+
+  subscribeTo() {
+    // this.findPaged(1, 5);
+
+    const list = this.allArticles;
+    const type = this.selectedCategory;
+    const pageRequest = this.pageRequest;
+
+    const result = combineLatest([list, type]);
+    result.subscribe(([articleList, categoryType]) => {
+      this.displayedArticles.next(articleList.filter(article => {
+        return !!article && article.type == categoryType || categoryType == 'all'
+      }))
+    })
+  }
+
+  findPagedCategory(page, psize, selectedCategory) {
+    return this.http
+      .get<ArticlesPage>(`${environment.apiUrl}/articlescatpaged?page=${page}&psize=${psize}&category=${selectedCategory}`)
+      .subscribe(value => {
+        console.log(value)
+        this.pagedArticles.next(value);
+      })
   }
 
   subscribeToCategoryChanges() {
@@ -56,29 +103,17 @@ export class ArticleService implements OnInit {
     })
   }
 
+
   subscribeToAllArticlesUpdate() {
     this.allArticles.subscribe(value => {
       this.displayedArticles.next(value)
     })
   }
 
-  subscribeTo() {
-    const list = this.allArticles;
-    const type = this.selectedCategory;
-
-    const result = combineLatest([list, type]);
-    result.subscribe(([articleList, categoryType]) => {
-      this.displayedArticles.next(articleList.filter(article => {
-        return !!article && article.type == categoryType || categoryType == 'all'
-      }))
-    })
-  }
-
-
-
   // findByCategory(){
   //   return this.http.post(`${environment.apiUrl}/`)
   // }
+
 
   findAll() {
     return this.http.get<Array<Article>>(`${environment.apiUrl}/articles`).pipe(
@@ -91,8 +126,12 @@ export class ArticleService implements OnInit {
       })
   }
 
-  findPaged(page, psize){
-    return this.http.get<Array<Article>>(`${environment.apiUrl}/articlespaged?page=${page}&psize=${psize}`)
+  findPaged(page, psize) {
+    return this.http
+      .get<ArticlesPage>(`${environment.apiUrl}/articlespaged?page=${page}&psize=${psize}`)
+      .subscribe(value => {
+        this.pagedArticles.next(value);
+      })
   }
 
 
@@ -117,7 +156,7 @@ export class ArticleService implements OnInit {
   getArticle(type: string, id: number): Article {
     console.log('getting article ', type, id)
     let articleFound = this.allArticles.getValue().filter(article => {
-      return article.type == type.toLowerCase()  && article.id == id;
+      return article.type == type.toLowerCase() && article.id == id;
     })[0]
     if (!!articleFound) {
       return articleFound;
@@ -135,17 +174,20 @@ export class ArticleService implements OnInit {
     let actionSnackBar = this.snackBar.open(`Deleting ${type + ' ' + id} `)
     //send request
     this.isLoading.next(true);
-    this.http.delete(`${environment.apiUrl}/article/${type}/${id}`, {observe: 'body', responseType: 'text'}).subscribe(response => {
+    this.http.delete(`${environment.apiUrl}/article/${type}/${id}`, {
+      observe: 'body',
+      responseType: 'text'
+    }).subscribe(response => {
       console.log(response);
       //show a new bar with success
-        let successSnackBar = this.snackBar.open(`${response}`,"", {duration: 2500})
+      let successSnackBar = this.snackBar.open(`${response}`, "", {duration: 2500})
 
-        //find where it was in currently displayed articles
-        let index: number = this.allArticles.getValue().findIndex(value => {
-          return value.type == type && value.id == id;
-        });
-        this.allArticles.next(this.allArticles.getValue().splice(index, 1));
-        this.isLoading.next(false);
+      //find where it was in currently displayed articles
+      let index: number = this.allArticles.getValue().findIndex(value => {
+        return value.type == type && value.id == id;
+      });
+      this.allArticles.next(this.allArticles.getValue().splice(index, 1));
+      this.isLoading.next(false);
     }, (error: HttpErrorResponse) => {
       console.log(error)
       let failureSnackBar = this.snackBar.open(`Unable to delete! ${error}`, 'Dismiss', {duration: 2500})
@@ -175,9 +217,10 @@ export class ArticleService implements OnInit {
         this.isLoading.next(false);
         this.router.navigateByUrl('/inventory')
       }, (error: HttpErrorResponse) => {
-        if(error.status == 417){
+        if (error.status == 417) {
           this.snackBar.open("ISBN did not pass Back-End validation", "", {duration: 5000})
-        } if (error.status == 422){
+        }
+        if (error.status == 422) {
           this.snackBar.open("Book with the same ISBN already exists", "", {duration: 5000})
         }
 
@@ -189,10 +232,11 @@ export class ArticleService implements OnInit {
         let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type + ' ' + submittedArticle.title} was created.`, null, {duration: 2500})
         this.isLoading.next(false);
         this.router.navigateByUrl('/inventory')
-      },(error: HttpErrorResponse) => {
-        if(error.status == 417){
+      }, (error: HttpErrorResponse) => {
+        if (error.status == 417) {
           this.snackBar.open("ISBN did not pass Back-End validation", "", {duration: 5000})
-        } if (error.status == 422){
+        }
+        if (error.status == 422) {
           this.snackBar.open("Book with the same ISBN already exists", "", {duration: 5000})
         }
         // let failureSnackBar = this.snackBar.open(`Not Able To Create! ${submittedArticle.type + ' ' + submittedArticle.title}`, null, {duration: 2500})

@@ -57,6 +57,59 @@ public class ArticleService {
                 .collect(Collectors.toList());
         return articles;
     }
+    public ArticlesPage findAllPaged(Long page, Long psize) {
+        List<Book> books = this.bookRepository.findAll();
+        List<Game> games = this.gameRepository.findAll();
+        List<LP> lps = this.lpRepository.findAll();
+        Long offset = (page-1) * psize;
+        List<Article> articles = Stream.of(books, games, lps)
+                .flatMap(Collection::stream)
+                .skip(offset).limit(psize)
+                .collect(Collectors.toList());
+        ArticlesPage resultPage = new ArticlesPage();
+        resultPage.setArticles(articles);
+        resultPage.setTotalArticles(Stream.of(books, games, lps).flatMap(Collection::stream).count());
+        resultPage.setCurrentPage(page);
+        resultPage.setTotalPages((long)Math.ceil((resultPage.getTotalArticles()/(double)psize)));
+        return resultPage;
+    }
+
+    public ArticlesPage findCatPaged(Long page, Long psize, String category) {
+        List<Book> books = new ArrayList<>();
+        List<Game> games = new ArrayList<>();
+        List<LP> lps = new ArrayList<>();
+        switch (category.toUpperCase()){
+            case "BOOK": {
+                books = this.bookRepository.findAll();
+                break;
+            }
+            case "GAME":{
+                games = this.gameRepository.findAll();
+                break;
+            }
+            case "LP":{
+                lps = this.lpRepository.findAll();
+                break;
+            }
+            case "ALL":{
+                books = this.bookRepository.findAll();
+                games = this.gameRepository.findAll();
+                lps = this.lpRepository.findAll();
+                break;
+            }
+        }
+        Long offset = (page-1) * psize;
+        List<Article> articles = Stream.of(books, games, lps)
+                .flatMap(Collection::stream)
+                .skip(offset).limit(psize)
+                .collect(Collectors.toList());
+        ArticlesPage resultPage = new ArticlesPage();
+        resultPage.setArticles(articles);
+        resultPage.setTotalArticles(Stream.of(books, games, lps).flatMap(Collection::stream).count());
+        resultPage.setCurrentPage(page);
+        resultPage.setTotalPages((long)Math.ceil((resultPage.getTotalArticles()/(double)psize)));
+        return resultPage;
+    }
 
     public boolean addArticle(String type, Article article) {
         if (type != null && article != null) {

@@ -8,19 +8,23 @@ import com.realdolmen.bookstore.repository.ArticleRepository;
 import com.realdolmen.bookstore.repository.BookRepository;
 import com.realdolmen.bookstore.repository.ReviewRepository;
 import com.realdolmen.bookstore.repository.UserRepository;
+import com.realdolmen.bookstore.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = BookstoreApplication.class)
@@ -34,64 +38,63 @@ public class UserFavoriteBookTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private ArticleRepository articleRepository;
 
     @Autowired
     private BookRepository bookRepository;
 
     @Test
+    @WithMockUser(username = "soren", password = "either", roles = "USER")
     public void findUserWithFavoriteBooksById(){
         Book book = this.bookRepository.findById(1l).get();
-
-        Set<User> users = this.userRepository.findByFavoriteBooksId(1l);
-        logger.debug("User is {}", users.isEmpty());
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        logger.debug(username);
+        logger.debug(principal.toString());
+        logger.debug("User is {}",principal);
+        User currentUser = this.userService.findByUserName(username);
+        currentUser.getFavoriteBooks().add(book);
+        this.userRepository.save(currentUser);
+        Set<User> users = this.userRepository.findByFavoriteBooksId(book.getId());
+        logger.debug("User is {}", currentUser.getUserName());
+        logger.debug("User's Favorite Book is is {}", users.stream().findFirst().get().getFavoriteBooks().stream().findFirst().get().getTitle());
+        logger.debug("User's favorite books size is {}", currentUser.getFavoriteBooks().size());
+        assertEquals(book.getTitle(), users.stream().findFirst().get().getFavoriteBooks().stream().findFirst().get().getTitle());
     }
 
     @Test
+    @WithMockUser(username = "soren", password = "either", roles = "USER")
     public void findUserWithFavoriteBooksByBook(){
         Book book = this.bookRepository.findById(1l).get();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        logger.debug(username);
+        logger.debug(principal.toString());
+        logger.debug("User is {}",principal);
+        User currentUser = this.userService.findByUserName(username);
+        //add book as favorite for the user
+        currentUser.getFavoriteBooks().add(book);
+        this.userRepository.save(currentUser);
+        //find users with the favorite book
         Set<User> users = this.userRepository.findAllByFavoriteBooksIs(book);
+        assertTrue(users.size()>0);
         logger.debug("User is {}", users.toArray()[0]);
-
+        logger.debug("Users size is {}", users.size());
+        logger.debug("User's Favorite Book is is {}", users.stream().findFirst().get().getFavoriteBooks().stream().findFirst().get().getTitle());
+        assertEquals(book.getTitle(), users.stream().findFirst().get().getFavoriteBooks().stream().findFirst().get().getTitle());
     }
 
-    public void createReview(){
-        Review sorenReview = new Review();
-        createUser();
-        User user = this.userRepository.findById(1L).get();
-        sorenReview.setRating(5);
-        sorenReview.setArticleType(ArticleType.BOOK);
-        sorenReview.setArticleId(1L);
-        sorenReview.setDescription("Masterpiece");
-        sorenReview.setUserId(user.getId());
-
-        this.reviewRepository.saveAndFlush(sorenReview);
-
-        List<Review> addedReviews = this.reviewRepository.findAll();
-        addedReviews.forEach(review -> {
-            logger.debug(review.getDescription());
-        });
-
-    }
-
-    public void findAllReviews(){
-        List<Review> foundReviews = this.reviewRepository.findAll();
-        assertFalse(foundReviews.isEmpty());
-    }
-
-    public void findReviewsForUser(){
-        Set<Review> foundReviews = this.reviewRepository.findAllByArticleTypeAndArticleId(ArticleType.GAME, 2L);
-        foundReviews.stream().findFirst().ifPresent(review -> {
-            logger.debug("Found Reviews: {}", review.getDescription());
-        });
-    }
-
-    private void createUser() {
-        User user = new User();
-        user.setLastName("Python");
-        user.setFirstName("Monty");
-        user.setRole("admin");
-
-        this.userRepository.saveAndFlush(user);
-    }
 }

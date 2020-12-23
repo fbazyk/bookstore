@@ -3,7 +3,8 @@ package com.realdolmen.bookstore.model;
 public enum ArticleType {
     BOOK ("BOOK"),
     GAME ("GAME"),
-    LP("LP");
+    LP("LP"),
+    ALL("ALL");
 
     private String type;
 
