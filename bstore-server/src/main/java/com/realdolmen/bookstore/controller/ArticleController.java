@@ -55,6 +55,19 @@ public class ArticleController {
         return articlesPage;
     }
 
+    @GetMapping("/articlescatfilteredpaged")
+    public ArticlesPage findCatFilteredPaged(@RequestParam Long page,
+                                          @RequestParam Long psize,
+                                          @RequestParam String category,
+                                             @RequestParam String filter
+    ) {
+        ArticlesPage articlesPage = new ArticlesPage();
+        logger.debug("Category is {}", category);
+        logger.debug("Filter is {}", filter);
+        articlesPage =this.articleService.findCatFilteredPaged(page, psize, category, filter);
+        return articlesPage;
+    }
+
 
 
     @DeleteMapping("/article/{type}/{id}")

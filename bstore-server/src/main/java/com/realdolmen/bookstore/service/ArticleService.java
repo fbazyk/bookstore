@@ -321,4 +321,52 @@ public class ArticleService {
 
         return result;
     }
+
+
+    public ArticlesPage findCatFilteredPaged(Long page, Long psize, String category, String filter) {
+        logger.debug("Page {}", page);
+        logger.debug("Page Size{}", psize);
+        logger.debug("Category {}", category);
+        logger.debug("Filter {}", filter);
+
+        List<Book> books = new ArrayList<>();
+        List<Game> games = new ArrayList<>();
+        List<LP> lps = new ArrayList<>();
+        switch (category.toUpperCase()){
+            case "BOOK": {
+                books = this.bookRepository.findAll();
+                break;
+            }
+            case "GAME":{
+                games = this.gameRepository.findAll();
+                break;
+            }
+            case "LP":{
+                lps = this.lpRepository.findAll();
+                break;
+            }
+            case "ALL":{
+                books = this.bookRepository.findAll();
+                games = this.gameRepository.findAll();
+                lps = this.lpRepository.findAll();
+                break;
+            }
+        }
+        Long offset = (page-1) * psize;
+        List<Article> articles = Stream.of(books, games, lps)
+                .flatMap(Collection::stream)
+                .filter(article -> {
+                    logger.debug(article.getSearchTitle());
+                    return article.getSearchTitle().contains(filter.replaceAll("[^a-zA-Z0-9]", " ").toLowerCase());
+                })
+                .skip(offset).limit(psize)
+                .collect(Collectors.toList());
+        ArticlesPage resultPage = new ArticlesPage();
+        resultPage.setArticles(articles);
+        resultPage.setTotalArticles(Stream.of(books, games, lps).flatMap(Collection::stream).count());
+        resultPage.setCurrentPage(page);
+        resultPage.setTotalPages((long)Math.ceil((resultPage.getTotalArticles()/(double)psize)));
+        return resultPage;
+    }
+
 }

@@ -3,7 +3,7 @@ import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {Article, Book, Game, Lp, articleTypeMapping, Item} from "../model/Articles";
 import {User} from "../model/User";
 import {environment} from "../../environments/environment";
-import {map, tap, withLatestFrom} from "rxjs/operators";
+import {debounceTime, map, tap, withLatestFrom} from "rxjs/operators";
 import {combineLatest} from "rxjs/index";
 import {BehaviorSubject, Observable} from "rxjs";
 import {errorObject} from "rxjs/internal-compatibility";
@@ -17,6 +17,7 @@ import {ArticlesPage, PageRequest} from "../model/ArticlesPage";
 export class ArticleService implements OnInit {
   providedCategoryState: string = "all";
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  filterValue: BehaviorSubject<String> = new BehaviorSubject<String>("")
 
   private allArticles: BehaviorSubject<Array<Article>> = new BehaviorSubject<Array<Article | Book | Game | Lp>>([{
     type: 'book',
@@ -46,10 +47,20 @@ export class ArticleService implements OnInit {
               public snackBar: MatSnackBar,
               private zone: NgZone) {
     // this.combineSubscriptions()
-    this.combineWTF()
+    this.combineCategoryPaging()
+    this.combineFiltering()
+  }
 
-    this.selectedCategory.subscribe(value => {
-      this.findPagedCategory(1, this.pageRequest.value.pageSize, value);
+  combineFiltering(){
+    const filter = this.filterValue.pipe(debounceTime(750));
+    const type = this.selectedCategory;
+    const pageRequest = this.pageRequest;
+    //TODO combine filter and category, provide page size
+    const result  = combineLatest([filter, type, pageRequest]);
+
+    result.subscribe(([filter, category, pageRequest])=>{
+      console.log(filter)
+      this.findCategoryFilteredPaged(category, filter, pageRequest.pageSize, 1);
     })
   }
 
@@ -62,33 +73,36 @@ export class ArticleService implements OnInit {
     })
   }
 
-  combineWTF() {
+  combineCategoryPaging() {
     const result = this.pageRequest.pipe(withLatestFrom(this.selectedCategory))
 
     // const result2 = combineLatest([pageRequest, type]);
     result.subscribe(([pageRequest, categoryType]) => {
       this.findPagedCategory(pageRequest.pageIndex, pageRequest.pageSize, categoryType)
     })
-  }
-
-  subscribeTo() {
-    // this.findPaged(1, 5);
-
-    const list = this.allArticles;
-    const type = this.selectedCategory;
-    const pageRequest = this.pageRequest;
-
-    const result = combineLatest([list, type]);
-    result.subscribe(([articleList, categoryType]) => {
-      this.displayedArticles.next(articleList.filter(article => {
-        return !!article && article.type == categoryType || categoryType == 'all'
-      }))
+    this.selectedCategory.subscribe(value => {
+      this.findPagedCategory(1, this.pageRequest.value.pageSize, value);
     })
+
   }
+
 
   findPagedCategory(page, psize, selectedCategory) {
     return this.http
       .get<ArticlesPage>(`${environment.apiUrl}/articlescatpaged?page=${page}&psize=${psize}&category=${selectedCategory}`)
+      .subscribe(value => {
+        console.log(value)
+        this.pagedArticles.next(value);
+      })
+  }
+
+  private findCategoryFilteredPaged(category, filter, psize, page) {
+    console.log(category);
+    console.log(filter);
+    console.log(psize);
+    console.log(page);
+    return this.http
+      .get<ArticlesPage>(`${environment.apiUrl}/articlescatfilteredpaged?page=${page}&psize=${psize}&category=${category}&filter=${filter}`)
       .subscribe(value => {
         console.log(value)
         this.pagedArticles.next(value);
@@ -114,6 +128,20 @@ export class ArticleService implements OnInit {
   //   return this.http.post(`${environment.apiUrl}/`)
   // }
 
+  subscribeTo() {
+    // this.findPaged(1, 5);
+
+    const list = this.allArticles;
+    const type = this.selectedCategory;
+    const pageRequest = this.pageRequest;
+
+    const result = combineLatest([list, type]);
+    result.subscribe(([articleList, categoryType]) => {
+      this.displayedArticles.next(articleList.filter(article => {
+        return !!article && article.type == categoryType || categoryType == 'all'
+      }))
+    })
+  }
 
   findAll() {
     return this.http.get<Array<Article>>(`${environment.apiUrl}/articles`).pipe(
@@ -254,4 +282,5 @@ export class ArticleService implements OnInit {
     this.allArticles.next(foundArticles);
     this.selectedCategory.next('all');
   }
+
 }
