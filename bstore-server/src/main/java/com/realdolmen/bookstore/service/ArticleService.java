@@ -111,6 +111,27 @@ public class ArticleService {
         return resultPage;
     }
 
+    public Article getArticle(String type, Long id) throws ArticleNotFoundException {
+        if (type != null && id != null) {
+            switch (type.toUpperCase()) {
+                case "BOOK": {
+                    return this.bookRepository.findById(id).get();
+                }
+                case "GAME": {
+                    return this.gameRepository.findById(id).get();
+                }
+                case "LP": {
+                    return this.lpRepository.findById(id).get();
+                }
+                default:{
+                    throw new ArticleNotFoundException("Wrong category");
+                }
+            }
+        } else {
+            throw new ArticleNotFoundException("Article does not exist");
+        }
+    }
+
     public boolean addArticle(String type, Article article) {
         if (type != null && article != null) {
             switch (type) {
@@ -353,17 +374,22 @@ public class ArticleService {
             }
         }
         Long offset = (page-1) * psize;
-        List<Article> articles = Stream.of(books, games, lps)
+        //Filter Articles
+        List<Article> filteredArticles = Stream.of(books, games, lps)
                 .flatMap(Collection::stream)
                 .filter(article -> {
                     logger.debug(article.getSearchTitle());
                     return article.getSearchTitle().contains(filter.replaceAll("[^a-zA-Z0-9]", " ").toLowerCase());
                 })
-                .skip(offset).limit(psize)
                 .collect(Collectors.toList());
+        //Page Filtered Articles
+        List<Article> pagedArticles = Stream.of(filteredArticles)
+                .flatMap(Collection::stream)
+                .skip(offset).limit(psize).collect(Collectors.toList());
+
         ArticlesPage resultPage = new ArticlesPage();
-        resultPage.setArticles(articles);
-        resultPage.setTotalArticles(Stream.of(books, games, lps).flatMap(Collection::stream).count());
+        resultPage.setArticles(pagedArticles);
+        resultPage.setTotalArticles(Stream.of(filteredArticles).flatMap(Collection::stream).count());
         resultPage.setCurrentPage(page);
         resultPage.setTotalPages((long)Math.ceil((resultPage.getTotalArticles()/(double)psize)));
         return resultPage;

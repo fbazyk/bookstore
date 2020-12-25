@@ -48,7 +48,7 @@ export class ArticleService implements OnInit {
               private zone: NgZone) {
     // this.combineSubscriptions()
     this.combineCategoryPaging()
-    this.combineFiltering()
+    // this.combineFiltering()
   }
 
   combineFiltering(){
@@ -74,14 +74,19 @@ export class ArticleService implements OnInit {
   }
 
   combineCategoryPaging() {
-    const result = this.pageRequest.pipe(withLatestFrom(this.selectedCategory))
+    const result = this.pageRequest.pipe(withLatestFrom(this.selectedCategory, this.filterValue))
 
     // const result2 = combineLatest([pageRequest, type]);
-    result.subscribe(([pageRequest, categoryType]) => {
-      this.findPagedCategory(pageRequest.pageIndex, pageRequest.pageSize, categoryType)
+    result.subscribe(([pageRequest, category, filter]) => {
+      // this.findPagedCategory(pageRequest.pageIndex, pageRequest.pageSize, category)
+      this.findCategoryFilteredPaged(category, filter, pageRequest.pageSize, pageRequest.pageIndex)
     })
-    this.selectedCategory.subscribe(value => {
-      this.findPagedCategory(1, this.pageRequest.value.pageSize, value);
+    this.selectedCategory.subscribe(category => {
+      this.findCategoryFilteredPaged(this.selectedCategory.value, this.filterValue.value, this.pageRequest.value.pageSize, 1)
+      ;
+    })
+    this.filterValue.pipe(debounceTime(750)).subscribe(filter => {
+      this.findCategoryFilteredPaged(this.selectedCategory.value, filter, this.pageRequest.value.pageSize, 1)
     })
 
   }
@@ -183,7 +188,7 @@ export class ArticleService implements OnInit {
 
   getArticle(type: string, id: number): Article {
     console.log('getting article ', type, id)
-    let articleFound = this.allArticles.getValue().filter(article => {
+    let articleFound = this.pagedArticles.getValue().articles.filter(article => {
       return article.type == type.toLowerCase() && article.id == id;
     })[0]
     if (!!articleFound) {
@@ -191,6 +196,10 @@ export class ArticleService implements OnInit {
     } else {
       throw errorObject;
     }
+  }
+
+  getArticleFromServer(type: string, id: number){
+    return this.http.get(`${environment.apiUrl}/article/${type}/${id}`, {observe:"body"});
   }
 
   /**
@@ -209,7 +218,7 @@ export class ArticleService implements OnInit {
       console.log(response);
       //show a new bar with success
       let successSnackBar = this.snackBar.open(`${response}`, "", {duration: 2500})
-
+      this.selectedCategory.next(type);
       //find where it was in currently displayed articles
       let index: number = this.allArticles.getValue().findIndex(value => {
         return value.type == type && value.id == id;
@@ -243,6 +252,9 @@ export class ArticleService implements OnInit {
       this.http.post(`${environment.apiUrl}/article/${submittedArticle.type}/${submittedArticle.id}`, submittedArticle, {responseType: "text"}).subscribe(response => {
         let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type} ${submittedArticle.id} was updated.`, null, {duration: 2500})
         this.isLoading.next(false);
+        this.findPagedCategory(this.pageRequest.value.pageIndex,
+          this.pageRequest.value.pageSize, this.selectedCategory.value)
+        this.filterValue.next("");
         this.router.navigateByUrl('/inventory')
       }, (error: HttpErrorResponse) => {
         if (error.status == 417) {

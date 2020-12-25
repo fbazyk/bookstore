@@ -70,6 +70,16 @@ public class ArticleController {
 
 
 
+    @GetMapping("/article/{type}/{id}")
+    public ResponseEntity<?> getArticle(@PathVariable String type, @PathVariable long id) {
+        try{
+            Article article = articleService.getArticle(type, id);
+            return ResponseEntity.ok().body(article);
+        } catch (ArticleNotFoundException ex){
+            String errorMessage = "Unable to find Article" + type + ":" + id;
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+    }
     @DeleteMapping("/article/{type}/{id}")
     public ResponseEntity<?> deleteArticle(@PathVariable String type, @PathVariable long id) {
         try{

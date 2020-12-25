@@ -10,7 +10,7 @@ import {BehaviorSubject, Observable} from "rxjs";
 })
 export class CartService {
 
-  private openOrderBS: BehaviorSubject<OrderDTO> = new BehaviorSubject<OrderDTO>(null);
+  public openOrderBS: BehaviorSubject<OrderDTO> = new BehaviorSubject<OrderDTO>(null);
   public openOrder: Observable<OrderDTO> = this.openOrderBS.asObservable();
 
   constructor(private http: HttpClient,

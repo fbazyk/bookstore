@@ -14,6 +14,7 @@
     <div>Price EUR: {{article.price}}</div>
     <div *ngIf="article.type == 'book'">Author: {{article.type == 'book' ? article?.author: ""}}</div>
     <div *ngIf="article.type == 'book'">ISBN: {{article.type == 'book'? article?.isbn: ""}}</div>
+    <div *ngIf="article.type == 'lp'">Artist: {{article.type == 'lp'? article?.artist: ""}}</div>
     <div *ngIf="article.type == 'lp'">Genre: {{article.type == 'lp'? article?.genre: ""}}</div>
     <div *ngIf="article.type == 'game'">Genre: {{article.type == 'game'? article?.genre: ""}}</div>
 

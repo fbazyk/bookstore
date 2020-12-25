@@ -25,7 +25,12 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
   private subs: Subscription[] = new Array<Subscription>();
   type: string;
   id: number;
-  article: Article;
+  article: Article = {
+    id: 0,
+    type: "BOOK",
+    title: "",
+    price: 0
+  };
   reviews: Review[];
   form: Form;
   reviewsExist: boolean;
@@ -48,34 +53,20 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
     let routeSub = this.route.params.subscribe(params => {
       this.type = params['type'];
       this.id = +params['id']; // (+) converts string 'id' to a number
-      this.article = this.articleService.getArticle(params['type'], params['id']);
-
+      this.articleService.getArticleFromServer(params['type'], params['id']).subscribe((value: Article) => {
+        this.article = value;
+        this.applyFavorite()
+      });
 
 
       this.reviewService.getReviews(params['type'], params['id']);
     });
-    let userSub = this.userService.isAdmin().subscribe(isAdmin => {
+    let userIsAdminSub = this.userService.isAdmin().subscribe(isAdmin => {
       this.showAdminControls = isAdmin
     });
-    this.userService.currentUser.subscribe(user => {
-      if(!!user){
-      switch (this.article.type.toUpperCase()) {
-        case 'BOOK': {
-          console.log(this.article.type)
-          this.isFavorite = this.userService.currentUserValue.favoriteBooks.map((value: Article) => value.id).includes(this.article.id)
-          break;
-        }
-        case 'GAME': {
-          this.isFavorite = this.userService.currentUserValue.favoriteGames.map((value: Article) => value.id).includes(this.article.id)
-          break;
-        }
-        case 'LP': {
-          this.isFavorite = this.userService.currentUserValue.favoriteLps.map((value: Article) => value.id).includes(this.article.id);
-          break;
-        }
-      }
-      }else {
-        console.log(user);
+    let userSub = this.userService.currentUser.subscribe(value => {
+      if (!!value) {
+        this.applyFavorite()
       }
     })
 
@@ -97,10 +88,28 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
       }
     })
     this.subs.push(reviewSub);
-    this.subs.push(routeSub);
     this.subs.push(userSub);
+    this.subs.push(routeSub);
+    this.subs.push(userIsAdminSub);
   }
 
+  applyFavorite() {
+    switch (this.article.type.toUpperCase()) {
+      case 'BOOK': {
+        console.log(this.article.type)
+        this.isFavorite = this.userService.currentUserValue.favoriteBooks.map((value: Article) => value.id).includes(this.article.id)
+        break;
+      }
+      case 'GAME': {
+        this.isFavorite = this.userService.currentUserValue.favoriteGames.map((value: Article) => value.id).includes(this.article.id)
+        break;
+      }
+      case 'LP': {
+        this.isFavorite = this.userService.currentUserValue.favoriteLps.map((value: Article) => value.id).includes(this.article.id);
+        break;
+      }
+    }
+  }
 
   ngOnDestroy(): void {
     this.reviewService.reviews.next(null)

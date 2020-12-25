@@ -12,6 +12,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {ArticleService} from "../service/article.service";
 import * as moment from 'moment';
 import {Location} from "@angular/common";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-cart',
@@ -26,6 +27,8 @@ export class CartComponent implements OnInit {
   //May be null?
   openOrder: OrderDTO;
   dataSource: MatTableDataSource<OrderItem>;
+  private subscriptionRegistry: Subscription[] = new Array<Subscription>();
+
   displayedColumns: string[] = ["articleId", "articleType", "title", "price", "quantity", "itemtotal"]
   displayQuantity: boolean = true;
   cartDate: Date;
@@ -55,33 +58,27 @@ export class CartComponent implements OnInit {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator.pageSize = 9;
     this.dataSource.connect();
-    this.getCart()
-    this.cartService.openOrder.subscribe(value => {
-      if (!!value) {
-        this.openOrder = value;
+    this.cartService.getCart()
+
+    let orderSub = this.cartService.openOrderBS.subscribe(order => {
+      if (!!order) {
+        this.openOrder = order;
         this.cartDate = new Date(this.openOrder.cartDate)
         this.cartDateFormatted = moment(this.cartDate).format('DD/MM/YYYY HH:MM');
+
         if (this.openOrder.orderItems.length > 0) {
+          console.log(this.openOrder.orderItems.length)
           this.openOrder.orderItems.forEach(orderItem => {
-            orderItem.title = this.articleService.getArticle(orderItem.articleType, orderItem.articleId).title;
             orderItem.editQuantity = false;
-
-            if (orderItem.articleType == 'BOOK') {
-              this.booksQuantity = this.booksQuantity + orderItem.quantity;
-              this.booksTotal = this.booksTotal + (orderItem.quantity * orderItem.price);
-            }
-            if (orderItem.articleType == 'GAME') {
-              this.gamesQuantity = this.gamesQuantity + orderItem.quantity;
-              this.gamesTotal = this.gamesTotal + (orderItem.quantity * orderItem.price);
-            }
-            if (orderItem.articleType == 'LP') {
-              this.lpsQuantity = this.lpsQuantity + orderItem.quantity;
-              this.lpsTotal = this.lpsTotal + (orderItem.quantity * orderItem.price);
-            }
-
-
-            this.dataSource.data = this.openOrder?.orderItems;
+            this.articleService
+              .getArticleFromServer(orderItem.articleType, orderItem.articleId)
+              .subscribe((value1:Article) => {
+                console.log(value1)
+                orderItem.title = value1.title;
+              })
+            this.updateDisplayedQuantity();
           })
+          this.dataSource.data = this.openOrder?.orderItems;
         } else {
           this.dataSource.data = []
           // this.table.renderRows();
@@ -91,10 +88,8 @@ export class CartComponent implements OnInit {
       }
     })
 
-  }
+    this.subscriptionRegistry.push(orderSub)
 
-  private getCart() {
-    this.cartService.getCart();
   }
 
   //TODO Beautify OrderTotal,
@@ -184,7 +179,7 @@ export class CartComponent implements OnInit {
   emptyCart() {
     this.http.delete(`${environment.apiUrl}/order`).subscribe(value => {
       console.log(value);
-      this.getCart()
+      this.cartService.getCart()
       this.booksTotal = 0;
       this.booksQuantity = 0;
       this.gamesTotal = 0;
@@ -192,5 +187,9 @@ export class CartComponent implements OnInit {
       this.lpsTotal = 0;
       this.lpsQuantity = 0;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptionRegistry.forEach(subscription => subscription.unsubscribe())
   }
 }

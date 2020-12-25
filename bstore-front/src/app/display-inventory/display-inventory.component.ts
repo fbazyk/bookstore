@@ -67,12 +67,8 @@ export class DisplayInventoryComponent implements OnInit, OnDestroy {
     this.providedType.subscribe(type => {
       this.displayedColumns = this.displayedColumnsMap.get(type);
     })
-    console.log("BEFORE SUBSCRIPTION")
     this.paginator.page.subscribe(value => {
-      console.log("IN SUBSCRIPTION")
-      console.log(value)
       this.articleService.pageRequest.next({pageIndex: value.pageIndex+1, pageSize: this.paginator.pageSize })
-      // this.articleService.findPaged(value.pageIndex+1, this.paginator.pageSize)
     })
 
 
