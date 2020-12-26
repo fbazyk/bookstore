@@ -101,7 +101,8 @@ export class ArticleService implements OnInit {
       })
   }
 
-  private findCategoryFilteredPaged(category, filter, psize, page) {
+  public findCategoryFilteredPaged(category, filter, psize, page) {
+    console.log("FIND CATEGORY FILTERED PAGED")
     console.log(category);
     console.log(filter);
     console.log(psize);

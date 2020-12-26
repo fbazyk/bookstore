@@ -15,16 +15,16 @@ public class SearchTitleListener {
     @PreUpdate
     public void setSearchTitle(Article article) {
 
-        String searchTitle = article.getTitle().replaceAll("[^a-zA-Z0-9]", " ").toLowerCase();
+        String searchTitle = article.getTitle().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
 
         if(article instanceof Book){
-            searchTitle = searchTitle + ((Book) article).getAuthor().replaceAll("[^a-zA-Z0-9]", " ").toLowerCase();
+            searchTitle = searchTitle + ((Book) article).getAuthor().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
         }
         if(article instanceof Game){
-            searchTitle = searchTitle + ((Game) article).getPublisher().replaceAll("[^a-zA-Z0-9]", " ").toLowerCase();
+            searchTitle = searchTitle + ((Game) article).getPublisher().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
         }
         if(article instanceof LP){
-            searchTitle = searchTitle + ((LP) article).getArtist().replaceAll("[^a-zA-Z0-9]", " ").toLowerCase();
+            searchTitle = searchTitle + ((LP) article).getArtist().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
         }
         article.setSearchTitle(searchTitle);
 

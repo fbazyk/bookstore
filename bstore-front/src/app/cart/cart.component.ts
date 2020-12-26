@@ -158,11 +158,18 @@ export class CartComponent implements OnInit {
       // this.dataSource.data = []
       this.updateDisplayedQuantity();
     }, (error: HttpErrorResponse) => {
+      this.cartService.getCart();
+      this.updateDisplayedQuantity();
+
       if (error.status == 417) {
         console.log(error);
         this.cartService.getCart();
         this.updateDisplayedQuantity();
         let actionSnackBar = this.snackBar.open(`Some items were not available at supplier and were removed`, "", {duration: 5000})
+      } else if (error.status == 400){
+        let actionSnackBar = this.snackBar.open(`Bad Request`, "", {duration: 5000})
+      } else if(error.status == 409){
+        let actionSnackBar = this.snackBar.open(`Supplier Service Unavailable`, "", {duration: 5000})
       }
     })
   }

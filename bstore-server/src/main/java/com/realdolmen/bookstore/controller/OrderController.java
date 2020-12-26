@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.ResourceAccessException;
 
 
 @CrossOrigin(origins = "http://localhost:4201")
@@ -101,6 +102,8 @@ public class OrderController {
 
         } catch (QuantityNotAvailableException ex){
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(false);
+        } catch(ResourceAccessException ex){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(false);
         }
         catch (Exception ex){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

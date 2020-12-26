@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -97,6 +99,7 @@ public class OrderService {
         return orderTotal;
     }
 
+    @Transactional
     public Order placeOrder(User user) throws Exception {
         Order order = this.findOpenOrder();
         if(order.getOrderItems().size() > 0){
@@ -115,6 +118,9 @@ public class OrderService {
                 this.orderRepository.save(order);
 //                this.saveOrder(order);
                 throw exception;
+            } catch (ResourceAccessException ex){
+                logger.debug("Exception was thrown: {}", ex.getMessage());
+                throw ex;
             }
         } else throw new Exception ("Order should have items");
 

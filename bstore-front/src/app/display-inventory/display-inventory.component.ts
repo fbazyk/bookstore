@@ -35,7 +35,6 @@ export class DisplayInventoryComponent implements OnInit, OnDestroy {
   showAdminControls: boolean = false;
 
 
-
   @Input()
   providedType: BehaviorSubject<string>;
   // articleType: BehaviorSubject<string> = new BehaviorSubject<string>('all');
@@ -51,7 +50,13 @@ export class DisplayInventoryComponent implements OnInit, OnDestroy {
     // this.dataSource.sort = this.sort;
     // this.dataSource.paginator.pageSize = 5;
     // this.dataSource.connect();
-    this.articleService.pagedArticles.subscribe((value:ArticlesPage) => {
+    this.articleService.findCategoryFilteredPaged(
+      this.articleService.selectedCategory.value,
+      this.articleService.filterValue.value,
+      this.articleService.pageRequest.value.pageSize,
+      this.articleService.pageRequest.value.pageIndex
+    )
+    let articlesSub = this.articleService.pagedArticles.subscribe((value:ArticlesPage) => {
       console.log(value);
       if(!!value){
         this.dataSource.data = value.articles;
@@ -63,18 +68,19 @@ export class DisplayInventoryComponent implements OnInit, OnDestroy {
       }
 
     })
-
-    this.providedType.subscribe(type => {
+    let typeSub = this.providedType.subscribe(type => {
       this.displayedColumns = this.displayedColumnsMap.get(type);
     })
-    this.paginator.page.subscribe(value => {
+    let paginatorSub = this.paginator.page.subscribe(value => {
       this.articleService.pageRequest.next({pageIndex: value.pageIndex+1, pageSize: this.paginator.pageSize })
     })
-
+    this.subscriptions.push(articlesSub);
+    this.subscriptions.push(typeSub);
+    this.subscriptions.push(paginatorSub);
 
   }
 
-  constructor(private articleService: ArticleService, private router: Router,
+  constructor(public articleService: ArticleService, private router: Router,
   ) {
 
     this.provideDisplayedColumns();

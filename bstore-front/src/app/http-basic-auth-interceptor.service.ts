@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {Observable, of} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,8 @@ export class HttpBasicAuthInterceptorService implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let basicAuthString = localStorage.getItem("basicAuthString");
+    if (req.headers.get('No-Auth') == "True")
+      return next.handle(req.clone())
     if (!!basicAuthString) {
       let updatedReq = req.clone({
         setHeaders: {
@@ -19,6 +21,8 @@ export class HttpBasicAuthInterceptorService implements HttpInterceptor {
         }
       })
       return next.handle(updatedReq);
+    } else {
+      return of({}) as Observable<HttpEvent<any>>;
     }
   }
 }
