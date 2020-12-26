@@ -10,6 +10,8 @@ import {errorObject} from "rxjs/internal-compatibility";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
 import {ArticlesPage, PageRequest} from "../model/ArticlesPage";
+import {provideEmptySearchState, SearchState} from "../model/SearchState";
+import {SearchDTO} from "../model/SearchDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +20,7 @@ export class ArticleService implements OnInit {
   providedCategoryState: string = "all";
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   filterValue: BehaviorSubject<String> = new BehaviorSubject<String>("")
+  searchState: BehaviorSubject<SearchDTO> = new BehaviorSubject<SearchDTO>(null);
 
   private allArticles: BehaviorSubject<Array<Article>> = new BehaviorSubject<Array<Article | Book | Game | Lp>>([{
     type: 'book',
@@ -74,12 +77,13 @@ export class ArticleService implements OnInit {
   }
 
   combineCategoryPaging() {
-    const result = this.pageRequest.pipe(withLatestFrom(this.selectedCategory, this.filterValue))
+    const result = this.pageRequest.pipe(withLatestFrom(this.selectedCategory, this.filterValue, this.searchState))
 
     // const result2 = combineLatest([pageRequest, type]);
-    result.subscribe(([pageRequest, category, filter]) => {
+    result.subscribe(([pageRequest, category, filter, searchState]) => {
       // this.findPagedCategory(pageRequest.pageIndex, pageRequest.pageSize, category)
-      this.findCategoryFilteredPaged(category, filter, pageRequest.pageSize, pageRequest.pageIndex)
+      // this.findCategoryFilteredPaged(category, filter, pageRequest.pageSize, pageRequest.pageIndex)
+      this.search(pageRequest.pageIndex, pageRequest.pageSize, category, filter, searchState);
     })
     this.selectedCategory.subscribe(category => {
       this.findCategoryFilteredPaged(this.selectedCategory.value, this.filterValue.value, this.pageRequest.value.pageSize, 1)
@@ -88,9 +92,25 @@ export class ArticleService implements OnInit {
     this.filterValue.pipe(debounceTime(750)).subscribe(filter => {
       this.findCategoryFilteredPaged(this.selectedCategory.value, filter, this.pageRequest.value.pageSize, 1)
     })
+    this.searchState.subscribe(searchDTO => {
+      console.log("New SearchDTO is {}", searchDTO);
+      if(!!searchDTO){
+        this.search(1, this.pageRequest.value.pageSize, this.selectedCategory.value, this.filterValue.value, searchDTO)
+      }
+    })
 
   }
 
+  search(page, psize, category, filter, searchDTO){
+    // let page = this.pageRequest.value.pageIndex;
+    // let psize = this.pageRequest.value.pageSize;
+    // let category = this.selectedCategory.value;
+    // let filter = this.filterValue.value;
+    this.http.post(`${environment.apiUrl}/article/search?page=${page}&psize=${psize}&category=${category}&filter=${filter}`, this.searchState.value).subscribe((value:ArticlesPage) => {
+      console.log("Response: {}", value);
+      this.pagedArticles.next(value);
+    })
+  }
 
   findPagedCategory(page, psize, selectedCategory) {
     return this.http
@@ -114,6 +134,7 @@ export class ArticleService implements OnInit {
         this.pagedArticles.next(value);
       })
   }
+
 
   subscribeToCategoryChanges() {
     this.selectedCategory.subscribe(value => {

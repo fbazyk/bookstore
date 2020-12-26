@@ -1,5 +1,6 @@
 package com.realdolmen.bookstore.service;
 
+import com.realdolmen.bookstore.dto.SearchDTO;
 import com.realdolmen.bookstore.exception.ArticleNotFoundException;
 import com.realdolmen.bookstore.exception.UnableToUpdateArticleException;
 import com.realdolmen.bookstore.model.*;
@@ -57,11 +58,12 @@ public class ArticleService {
                 .collect(Collectors.toList());
         return articles;
     }
+
     public ArticlesPage findAllPaged(Long page, Long psize) {
         List<Book> books = this.bookRepository.findAll();
         List<Game> games = this.gameRepository.findAll();
         List<LP> lps = this.lpRepository.findAll();
-        Long offset = (page-1) * psize;
+        Long offset = (page - 1) * psize;
         List<Article> articles = Stream.of(books, games, lps)
                 .flatMap(Collection::stream)
                 .skip(offset).limit(psize)
@@ -70,7 +72,7 @@ public class ArticleService {
         resultPage.setArticles(articles);
         resultPage.setTotalArticles(Stream.of(books, games, lps).flatMap(Collection::stream).count());
         resultPage.setCurrentPage(page);
-        resultPage.setTotalPages((long)Math.ceil((resultPage.getTotalArticles()/(double)psize)));
+        resultPage.setTotalPages((long) Math.ceil((resultPage.getTotalArticles() / (double) psize)));
         return resultPage;
     }
 
@@ -78,27 +80,27 @@ public class ArticleService {
         List<Book> books = new ArrayList<>();
         List<Game> games = new ArrayList<>();
         List<LP> lps = new ArrayList<>();
-        switch (category.toUpperCase()){
+        switch (category.toUpperCase()) {
             case "BOOK": {
                 books = this.bookRepository.findAll();
                 break;
             }
-            case "GAME":{
+            case "GAME": {
                 games = this.gameRepository.findAll();
                 break;
             }
-            case "LP":{
+            case "LP": {
                 lps = this.lpRepository.findAll();
                 break;
             }
-            case "ALL":{
+            case "ALL": {
                 books = this.bookRepository.findAll();
                 games = this.gameRepository.findAll();
                 lps = this.lpRepository.findAll();
                 break;
             }
         }
-        Long offset = (page-1) * psize;
+        Long offset = (page - 1) * psize;
         List<Article> articles = Stream.of(books, games, lps)
                 .flatMap(Collection::stream)
                 .skip(offset).limit(psize)
@@ -107,7 +109,7 @@ public class ArticleService {
         resultPage.setArticles(articles);
         resultPage.setTotalArticles(Stream.of(books, games, lps).flatMap(Collection::stream).count());
         resultPage.setCurrentPage(page);
-        resultPage.setTotalPages((long)Math.ceil((resultPage.getTotalArticles()/(double)psize)));
+        resultPage.setTotalPages((long) Math.ceil((resultPage.getTotalArticles() / (double) psize)));
         return resultPage;
     }
 
@@ -123,7 +125,7 @@ public class ArticleService {
                 case "LP": {
                     return this.lpRepository.findById(id).get();
                 }
-                default:{
+                default: {
                     throw new ArticleNotFoundException("Wrong category");
                 }
             }
@@ -212,7 +214,7 @@ public class ArticleService {
                     this.bookRepository.saveAndFlush(existingBook);
                     return true;
                 } catch (Exception ex) {
-                       logger.debug(ex.getMessage());
+                    logger.debug(ex.getMessage());
                     throw new UnableToUpdateArticleException();
                 }
             } else if (article instanceof Game) {
@@ -271,7 +273,7 @@ public class ArticleService {
             }
         }
         Sort sort = Sort.by(ASC, "id");
-        if(sortby != null && sortorder != null){
+        if (sortby != null && sortorder != null) {
             sort = Sort.by(sortorder, sortby);
         }
 
@@ -353,27 +355,27 @@ public class ArticleService {
         List<Book> books = new ArrayList<>();
         List<Game> games = new ArrayList<>();
         List<LP> lps = new ArrayList<>();
-        switch (category.toUpperCase()){
+        switch (category.toUpperCase()) {
             case "BOOK": {
                 books = this.bookRepository.findAll();
                 break;
             }
-            case "GAME":{
+            case "GAME": {
                 games = this.gameRepository.findAll();
                 break;
             }
-            case "LP":{
+            case "LP": {
                 lps = this.lpRepository.findAll();
                 break;
             }
-            case "ALL":{
+            case "ALL": {
                 books = this.bookRepository.findAll();
                 games = this.gameRepository.findAll();
                 lps = this.lpRepository.findAll();
                 break;
             }
         }
-        Long offset = (page-1) * psize;
+        Long offset = (page - 1) * psize;
         //Filter Articles
         List<Article> filteredArticles = Stream.of(books, games, lps)
                 .flatMap(Collection::stream)
@@ -391,7 +393,155 @@ public class ArticleService {
         resultPage.setArticles(pagedArticles);
         resultPage.setTotalArticles(Stream.of(filteredArticles).flatMap(Collection::stream).count());
         resultPage.setCurrentPage(page);
-        resultPage.setTotalPages((long)Math.ceil((resultPage.getTotalArticles()/(double)psize)));
+        resultPage.setTotalPages((long) Math.ceil((resultPage.getTotalArticles() / (double) psize)));
+        return resultPage;
+    }
+
+    public ArticlesPage search(Long page, Long psize, String category, String filter, SearchDTO searchDto) {
+        logger.debug("Page {}", page);
+        logger.debug("Page Size{}", psize);
+        logger.debug("Category {}", category);
+        logger.debug("Filter {}", filter);
+        logger.debug("Search {}", searchDto);
+
+        Long articleIdV = null;
+        BigDecimal minpriceV = null;
+        BigDecimal maxpriceV = null;
+        String titleV = "";
+        String type = null;
+        String sortby = null;
+        String sortorder = null;
+        logger.debug(type);
+
+        if (searchDto.getArticleType() != null) {
+            type = searchDto.getArticleType();
+        }
+        if (searchDto.getArticleId() != null) {
+            articleIdV = searchDto.getArticleId();
+        }
+        if (!searchDto.getSearchTitle().isEmpty()) {
+            titleV = searchDto.getSearchTitle().replaceAll("[^a-zA-Z0-9]", " ").toLowerCase();
+        }
+        if (searchDto.getMinPrice() != null) {
+            minpriceV = BigDecimal.valueOf(searchDto.getMinPrice());
+        }
+        if (searchDto.getMaxPrice() != null) {
+            maxpriceV = BigDecimal.valueOf(searchDto.getMaxPrice());
+        }
+        if (!searchDto.getSortBy().isEmpty()) {
+            sortby = searchDto.getSortBy();
+        }
+        if (!searchDto.getSortOrder().isEmpty()) {
+            sortorder = searchDto.getSortOrder();
+        }
+        Sort sort = Sort.by(ASC, "id");
+        if (sortby != null && sortorder != null) {
+            sort = Sort.by(sortorder, sortby);
+        }
+
+        logger.debug(type);
+
+        List<Article> resultList = new ArrayList<Article>();
+
+        switch (type.toUpperCase()) {
+            case ("ALL"): {
+
+                List<Book> listb = this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
+                List<Game> listg = this.gameRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
+                List<LP> listl = this.lpRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
+                if (listb != null) {
+                    resultList.addAll(listb);
+                }
+                if (listg != null) {
+                    resultList.addAll(listg);
+                }
+                if (listl != null) {
+                    resultList.addAll(listl);
+                }
+                break;
+            }
+            case ("BOOK"): {
+                resultList.addAll(this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
+                break;
+
+            }
+            case ("GAME"): {
+                resultList.addAll(this.gameRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
+                break;
+
+            }
+            case ("LP"): {
+                resultList.addAll(this.lpRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
+                break;
+            }
+        }
+
+
+        Long offset = (page - 1) * psize;
+        //Filter Articles
+        List<Article> filteredArticles = Stream.of(resultList)
+                .flatMap(Collection::stream)
+                .filter(article -> {
+                    logger.debug(article.getSearchTitle());
+                    return article.getSearchTitle().contains(filter.replaceAll("[^a-zA-Z0-9]", " ").toLowerCase());
+                })
+                .collect(Collectors.toList());
+        //TODO Sort articles
+        List<Article> sortedArticles;
+        //TODO select sorting field
+        if(sortby != null && !sortby.isEmpty()){
+            switch (sortby.toUpperCase()){
+                case ("TYPE"): {
+                    sortedArticles         = Stream.of(filteredArticles)
+                            .flatMap(Collection::stream)
+                            .sorted((o1, o2) -> {
+                                return o1.getClass().getName().compareTo(o2.getClass().getName());
+                            }).collect(Collectors.toList());
+                    break;
+                }
+                case ("ID"): {
+                    sortedArticles         = Stream.of(filteredArticles)
+                            .flatMap(Collection::stream)
+                            .sorted((o1, o2) -> {
+                                return o1.getId().compareTo(o2.getId());
+                            }).collect(Collectors.toList());
+                    break;
+                }
+                case ("TITLE"):{
+                    sortedArticles         = Stream.of(filteredArticles)
+                            .flatMap(Collection::stream)
+                            .sorted((o1, o2) -> {
+                                return o1.getSearchTitle().compareTo(o2.getSearchTitle());
+                            }).collect(Collectors.toList());
+                    break;
+                }
+                case ("PRICE"):{
+                    sortedArticles         = Stream.of(filteredArticles)
+                            .flatMap(Collection::stream)
+                            .sorted((o1, o2) -> {
+                                return o1.getPrice().compareTo(o2.getPrice());
+                            }).collect(Collectors.toList());
+                    break;
+                }
+                default :{
+                    sortedArticles = filteredArticles;
+                }
+            }
+        } else {
+            sortedArticles = filteredArticles;
+        }
+
+
+        //Page Filtered Articles
+        List<Article> pagedArticles = Stream.of(sortedArticles)
+                .flatMap(Collection::stream)
+                .skip(offset).limit(psize).collect(Collectors.toList());
+
+        ArticlesPage resultPage = new ArticlesPage();
+        resultPage.setArticles(pagedArticles);
+        resultPage.setTotalArticles(Stream.of(filteredArticles).flatMap(Collection::stream).count());
+        resultPage.setCurrentPage(page);
+        resultPage.setTotalPages((long) Math.ceil((resultPage.getTotalArticles() / (double) psize)));
         return resultPage;
     }
 

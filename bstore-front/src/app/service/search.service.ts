@@ -17,10 +17,14 @@ export class SearchService {
   constructor(private articleService: ArticleService,
               private http: HttpClient,
               public snackBar: MatSnackBar) {
-    this.searchState.subscribe(value => {
-      console.log(value)
-    })
+    // this.searchState.subscribe(value => {
+    //   console.log(value)
+    // })
     console.log("SEARCH SERVICE INITIALIZED!!!")
+
+  }
+
+  search(){
 
   }
 

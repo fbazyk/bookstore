@@ -1,5 +1,6 @@
 package com.realdolmen.bookstore.controller;
 
+import com.realdolmen.bookstore.dto.SearchDTO;
 import com.realdolmen.bookstore.exception.ArticleNotFoundException;
 import com.realdolmen.bookstore.exception.UnableToUpdateArticleException;
 import com.realdolmen.bookstore.model.Article;
@@ -133,8 +134,10 @@ public class ArticleController {
             return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/article/search")
+    @PostMapping("/article/oldsearch")
     public ResponseEntity<List<Article>> searchArticle(@RequestBody Map<String,String> searchFields) {
+       logger.debug("Search initiated");
+
         List<Article> resultLsit = this.articleService.search(searchFields);
         //todo catch custom exception and throw bad request "field not provided"
         if(resultLsit != null && resultLsit.size()>0){
@@ -143,6 +146,21 @@ public class ArticleController {
         } else {
             return ResponseEntity.noContent().build();
         }
+
+    }
+
+    @PostMapping("/article/search")
+    public ResponseEntity<ArticlesPage> search(@RequestParam Long page,
+                                               @RequestParam Long psize,
+                                               @RequestParam String category,
+                                               @RequestParam String filter,
+                                               @RequestBody SearchDTO searchState) {
+       logger.debug("Search initiated {}", searchState);
+        ArticlesPage articlesPage = new ArticlesPage();
+        articlesPage.setCurrentPage(1l);
+        articlesPage.setTotalPages(10l);
+        ArticlesPage resultLsit = this.articleService.search(page, psize, category, filter, searchState);
+        return ResponseEntity.ok(resultLsit);
 
     }
 }
