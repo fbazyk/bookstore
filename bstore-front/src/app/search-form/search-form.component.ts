@@ -63,13 +63,13 @@ export class SearchFormComponent implements OnInit, OnDestroy {
     private articleService: ArticleService
   ) {
 
-
   }
 
   ngOnInit(): void {
     console.log("INITIALIZE SEARCH FORM")
     this.searchForm = this.fb.group(this.clearFormValue);
     console.log("SEARCH FORM INITIALIZED")
+    this.search();
   }
   /**
    * Send existing NewState object to parent component
@@ -132,7 +132,7 @@ export class SearchFormComponent implements OnInit, OnDestroy {
   clearForm() {
     // this.searchService.searchState.next(provideEmptySearchState())
     // this.newState = this.providedState;
-    // this.searchForm.reset()
+    this.searchForm.reset(this.clearFormValue)
     this.searchForm.controls['type'].setValidators(Validators.required)
     this.searchForm.controls['id'].setValidators(Validators.min(1))
     this.searchForm.controls['title'].setValidators(Validators.minLength(1))
@@ -141,6 +141,7 @@ export class SearchFormComponent implements OnInit, OnDestroy {
     this.searchForm.setValidators([atLeastTwo]);
     // this.subscribeToFormChanges();
     this.showForm = true;
+    this.search()
   }
 
   hideForm() {

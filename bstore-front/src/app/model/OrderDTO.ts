@@ -1,3 +1,5 @@
+import {Article} from "./Articles";
+
 export interface OrderDTO{
   cartDate: string
   orderDate: string
@@ -13,5 +15,7 @@ export interface OrderItem{
   id: number
   price: number
   quantity: number
+  article: Article
   editQuantity?: boolean
 }
+

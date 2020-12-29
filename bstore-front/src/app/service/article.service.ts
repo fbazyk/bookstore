@@ -20,23 +20,31 @@ export class ArticleService implements OnInit {
   providedCategoryState: string = "all";
   isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   filterValue: BehaviorSubject<String> = new BehaviorSubject<String>("")
-  searchState: BehaviorSubject<SearchDTO> = new BehaviorSubject<SearchDTO>(null);
-
-  private allArticles: BehaviorSubject<Array<Article>> = new BehaviorSubject<Array<Article | Book | Game | Lp>>([{
-    type: 'book',
-    id: 1,
-    title: '',
-    price: 0,
-    supplierId: '111',
-    author: '',
-    isbn: '123123123',
-    pages: 100
-  }]);
+  searchState: BehaviorSubject<SearchDTO> = new BehaviorSubject<SearchDTO>({
+    articleId: null,
+    articleType: "all",
+    maxPrice: null,
+    minPrice: null,
+    searchTitle: "",
+    sortBy: "",
+    sortOrder: ""
+  });
+  //
+  // private allArticles: BehaviorSubject<Array<Article>> = new BehaviorSubject<Array<Article | Book | Game | Lp>>([{
+  //   type: 'book',
+  //   id: 1,
+  //   title: '',
+  //   price: 0,
+  //   supplierId: '111',
+  //   author: '',
+  //   isbn: '123123123',
+  //   pages: 100
+  // }]);
   public pagedArticles: BehaviorSubject<ArticlesPage> = new BehaviorSubject<ArticlesPage>(null);
 
-  private displayedArticles: BehaviorSubject<Array<Article>> = new BehaviorSubject<Array<Article>>(this.allArticles.getValue());
-  public allArticlesO: Observable<Array<Article>> = this.allArticles.asObservable();
-  public displayedArticlesO: Observable<Array<Article>> = this.displayedArticles.asObservable();
+  // private displayedArticles: BehaviorSubject<Array<Article>> = new BehaviorSubject<Array<Article>>(this.allArticles.getValue());
+  // public allArticlesO: Observable<Array<Article>> = this.allArticles.asObservable();
+  // public displayedArticlesO: Observable<Array<Article>> = this.displayedArticles.asObservable();
 
   public selectedCategory: BehaviorSubject<string> = new BehaviorSubject<string>(this.providedCategoryState);
 
@@ -86,11 +94,15 @@ export class ArticleService implements OnInit {
       this.search(pageRequest.pageIndex, pageRequest.pageSize, category, filter, searchState);
     })
     this.selectedCategory.subscribe(category => {
-      this.findCategoryFilteredPaged(this.selectedCategory.value, this.filterValue.value, this.pageRequest.value.pageSize, 1)
-      ;
+      if(!!category){
+        this.search(1, this.pageRequest.value.pageSize, category, this.filterValue.value,  this.searchState.value);
+      }
     })
     this.filterValue.pipe(debounceTime(750)).subscribe(filter => {
-      this.findCategoryFilteredPaged(this.selectedCategory.value, filter, this.pageRequest.value.pageSize, 1)
+      if(!!filter){
+        this.search(1, this.pageRequest.value.pageSize, this.selectedCategory.value, filter,  this.searchState.value)
+      }
+      // this.findCategoryFilteredPaged(this.selectedCategory.value, filter, this.pageRequest.value.pageSize, 1)
     })
     this.searchState.subscribe(searchDTO => {
       console.log("New SearchDTO is {}", searchDTO);
@@ -132,52 +144,6 @@ export class ArticleService implements OnInit {
       .subscribe(value => {
         console.log(value)
         this.pagedArticles.next(value);
-      })
-  }
-
-
-  subscribeToCategoryChanges() {
-    this.selectedCategory.subscribe(value => {
-      this.displayedArticles.next(this.allArticles.getValue().filter(value1 => {
-        return value1.type == value || value == 'all'
-      }));
-    })
-  }
-
-
-  subscribeToAllArticlesUpdate() {
-    this.allArticles.subscribe(value => {
-      this.displayedArticles.next(value)
-    })
-  }
-
-  // findByCategory(){
-  //   return this.http.post(`${environment.apiUrl}/`)
-  // }
-
-  subscribeTo() {
-    // this.findPaged(1, 5);
-
-    const list = this.allArticles;
-    const type = this.selectedCategory;
-    const pageRequest = this.pageRequest;
-
-    const result = combineLatest([list, type]);
-    result.subscribe(([articleList, categoryType]) => {
-      this.displayedArticles.next(articleList.filter(article => {
-        return !!article && article.type == categoryType || categoryType == 'all'
-      }))
-    })
-  }
-
-  findAll() {
-    return this.http.get<Array<Article>>(`${environment.apiUrl}/articles`).pipe(
-      tap(x => console.log("Piped from response", x, "Type of X = ", typeof x)),
-      map(this.typeArticles),
-      tap(x => console.log("Piped from cast", x, "Type of X = ", typeof x)),)
-      .subscribe(result => {
-        this.allArticles.next(result);
-        console.log("In Subscription:", result)
       })
   }
 
@@ -242,10 +208,10 @@ export class ArticleService implements OnInit {
       let successSnackBar = this.snackBar.open(`${response}`, "", {duration: 2500})
       this.selectedCategory.next(type);
       //find where it was in currently displayed articles
-      let index: number = this.allArticles.getValue().findIndex(value => {
-        return value.type == type && value.id == id;
-      });
-      this.allArticles.next(this.allArticles.getValue().splice(index, 1));
+      // let index: number = this.allArticles.getValue().findIndex(value => {
+      //   return value.type == type && value.id == id;
+      // });
+      // this.allArticles.next(this.allArticles.getValue().splice(index, 1));
       this.isLoading.next(false);
     }, (error: HttpErrorResponse) => {
       console.log(error)
@@ -313,8 +279,8 @@ export class ArticleService implements OnInit {
    * */
   foundArticles(foundArticles: Array<Article>) {
     console.log("ArticleService accepts foundArticles: ", foundArticles);
-    this.allArticles.next(foundArticles);
-    this.selectedCategory.next('all');
+    // this.allArticles.next(foundArticles);
+    // this.selectedCategory.next('all');
   }
 
 }

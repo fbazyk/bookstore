@@ -1,6 +1,8 @@
 package com.realdolmen.bookstore.service;
 
+import com.realdolmen.bookstore.dto.CartArticles;
 import com.realdolmen.bookstore.dto.OrderItemDTO;
+import com.realdolmen.bookstore.exception.ArticleNotFoundException;
 import com.realdolmen.bookstore.exception.QuantityNotAvailableException;
 import com.realdolmen.bookstore.model.Article;
 import com.realdolmen.bookstore.model.Order;
@@ -20,6 +22,11 @@ import org.springframework.web.client.ResourceAccessException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class OrderService {
@@ -92,7 +99,7 @@ public class OrderService {
         for (OrderItem item : order.getOrderItems()) {
             orderTotal = orderTotal.add(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
         }
-        if(order.getOrderItems().size() == 0){
+        if (order.getOrderItems().size() == 0) {
             orderTotal = BigDecimal.ZERO;
         }
         logger.debug("OrderTotal calculated: {}", orderTotal.toString());
@@ -102,32 +109,32 @@ public class OrderService {
     @Transactional
     public Order placeOrder(User user) throws Exception {
         Order order = this.findOpenOrder();
-        if(order.getOrderItems().size() > 0){
+        if (order.getOrderItems().size() > 0) {
             order.setOrderDate(Instant.now());
 //            this.saveOrder(order);
             this.orderRepository.save(order);
-            try{
+            try {
                 this.mockSupplierService.placeOrder(order);
-            } catch (QuantityNotAvailableException exception){
+            } catch (QuantityNotAvailableException exception) {
                 order = this.orderRepository.findById(order.getOrderId()).get();
                 order.setOrderDate(null);
-                for (OrderItem orderItem : exception.getItemSet() ){
+                for (OrderItem orderItem : exception.getItemSet()) {
                     order.getOrderItems().remove(orderItem);
                 }
                 order.setOrderTotal(this.calcTotal(order));
                 this.orderRepository.save(order);
 //                this.saveOrder(order);
                 throw exception;
-            } catch (ResourceAccessException ex){
+            } catch (ResourceAccessException ex) {
                 logger.debug("Exception was thrown: {}", ex.getMessage());
                 throw ex;
             }
-        } else throw new Exception ("Order should have items");
+        } else throw new Exception("Order should have items");
 
         return order;
     }
 
-    public boolean emptyCart(){
+    public boolean emptyCart() {
         Order order = this.findOpenOrder();
         this.orderRepository.delete(order);
 
@@ -224,5 +231,41 @@ public class OrderService {
         this.orderItemRepository.delete(orderItem);
     }
 
-
+    /**
+     * Accept Paging data:
+     * <p>
+     * Cycle OrderItems from an open order
+     * find each article by type and id
+     */
+    public CartArticles getCartArticles(Long page, Long psize) {
+        Order openOrder = findOpenOrder();
+        Set<Article> orderArticles = openOrder.getOrderItems()
+                .stream()
+                .map(orderItem -> {
+                    try {
+                        return this.articleService
+                                .getArticle(orderItem.getArticleType().name(), orderItem.getArticleId());
+                    } catch (ArticleNotFoundException anfex) {
+                        logger.debug("Article not found {}", anfex.getMessage());
+                        return null;
+                    }
+                }).sorted((o1, o2) -> {
+                    return o1.getId().compareTo(o2.getId());
+                }).collect(Collectors.toSet());
+        logger.debug("GETCARTARTICLES::orderArticles size is: {}",orderArticles.size());
+        logger.debug("GETCARTARTICLES::orderArticles contains null? {}",orderArticles.contains(null));
+        //Page the stream
+        Long offset = (page - 1) * psize;
+        Set<Article> pagedArticles = Stream.of(orderArticles)
+                .flatMap(Collection::stream)
+                .skip(offset).limit(psize)
+                .collect(Collectors.toSet());
+        CartArticles resultCartArticles = new CartArticles();
+        resultCartArticles.setArticles(pagedArticles);
+        resultCartArticles.setTotalArticles(Stream.of(orderArticles)
+                .flatMap(Collection::stream).count());
+        resultCartArticles.setCurrentPage(page);
+        resultCartArticles.setTotalPages((long) Math.ceil((resultCartArticles.getTotalArticles() / (double) psize)));
+        return resultCartArticles;
+    }
 }

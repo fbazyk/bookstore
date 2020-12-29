@@ -50,12 +50,12 @@ export class DisplayInventoryComponent implements OnInit, OnDestroy {
     // this.dataSource.sort = this.sort;
     // this.dataSource.paginator.pageSize = 5;
     // this.dataSource.connect();
-    this.articleService.findCategoryFilteredPaged(
-      this.articleService.selectedCategory.value,
-      this.articleService.filterValue.value,
-      this.articleService.pageRequest.value.pageSize,
-      this.articleService.pageRequest.value.pageIndex
-    )
+    // this.articleService.findCategoryFilteredPaged(
+    //   this.articleService.selectedCategory.value,
+    //   this.articleService.filterValue.value,
+    //   this.articleService.pageRequest.value.pageSize,
+    //   this.articleService.pageRequest.value.pageIndex
+    // )
     let articlesSub = this.articleService.pagedArticles.subscribe((value:ArticlesPage) => {
       console.log(value);
       if(!!value){
@@ -74,9 +74,9 @@ export class DisplayInventoryComponent implements OnInit, OnDestroy {
     let paginatorSub = this.paginator.page.subscribe(value => {
       this.articleService.pageRequest.next({pageIndex: value.pageIndex+1, pageSize: this.paginator.pageSize })
     })
+    this.subscriptions.push(paginatorSub);
     this.subscriptions.push(articlesSub);
     this.subscriptions.push(typeSub);
-    this.subscriptions.push(paginatorSub);
 
   }
 

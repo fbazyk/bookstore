@@ -10,7 +10,7 @@ insert into books (price, supplier_id, title, search_title, author, isbn, pages)
 insert into games (price, supplier_id, title, search_title, genre, minage, publisher) VALUES (10, '323', 'World of Warcraft', 'worldofwarcraftblizzardentertainment', 'MMORPG', 12,  'Blizzard Entertainment');
 insert into games (price, supplier_id, title, search_title, genre, minage, publisher) VALUES (10, '323', 'World of Warcraft:Cataclysm', 'worldofwarcraftcataclysm', 'MMORPG', 12, 'Blizzard Entertainment');
 insert into games (price, supplier_id, title, search_title, genre, minage, publisher) VALUES (10, '323', 'World of Warcraft:Wrath of Lichy Kung', 'worldofwarcraftwrathoflichykung', 'MMORPG', 12,  'Blizzard Entertainment');
-insert into games (price, supplier_id, title, search_title, genre, minage, publisher) VALUES (10, '424', 'Cyberpunk 2077', 'cyberpunk2077cdprojekt', 'RPG', 50,  'CD Projekt');
+insert into games (price, supplier_id, title, search_title, genre, minage, publisher) VALUES (50, '424', 'Cyberpunk 2077', 'cyberpunk2077cdprojekt', 'RPG', 18,  'CD Projekt');
 insert into lps (price, supplier_id, title, search_title, artist, genre) VALUES (15, '299', 'Innuendo', 'innuendoqueen', 'Queen', 'rock');
 insert into lps (price, supplier_id, title, search_title, artist, genre) VALUES (10, '299', 'Oasis of The Wind', 'oasisofthewindtakashikokubo', 'Takashi Kokubo', 'newage');
 insert into lps (price, supplier_id, title, search_title, artist, genre) VALUES (15, '299', 'Dark Side Of The Moon', 'darksideofthemoonpinkfloyd', 'Pink Floyd', 'rock');

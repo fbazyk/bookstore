@@ -495,7 +495,11 @@ public class ArticleService {
                     sortedArticles         = Stream.of(filteredArticles)
                             .flatMap(Collection::stream)
                             .sorted((o1, o2) -> {
-                                return o1.getClass().getName().compareTo(o2.getClass().getName());
+                                if(searchDto.getSortOrder().equals("ASC")){
+                                    return o1.getClass().getName().compareTo(o2.getClass().getName());
+                                } else {
+                                    return o2.getClass().getName().compareTo(o1.getClass().getName());
+                                }
                             }).collect(Collectors.toList());
                     break;
                 }
@@ -503,7 +507,11 @@ public class ArticleService {
                     sortedArticles         = Stream.of(filteredArticles)
                             .flatMap(Collection::stream)
                             .sorted((o1, o2) -> {
-                                return o1.getId().compareTo(o2.getId());
+                                if(searchDto.getSortOrder().equals("ASC")){
+                                    return o1.getId().compareTo(o2.getId());
+                                } else {
+                                    return o2.getId().compareTo(o1.getId());
+                                }
                             }).collect(Collectors.toList());
                     break;
                 }
@@ -511,7 +519,11 @@ public class ArticleService {
                     sortedArticles         = Stream.of(filteredArticles)
                             .flatMap(Collection::stream)
                             .sorted((o1, o2) -> {
-                                return o1.getSearchTitle().compareTo(o2.getSearchTitle());
+                                if(searchDto.getSortOrder().equals("ASC")){
+                                    return o1.getSearchTitle().compareTo(o2.getSearchTitle());
+                                } else {
+                                    return o2.getSearchTitle().compareTo(o1.getSearchTitle());
+                                }
                             }).collect(Collectors.toList());
                     break;
                 }
@@ -519,7 +531,11 @@ public class ArticleService {
                     sortedArticles         = Stream.of(filteredArticles)
                             .flatMap(Collection::stream)
                             .sorted((o1, o2) -> {
-                                return o1.getPrice().compareTo(o2.getPrice());
+                                if(searchDto.getSortOrder().equals("ASC")){
+                                    return o1.getPrice().compareTo(o2.getPrice());
+                                }else {
+                                    return o2.getPrice().compareTo(o1.getPrice());
+                                }
                             }).collect(Collectors.toList());
                     break;
                 }
@@ -530,16 +546,43 @@ public class ArticleService {
         } else {
             sortedArticles = filteredArticles;
         }
-
+        List<Article> categorizedArticles;
+        switch (category.toUpperCase()){
+            case "ALL":{
+                categorizedArticles = sortedArticles;
+                break;
+            }
+            case "BOOK":{
+                categorizedArticles = Stream.of(sortedArticles).flatMap(Collection::stream).filter(article -> {
+                    return article instanceof Book;
+                }).collect(Collectors.toList());
+                break;
+            }
+            case "GAME":{
+                categorizedArticles = Stream.of(sortedArticles).flatMap(Collection::stream).filter(article -> {
+                    return article instanceof Game;
+                }).collect(Collectors.toList());
+                break;
+            }
+            case "LP":{
+                categorizedArticles = Stream.of(sortedArticles).flatMap(Collection::stream).filter(article -> {
+                    return article instanceof LP;
+                }).collect(Collectors.toList());
+                break;
+            }
+            default: {
+                categorizedArticles = sortedArticles;
+            }
+        }
 
         //Page Filtered Articles
-        List<Article> pagedArticles = Stream.of(sortedArticles)
+        List<Article> pagedArticles = Stream.of(categorizedArticles)
                 .flatMap(Collection::stream)
                 .skip(offset).limit(psize).collect(Collectors.toList());
 
         ArticlesPage resultPage = new ArticlesPage();
         resultPage.setArticles(pagedArticles);
-        resultPage.setTotalArticles(Stream.of(filteredArticles).flatMap(Collection::stream).count());
+        resultPage.setTotalArticles(Stream.of(categorizedArticles).flatMap(Collection::stream).count());
         resultPage.setCurrentPage(page);
         resultPage.setTotalPages((long) Math.ceil((resultPage.getTotalArticles() / (double) psize)));
         return resultPage;

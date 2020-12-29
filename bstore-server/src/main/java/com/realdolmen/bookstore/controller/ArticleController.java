@@ -156,9 +156,6 @@ public class ArticleController {
                                                @RequestParam String filter,
                                                @RequestBody SearchDTO searchState) {
        logger.debug("Search initiated {}", searchState);
-        ArticlesPage articlesPage = new ArticlesPage();
-        articlesPage.setCurrentPage(1l);
-        articlesPage.setTotalPages(10l);
         ArticlesPage resultLsit = this.articleService.search(page, psize, category, filter, searchState);
         return ResponseEntity.ok(resultLsit);
 

@@ -61,7 +61,9 @@ export class EditArticleComponent implements OnInit {
         title: 'Please Enter Title'
       };
       if (!!params['type'] && !!params['id']) {
-        this.article = this.articleService.getArticle(this.type, this.id);
+        this.articleService.getArticleFromServer(this.type, this.id).subscribe((value: Article) => {
+          this.article = value;
+        });
         this.populateForm();
       } else {
         this.article = emptyArticle

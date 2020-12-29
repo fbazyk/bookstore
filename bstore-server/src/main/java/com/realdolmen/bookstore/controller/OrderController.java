@@ -1,5 +1,6 @@
 package com.realdolmen.bookstore.controller;
 
+import com.realdolmen.bookstore.dto.CartArticles;
 import com.realdolmen.bookstore.dto.OrderItemDTO;
 import com.realdolmen.bookstore.exception.QuantityNotAvailableException;
 import com.realdolmen.bookstore.model.Order;
@@ -48,6 +49,18 @@ public class OrderController {
             logger.debug("GET CART::Something went wrong {}", exception.getMessage());
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
         }
+    }
+
+    @GetMapping(path = "/cartarticles")
+    public ResponseEntity<CartArticles> getCartArticles(@RequestParam Long page, @RequestParam Long psize){
+        CartArticles cartArticles;
+        try{
+            cartArticles = this.orderService.getCartArticles(page, psize);
+        } catch (Exception ex){
+            logger.debug("CARTARTICLES::something went wrong: {}", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.ok(cartArticles);
     }
 
     /**

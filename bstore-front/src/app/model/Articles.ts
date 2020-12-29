@@ -15,6 +15,8 @@ export interface Article{
   minage?: number;
   artist?: string;
   genre?: GameGenre|LpGenre;
+  editQuantity?: boolean
+
 }
 
 export enum articleType{
