@@ -4,13 +4,13 @@
   <mat-card-header>
     <div mat-card-avatar class="display-article--card-icon"></div>
     <mat-card-title>
-      {{article.title}}</mat-card-title>
-    <mat-card-subtitle>{{article.type | titlecase}}:{{article.id}}
+      {{article?.title}}</mat-card-title>
+    <mat-card-subtitle>{{article?.type | titlecase}}:{{article?.id}}
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content class="edit-article--input-fields__column">
 
-    <mat-form-field appearance="fill" class="search-form--type" *ngIf="article.id == 0">
+    <mat-form-field appearance="fill" class="search-form--type" *ngIf="article?.id == 0">
       <mat-label>Type</mat-label>
       <mat-select formControlName="type" >
         <mat-option *ngFor="let type of articleType" [value]="type">{{type}}</mat-option>
@@ -30,7 +30,7 @@
       <input matInput formControlName="supplierId" >
     </mat-form-field>
 
-    <div *ngIf="article.type == 'book'" class="edit-article--input-groups__flattened">
+    <div *ngIf="article?.type == 'book'" class="edit-article--input-groups__flattened">
       <mat-form-field appearance="fill">
         <mat-label>author</mat-label>
         <input matInput formControlName="author" >
@@ -45,7 +45,7 @@
       </mat-form-field>
     </div>
 
-    <div *ngIf="article.type == 'game'" class="edit-article--input-groups__flattened">
+    <div *ngIf="article?.type == 'game'" class="edit-article--input-groups__flattened">
       <mat-form-field appearance="fill">
         <mat-label>Publisher</mat-label>
         <input matInput formControlName="publisher" >
@@ -62,7 +62,7 @@
       </mat-form-field>
     </div>
 
-    <div *ngIf="article.type == 'lp'" class="edit-article--input-groups__flattened">
+    <div *ngIf="article?.type == 'lp'" class="edit-article--input-groups__flattened">
       <mat-form-field appearance="fill">
         <mat-label>artist</mat-label>
         <input matInput formControlName="artist" >
@@ -80,7 +80,7 @@
       || (!articleForm.controls['type'].dirty
       && articleForm.controls['type'].value == 'all')">
         Please select Article type </div>
-      <div *ngIf="(articleForm.controls['type'].value == ('lp' || 'game') && articleForm.controls['genre'].pristine)"> Please Select Genre </div>
+      <div *ngIf="(articleForm.controls['type'].value == ('lp' || 'game') && articleForm.controls['genre'].errors)"> Please Select Genre </div>
       <div *ngIf="!articleForm.controls['isbn'].valid"> Try correct isbn: 9780140445770 or 9788371815102
       </div>
 

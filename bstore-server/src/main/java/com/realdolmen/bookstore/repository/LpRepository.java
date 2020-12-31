@@ -17,12 +17,15 @@ public interface LpRepository extends JpaRepository<LP, Long> {
             "WHERE (:articleId is null or l.id = :articleId) " +
             " and  (:title is null or lower(l.searchTitle) like lower(concat('%',:title,'%'))) " +
             " and (:minprice is null or l.price >= :minprice) " +
-            " and (:maxprice is null or l.price <= :maxprice)")
+            " and (:maxprice is null or l.price <= :maxprice)" +
+            " and l.deleted = false")
     List<LP> findByArticleParams(
             @Param("articleId") Long articleId,
             @Param("title") String title,
             @Param("minprice") BigDecimal minprice,
             @Param("maxprice") BigDecimal maxprice);
+
+    public LP findByIdAndDeletedFalse(Long id);
 
     @Modifying
     @Transactional

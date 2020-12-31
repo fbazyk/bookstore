@@ -139,9 +139,9 @@ export class SearchFormComponent implements OnInit, OnDestroy {
     this.searchForm.controls['minprice'].setValidators(Validators.min(1))
     this.searchForm.controls['maxprice'].setValidators(Validators.min(1))
     this.searchForm.setValidators([atLeastTwo]);
+    this.search()
     // this.subscribeToFormChanges();
     this.showForm = true;
-    this.search()
   }
 
   hideForm() {

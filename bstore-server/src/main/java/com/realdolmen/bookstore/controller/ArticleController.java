@@ -74,7 +74,7 @@ public class ArticleController {
     @GetMapping("/article/{type}/{id}")
     public ResponseEntity<?> getArticle(@PathVariable String type, @PathVariable long id) {
         try{
-            Article article = articleService.getArticle(type, id);
+            Article article = articleService.getNotDeletedArticle(type, id);
             return ResponseEntity.ok().body(article);
         } catch (ArticleNotFoundException ex){
             String errorMessage = "Unable to find Article" + type + ":" + id;

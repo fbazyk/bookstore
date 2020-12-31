@@ -20,7 +20,7 @@ public class Book extends Article {
     private String author;
 
     @NotNull
-    @ISBN
+//    @ISBN  //Validator returns incorrect results (false negatives)
     @Column(name = "isbn", unique = true)
     private String isbn;
 

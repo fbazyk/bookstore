@@ -47,6 +47,9 @@ public class Article implements Auditable {
 //    @Version
 //    private Integer version;
 
+    @Column(name = "deleted", columnDefinition = "boolean default false")
+    private boolean deleted = false;
+
     @NotNull
     @Column
     @Size(max=100)
@@ -58,6 +61,14 @@ public class Article implements Auditable {
 
     @Embedded
     private Audit audit;
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
     public Audit getAudit() {
         if(audit == null) {

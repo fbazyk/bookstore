@@ -30,6 +30,7 @@ public class ArticleService {
     private GameRepository gameRepository;
     private LpRepository lpRepository;
     private UserRepository userRepository;
+    private OrderItemRepository orderItemRepository;
 
 
     @PersistenceContext
@@ -41,12 +42,16 @@ public class ArticleService {
     public ArticleService(ArticleRepository articleRepository,
                           BookRepository bookRepository,
                           GameRepository gameRepository,
-                          LpRepository lpRepository, UserRepository userRepository) {
+                          LpRepository lpRepository,
+                          UserRepository userRepository,
+                          OrderItemRepository orderItemRepository
+    ) {
         this.articleRepository = articleRepository;
         this.bookRepository = bookRepository;
         this.gameRepository = gameRepository;
         this.lpRepository = lpRepository;
         this.userRepository = userRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     public List<Article> findAll() {
@@ -134,6 +139,27 @@ public class ArticleService {
         }
     }
 
+    public Article getNotDeletedArticle(String type, Long id) throws ArticleNotFoundException {
+        if (type != null && id != null) {
+            switch (type.toUpperCase()) {
+                case "BOOK": {
+                    return this.bookRepository.findByIdAndDeletedFalse(id);
+                }
+                case "GAME": {
+                    return this.gameRepository.findByIdAndDeletedFalse(id);
+                }
+                case "LP": {
+                    return this.lpRepository.findByIdAndDeletedFalse(id);
+                }
+                default: {
+                    throw new ArticleNotFoundException("Wrong category");
+                }
+            }
+        } else {
+            throw new ArticleNotFoundException("Article does not exist");
+        }
+    }
+
     public boolean addArticle(String type, Article article) {
         if (type != null && article != null) {
             switch (type) {
@@ -160,13 +186,17 @@ public class ArticleService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean deleteByTypeById(String type, long id) throws ArticleNotFoundException {
         if (type != null && id > 0) {
+            //TODO delete order items with this type and id
+            this.orderItemRepository.deleteAllByArticleTypeAndArticleId(ArticleType.getByType(type), id);
             switch (type) {
                 case "book": {
                     try {
-                        Book book = new Book();
-                        this.bookRepository.deleteAllFavoriteRelationsByArticleId(id);
-                        this.bookRepository.deleteById(id);
-                        this.bookRepository.flush();
+                        Book book;
+//                        this.bookRepository.deleteAllFavoriteRelationsByArticleId(id);
+                        book = this.bookRepository.findById(id).get();
+                        book.setDeleted(true);
+                        this.bookRepository.save(book);
+//                        this.bookRepository.flush();
                     } catch (Exception ex) {
                         //todo throw another exception to the controller
                         throw new ArticleNotFoundException();
@@ -175,9 +205,12 @@ public class ArticleService {
                 }
                 case "game": {
                     try {
-                        this.gameRepository.deleteAllFavoriteRelationsByArticleId(id);
-                        this.gameRepository.deleteById(id);
-                        this.gameRepository.flush();
+                        Game game;
+//                        this.gameRepository.deleteAllFavoriteRelationsByArticleId(id);
+                        game = gameRepository.findById(id).get();
+                        game.setDeleted(true);
+                        this.gameRepository.save(game);
+//                        this.gameRepository.flush();
                     } catch (Exception ex) {
                         throw new ArticleNotFoundException();
                     }
@@ -185,9 +218,12 @@ public class ArticleService {
                 }
                 case "lp": {
                     try {
-                        this.lpRepository.deleteAllFavoriteRelationsByArticleId(id);
-                        this.lpRepository.deleteById(id);
-                        this.lpRepository.flush();
+                        LP lp;
+//                        this.lpRepository.deleteAllFavoriteRelationsByArticleId(id);
+                        lp = lpRepository.findById(id).get();
+                        lp.setDeleted(true);
+                        this.lpRepository.save(lp);
+//                        this.lpRepository.flush();
                     } catch (Exception ex) {
                         throw new ArticleNotFoundException();
                     }
@@ -196,7 +232,10 @@ public class ArticleService {
                 default:
                     return false;
             }
-        } else return false;
+
+        } else {
+            return false;
+        }
     }
 
     public boolean updateArticle(Article article) throws UnableToUpdateArticleException {

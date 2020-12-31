@@ -115,6 +115,9 @@ export class CartComponent implements OnInit, OnDestroy {
     })
 
     let caSub = this.cartService.cartArticlesBS.subscribe(cartArticles => {
+      if (!!this.cartService.openOrderBS.value) {
+
+
       this.cartService.openOrderBS.value.orderItems.forEach(orderItem => {
         orderItem.article = cartArticles.articles.find(article => {
           return article.type.toUpperCase() == orderItem.articleType && article.id == orderItem.articleId;
@@ -125,6 +128,7 @@ export class CartComponent implements OnInit, OnDestroy {
       })
       console.log(this.displayedOrderItems)
       this.dataSource.data = this.displayedOrderItems;
+    }
     })
 
     let paginatorSub = this.paginator.page.subscribe(value => {

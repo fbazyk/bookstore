@@ -23,6 +23,7 @@ import org.springframework.web.client.ResourceAccessException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -239,7 +240,7 @@ public class OrderService {
      */
     public CartArticles getCartArticles(Long page, Long psize) {
         Order openOrder = findOpenOrder();
-        Set<Article> orderArticles = openOrder.getOrderItems()
+        LinkedHashSet<Article> orderArticles = openOrder.getOrderItems()
                 .stream()
                 .map(orderItem -> {
                     try {
@@ -251,7 +252,7 @@ public class OrderService {
                     }
                 }).sorted((o1, o2) -> {
                     return o1.getId().compareTo(o2.getId());
-                }).collect(Collectors.toSet());
+                }).collect(Collectors.toCollection(LinkedHashSet::new));
         logger.debug("GETCARTARTICLES::orderArticles size is: {}",orderArticles.size());
         logger.debug("GETCARTARTICLES::orderArticles contains null? {}",orderArticles.contains(null));
         //Page the stream

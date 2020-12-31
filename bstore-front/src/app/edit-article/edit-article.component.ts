@@ -63,8 +63,8 @@ export class EditArticleComponent implements OnInit {
       if (!!params['type'] && !!params['id']) {
         this.articleService.getArticleFromServer(this.type, this.id).subscribe((value: Article) => {
           this.article = value;
+          this.populateForm();
         });
-        this.populateForm();
       } else {
         this.article = emptyArticle
       }

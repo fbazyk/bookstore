@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, Inject, InjectionToken, Input, OnDestroy, 
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator, MatPaginatorDefaultOptions} from "@angular/material/paginator";
 import {MatTable} from '@angular/material/table';
-import {MatSort} from "@angular/material/sort";
+import {MatSort, Sort} from "@angular/material/sort";
 import {ArticleService} from "../service/article.service";
 import {Article, Book, Game, Lp} from "../model/Articles";
 import {BehaviorSubject, Subscription} from "rxjs";
@@ -91,6 +91,10 @@ export class DisplayInventoryComponent implements OnInit, OnDestroy {
     //   this.dataSource.data = value;
     // })
 
+  }
+
+  sortData(sort: Sort) {
+    console.log(sort)
   }
 
   private provideDisplayedColumns() {
