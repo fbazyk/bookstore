@@ -70,6 +70,8 @@ public class OrderService {
         if (openOrder == null) {
             openOrder = openOrder(currentUser);
         }
+        openOrder.setOrderTotal(calcTotal(openOrder));
+        this.saveOrder(openOrder);
         return openOrder;
     }
 
@@ -222,6 +224,7 @@ public class OrderService {
             return orderItem1.getArticleType().name().equals(articleType) &&
                     orderItem1.getArticleId().equals(articleId);
         });
+        openOrder.setOrderTotal(calcTotal(openOrder));
 
         //* Save Open Order
 

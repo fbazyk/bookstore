@@ -134,6 +134,7 @@ export class CartComponent implements OnInit, OnDestroy {
     let paginatorSub = this.paginator.page.subscribe(value => {
       this.cartService.pageRequest.next({pageIndex: value.pageIndex+1, pageSize: this.paginator.pageSize })
     })
+    this.subscriptionRegistry.push(caSub);
     this.subscriptionRegistry.push(paginatorSub);
     this.subscriptionRegistry.push(orderSub)
 

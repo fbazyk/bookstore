@@ -17,6 +17,13 @@
 .mat-column-price{
   width: 10%;
 }
+.mat-column-total{
+  width: 10%;
+}
+
+.mat-column-delete{
+  width: 10%;
+}
 
 .cart--header-container{
   display: flex;

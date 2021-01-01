@@ -46,6 +46,7 @@ export class CartService {
     this.http.post(`${environment.apiUrl}/orderitem`, orderItem)
       .subscribe(value => {
         console.log(value)
+        this.getCart()
       }, error => {
         console.log(error)
       })
@@ -63,6 +64,7 @@ export class CartService {
     }
     this.http.delete(`${environment.apiUrl}/orderitem/${orderItem.articleType}/${orderItem.articleId}`).subscribe(value => {
       console.log(value);
+      this.getCart()
     }, error => {
       console.log(error)
     })

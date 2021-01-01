@@ -18,30 +18,30 @@
       </div>
     </div>
     <div class="mat-elevation-z8">
-      <table mat-table [dataSource]="dataSource" matSort>
+      <table mat-table [dataSource]="dataSource" >
 
         <ng-container matColumnDef="articleId">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Article ID</th>
+          <th mat-header-cell *matHeaderCellDef > Article ID</th>
           <td mat-cell *matCellDef="let orderItem"> {{orderItem.articleId}} </td>
         </ng-container>
 
         <ng-container matColumnDef="articleType">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Type</th>
+          <th mat-header-cell *matHeaderCellDef > Type</th>
           <td mat-cell *matCellDef="let orderItem"> {{orderItem.articleType}} </td>
         </ng-container>
 
         <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Title</th>
+          <th mat-header-cell *matHeaderCellDef > Title</th>
           <td mat-cell *matCellDef="let orderItem"> {{orderItem.article?.title}} </td>
         </ng-container>
 
         <ng-container matColumnDef="price">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Price</th>
+          <th mat-header-cell *matHeaderCellDef > Price</th>
           <td mat-cell *matCellDef="let orderItem"> {{orderItem.price}} </td>
         </ng-container>
 
         <ng-container matColumnDef="quantity" (show)="displayQuantity">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Quantity</th>
+          <th mat-header-cell *matHeaderCellDef > Quantity</th>
           <td mat-cell *matCellDef="let orderItem">
 
             <span *ngIf="!orderItem.editQuantity" (click)="editQuantity(orderItem)">{{orderItem?.quantity}}</span>
@@ -58,12 +58,12 @@
         </ng-container>
 
         <ng-container matColumnDef="itemtotal">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Total</th>
+          <th mat-header-cell *matHeaderCellDef > Total</th>
           <td mat-cell *matCellDef="let orderItem"> {{orderItem.quantity * orderItem.price}} </td>
         </ng-container>
 
         <ng-container matColumnDef="delete">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Total</th>
+          <th mat-header-cell *matHeaderCellDef > Delete</th>
           <td mat-cell *matCellDef="let orderItem">
             <mat-icon (click)="deleteOrderItem(orderItem)">delete</mat-icon> </td>
         </ng-container>
