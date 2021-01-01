@@ -85,10 +85,10 @@ public class OrderController {
     /**
      * Delete order item
      * */
-    @DeleteMapping(path = "/orderitem")
-    public ResponseEntity<Boolean> deleteOrderItem(@RequestBody OrderItemDTO orderItemDTO){
+    @DeleteMapping(path = "/orderitem/{type}/{id}")
+    public ResponseEntity<Boolean> deleteOrderItem(@PathVariable String type, @PathVariable long id){
         try{
-            this.orderService.deleteOrderItem(orderItemDTO);
+            this.orderService.deleteOrderItem(type, id);
             return ResponseEntity.ok(true);
         } catch (Exception exception) {
             logger.debug("DELETE ORDERITEM::Something went wrong {}", exception.getMessage());

@@ -95,6 +95,7 @@ export class DisplayInventoryComponent implements OnInit, OnDestroy {
 
   sortData(sort: Sort) {
     console.log(sort)
+    this.articleService.sortState.next(sort);
   }
 
   private provideDisplayedColumns() {

@@ -4,10 +4,7 @@ import com.realdolmen.bookstore.dto.CartArticles;
 import com.realdolmen.bookstore.dto.OrderItemDTO;
 import com.realdolmen.bookstore.exception.ArticleNotFoundException;
 import com.realdolmen.bookstore.exception.QuantityNotAvailableException;
-import com.realdolmen.bookstore.model.Article;
-import com.realdolmen.bookstore.model.Order;
-import com.realdolmen.bookstore.model.OrderItem;
-import com.realdolmen.bookstore.model.User;
+import com.realdolmen.bookstore.model.*;
 import com.realdolmen.bookstore.repository.OrderItemRepository;
 import com.realdolmen.bookstore.repository.OrderRepository;
 import com.realdolmen.bookstore.repository.UserRepository;
@@ -208,7 +205,7 @@ public class OrderService {
      * Remove item from the set
      * Save Open Order
      */
-    public void deleteOrderItem(OrderItemDTO orderItemDTO) throws Exception {
+    public void deleteOrderItem(String articleType, Long articleId) throws Exception {
 
         //* Get Open Order
         Order openOrder;
@@ -216,14 +213,14 @@ public class OrderService {
 
         //* Check item to delete exists
         OrderItem orderItem = openOrder.getOrderItems().stream().filter(item -> {
-            return item.getArticleType().equals(orderItemDTO.getArticleType()) &&
-                    item.getArticleId().equals(orderItemDTO.getArticleId());
+            return item.getArticleType().equals(ArticleType.getByType(articleType)) &&
+                    item.getArticleId().equals(articleId);
         }).findFirst().orElseThrow(Exception::new);
 
         //* Remove item from the set
         openOrder.getOrderItems().removeIf(orderItem1 -> {
-            return orderItem1.getArticleType().equals(orderItemDTO.getArticleType()) &&
-                    orderItem1.getArticleId().equals(orderItemDTO.getArticleId());
+            return orderItem1.getArticleType().name().equals(articleType) &&
+                    orderItem1.getArticleId().equals(articleId);
         });
 
         //* Save Open Order

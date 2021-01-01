@@ -3,7 +3,7 @@ import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {Article, Book, Game, Lp, articleTypeMapping, Item} from "../model/Articles";
 import {User} from "../model/User";
 import {environment} from "../../environments/environment";
-import {debounceTime, map, tap, withLatestFrom} from "rxjs/operators";
+import {debounceTime, map, tap, timestamp, withLatestFrom} from "rxjs/operators";
 import {combineLatest} from "rxjs/index";
 import {BehaviorSubject, Observable} from "rxjs";
 import {errorObject} from "rxjs/internal-compatibility";
@@ -12,6 +12,8 @@ import {Router} from "@angular/router";
 import {ArticlesPage, PageRequest} from "../model/ArticlesPage";
 import {provideEmptySearchState, SearchState} from "../model/SearchState";
 import {SearchDTO} from "../model/SearchDTO";
+import {Sort} from "@angular/material/sort";
+import {SortDirection} from "@angular/material/sort/sort-direction";
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +31,10 @@ export class ArticleService implements OnInit {
     sortBy: "",
     sortOrder: ""
   });
+  sortState: BehaviorSubject<Sort> = new BehaviorSubject<Sort>({
+    active: 'title',
+    direction: "asc"
+  })
   //
   // private allArticles: BehaviorSubject<Array<Article>> = new BehaviorSubject<Array<Article | Book | Game | Lp>>([{
   //   type: 'book',
@@ -62,14 +68,14 @@ export class ArticleService implements OnInit {
     // this.combineFiltering()
   }
 
-  combineFiltering(){
+  combineFiltering() {
     const filter = this.filterValue.pipe(debounceTime(750));
     const type = this.selectedCategory;
     const pageRequest = this.pageRequest;
     //TODO combine filter and category, provide page size
-    const result  = combineLatest([filter, type, pageRequest]);
+    const result = combineLatest([filter, type, pageRequest]);
 
-    result.subscribe(([filter, category, pageRequest])=>{
+    result.subscribe(([filter, category, pageRequest]) => {
       console.log(filter)
       this.findCategoryFilteredPaged(category, filter, pageRequest.pageSize, 1);
     })
@@ -85,41 +91,58 @@ export class ArticleService implements OnInit {
   }
 
   combineCategoryPaging() {
-    const result = this.pageRequest.pipe(withLatestFrom(this.selectedCategory, this.filterValue, this.searchState))
-
+    // const result = this.pageRequest.pipe(withLatestFrom(this.selectedCategory, this.filterValue, this.searchState))
+    const result = combineLatest([
+      this.pageRequest.pipe(timestamp()),
+      this.selectedCategory.pipe(timestamp()),
+      this.filterValue.pipe(timestamp()),
+      this.searchState.pipe(timestamp()),
+      this.sortState.pipe(timestamp())]);
     // const result2 = combineLatest([pageRequest, type]);
-    result.subscribe(([pageRequest, category, filter, searchState]) => {
+    result.subscribe(([pageRequest,
+                        category,
+                        filter,
+                        searchState,
+                        sortState]) => {
       // this.findPagedCategory(pageRequest.pageIndex, pageRequest.pageSize, category)
       // this.findCategoryFilteredPaged(category, filter, pageRequest.pageSize, pageRequest.pageIndex)
-      this.search(pageRequest.pageIndex, pageRequest.pageSize, category, filter, searchState);
-    })
-    this.selectedCategory.subscribe(category => {
-      if(!!category){
-        this.search(1, this.pageRequest.value.pageSize, category, this.filterValue.value,  this.searchState.value);
+      let pageIndex = pageRequest.value.pageIndex
+      if (category.timestamp > pageRequest.timestamp
+        || filter.timestamp > pageRequest.timestamp
+        || searchState.timestamp > pageRequest.timestamp
+        || sortState.timestamp > pageRequest.timestamp) {
+        pageIndex = 1
       }
+      console.log(pageIndex)
+      this.search(pageIndex, pageRequest.value.pageSize, category.value, filter.value, searchState.value, sortState.value);
     })
-    this.filterValue.pipe(debounceTime(750)).subscribe(filter => {
-      if(!!filter){
-        this.search(1, this.pageRequest.value.pageSize, this.selectedCategory.value, filter,  this.searchState.value)
-      }
-      // this.findCategoryFilteredPaged(this.selectedCategory.value, filter, this.pageRequest.value.pageSize, 1)
-    })
-    this.searchState.subscribe(searchDTO => {
-      console.log("New SearchDTO is {}", searchDTO);
-      if(!!searchDTO){
-        this.search(1, this.pageRequest.value.pageSize, this.selectedCategory.value, this.filterValue.value, searchDTO)
-      }
-    })
+    // this.selectedCategory.subscribe(category => {
+    //   if(!!category){
+    //     this.search(1, this.pageRequest.value.pageSize, category, this.filterValue.value,  this.searchState.value);
+    //   }
+    // })
+    // this.filterValue.pipe(debounceTime(750)).subscribe(filter => {
+    //   if(!!filter){
+    //     this.search(1, this.pageRequest.value.pageSize, this.selectedCategory.value, filter,  this.searchState.value)
+    //   }
+    //   // this.findCategoryFilteredPaged(this.selectedCategory.value, filter, this.pageRequest.value.pageSize, 1)
+    // })
+    // this.searchState.subscribe(searchDTO => {
+    //   console.log("New SearchDTO is {}", searchDTO);
+    //   if(!!searchDTO){
+    //     this.search(1, this.pageRequest.value.pageSize, this.selectedCategory.value, this.filterValue.value, searchDTO)
+    //   }
+    // })
 
   }
 
-  search(page, psize, category, filter, searchDTO){
+  search(page, psize, category, filter, searchDTO, sortState) {
     // let page = this.pageRequest.value.pageIndex;
     // let psize = this.pageRequest.value.pageSize;
     // let category = this.selectedCategory.value;
     // let filter = this.filterValue.value;
-    this.http.post(`${environment.apiUrl}/article/search?page=${page}&psize=${psize}&category=${category}&filter=${filter}`, this.searchState.value).subscribe((value:ArticlesPage) => {
-      console.log("Response: {}", value);
+    this.http.post(`${environment.apiUrl}/article/search?page=${page}&psize=${psize}&category=${category}&filter=${filter}&sort=${sortState.active}&direction=${sortState.direction}`, searchDTO).subscribe((value: ArticlesPage) => {
+      console.log("SEARCH::Paged Articles Result: {}", value);
       this.pagedArticles.next(value);
     })
   }
@@ -186,8 +209,8 @@ export class ArticleService implements OnInit {
     }
   }
 
-  getArticleFromServer(type: string, id: number){
-    return this.http.get(`${environment.apiUrl}/article/${type}/${id}`, {observe:"body"});
+  getArticleFromServer(type: string, id: number) {
+    return this.http.get(`${environment.apiUrl}/article/${type}/${id}`, {observe: "body"});
   }
 
   /**

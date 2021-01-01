@@ -31,7 +31,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   displayedOrderItems: OrderItem[];
 
-  displayedColumns: string[] = ["articleId", "articleType", "title", "price", "quantity", "itemtotal"]
+  displayedColumns: string[] = ["articleId", "articleType", "title", "price", "quantity", "itemtotal", "delete"]
   displayQuantity: boolean = true;
   cartDate: Date;
   cartDateFormatted: string;
@@ -248,5 +248,10 @@ export class CartComponent implements OnInit, OnDestroy {
 
   getNext($event: PageEvent) {
     console.log($event)
+  }
+
+  deleteOrderItem(orderItem: OrderItem) {
+    this.cartService.delete(orderItem)
+    this.cartService.getCart();
   }
 }

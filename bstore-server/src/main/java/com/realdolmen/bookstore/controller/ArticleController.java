@@ -154,9 +154,13 @@ public class ArticleController {
                                                @RequestParam Long psize,
                                                @RequestParam String category,
                                                @RequestParam String filter,
+                                               @RequestParam String sort,
+                                               @RequestParam String direction,
                                                @RequestBody SearchDTO searchState) {
-       logger.debug("Search initiated {}", searchState);
-        ArticlesPage resultLsit = this.articleService.search(page, psize, category, filter, searchState);
+       logger.debug("SEARCH::sortActive {}", sort);
+       logger.debug("SEARCH::sortDirection {}", direction);
+        logger.debug("Search initiated {}", searchState);
+        ArticlesPage resultLsit = this.articleService.search(page, psize, category, filter, searchState, sort, direction);
         return ResponseEntity.ok(resultLsit);
 
     }

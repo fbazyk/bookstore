@@ -205,7 +205,7 @@ public class OrderServiceTest {
 
         //delete item
         try{
-            this.orderService.deleteOrderItem(orderITemDTO);
+            this.orderService.deleteOrderItem("BOOK", 1l);
         } catch (Exception ex){
             logger.debug("Unable to delete: {}", ex.getMessage());
         }

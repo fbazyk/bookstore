@@ -7,6 +7,7 @@ import {BehaviorSubject, Observable} from "rxjs";
 import {Article} from "../model/Articles";
 import {withLatestFrom} from "rxjs/operators";
 import {PageRequest} from "../model/ArticlesPage";
+import {OrderItemDTO} from "../model/OrderItemDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +54,18 @@ export class CartService {
   getCartArticles(page: number, psize: number) {
     return this.http.get<CartArticles>(`${environment.apiUrl}/cartarticles?page=${page}&psize=${psize}`);
 
+  }
+
+  delete(orderItem: OrderItem) {
+    let oi: OrderItemDTO = {
+      articleId: orderItem.articleId,
+      articleType: orderItem.articleType
+    }
+    this.http.delete(`${environment.apiUrl}/orderitem/${orderItem.articleType}/${orderItem.articleId}`).subscribe(value => {
+      console.log(value);
+    }, error => {
+      console.log(error)
+    })
   }
 }
 

@@ -528,13 +528,13 @@ public class ArticleService {
         //TODO Sort articles
         List<Article> sortedArticles;
         //TODO select sorting field
-        if(sortby != null && !sortby.isEmpty()){
-            switch (sortby.toUpperCase()){
+        if (sortby != null && !sortby.isEmpty()) {
+            switch (sortby.toUpperCase()) {
                 case ("TYPE"): {
-                    sortedArticles         = Stream.of(filteredArticles)
+                    sortedArticles = Stream.of(filteredArticles)
                             .flatMap(Collection::stream)
                             .sorted((o1, o2) -> {
-                                if(searchDto.getSortOrder().equals("ASC")){
+                                if (searchDto.getSortOrder().equals("ASC")) {
                                     return o1.getClass().getName().compareTo(o2.getClass().getName());
                                 } else {
                                     return o2.getClass().getName().compareTo(o1.getClass().getName());
@@ -543,10 +543,10 @@ public class ArticleService {
                     break;
                 }
                 case ("ID"): {
-                    sortedArticles         = Stream.of(filteredArticles)
+                    sortedArticles = Stream.of(filteredArticles)
                             .flatMap(Collection::stream)
                             .sorted((o1, o2) -> {
-                                if(searchDto.getSortOrder().equals("ASC")){
+                                if (searchDto.getSortOrder().equals("ASC")) {
                                     return o1.getId().compareTo(o2.getId());
                                 } else {
                                     return o2.getId().compareTo(o1.getId());
@@ -554,11 +554,11 @@ public class ArticleService {
                             }).collect(Collectors.toList());
                     break;
                 }
-                case ("TITLE"):{
-                    sortedArticles         = Stream.of(filteredArticles)
+                case ("TITLE"): {
+                    sortedArticles = Stream.of(filteredArticles)
                             .flatMap(Collection::stream)
                             .sorted((o1, o2) -> {
-                                if(searchDto.getSortOrder().equals("ASC")){
+                                if (searchDto.getSortOrder().equals("ASC")) {
                                     return o1.getSearchTitle().compareTo(o2.getSearchTitle());
                                 } else {
                                     return o2.getSearchTitle().compareTo(o1.getSearchTitle());
@@ -566,19 +566,19 @@ public class ArticleService {
                             }).collect(Collectors.toList());
                     break;
                 }
-                case ("PRICE"):{
-                    sortedArticles         = Stream.of(filteredArticles)
+                case ("PRICE"): {
+                    sortedArticles = Stream.of(filteredArticles)
                             .flatMap(Collection::stream)
                             .sorted((o1, o2) -> {
-                                if(searchDto.getSortOrder().equals("ASC")){
+                                if (searchDto.getSortOrder().equals("ASC")) {
                                     return o1.getPrice().compareTo(o2.getPrice());
-                                }else {
+                                } else {
                                     return o2.getPrice().compareTo(o1.getPrice());
                                 }
                             }).collect(Collectors.toList());
                     break;
                 }
-                default :{
+                default: {
                     sortedArticles = filteredArticles;
                 }
             }
@@ -586,24 +586,213 @@ public class ArticleService {
             sortedArticles = filteredArticles;
         }
         List<Article> categorizedArticles;
-        switch (category.toUpperCase()){
-            case "ALL":{
+        switch (category.toUpperCase()) {
+            case "ALL": {
                 categorizedArticles = sortedArticles;
                 break;
             }
-            case "BOOK":{
+            case "BOOK": {
                 categorizedArticles = Stream.of(sortedArticles).flatMap(Collection::stream).filter(article -> {
                     return article instanceof Book;
                 }).collect(Collectors.toList());
                 break;
             }
-            case "GAME":{
+            case "GAME": {
                 categorizedArticles = Stream.of(sortedArticles).flatMap(Collection::stream).filter(article -> {
                     return article instanceof Game;
                 }).collect(Collectors.toList());
                 break;
             }
-            case "LP":{
+            case "LP": {
+                categorizedArticles = Stream.of(sortedArticles).flatMap(Collection::stream).filter(article -> {
+                    return article instanceof LP;
+                }).collect(Collectors.toList());
+                break;
+            }
+            default: {
+                categorizedArticles = sortedArticles;
+            }
+        }
+
+        //Page Filtered Articles
+        List<Article> pagedArticles = Stream.of(categorizedArticles)
+                .flatMap(Collection::stream)
+                .skip(offset).limit(psize).collect(Collectors.toList());
+
+        ArticlesPage resultPage = new ArticlesPage();
+        resultPage.setArticles(pagedArticles);
+        resultPage.setTotalArticles(Stream.of(categorizedArticles).flatMap(Collection::stream).count());
+        resultPage.setCurrentPage(page);
+        resultPage.setTotalPages((long) Math.ceil((resultPage.getTotalArticles() / (double) psize)));
+        return resultPage;
+    }
+
+    public ArticlesPage search(Long page, Long psize, String category, String filter, SearchDTO searchDto, String sort, String direction) {
+        logger.debug("Page {}", page);
+        logger.debug("Page Size{}", psize);
+        logger.debug("Category {}", category);
+        logger.debug("Filter {}", filter);
+        logger.debug("Search {}", searchDto);
+
+        Long articleIdV = null;
+        BigDecimal minpriceV = null;
+        BigDecimal maxpriceV = null;
+        String titleV = "";
+        String type = null;
+        String sortby = null;
+        String sortorder = null;
+        logger.debug(type);
+
+        if (searchDto.getArticleType() != null) {
+            type = searchDto.getArticleType();
+        }
+        if (searchDto.getArticleId() != null) {
+            articleIdV = searchDto.getArticleId();
+        }
+        if (!searchDto.getSearchTitle().isEmpty()) {
+            titleV = searchDto.getSearchTitle().replaceAll("[^a-zA-Z0-9]", " ").toLowerCase();
+        }
+        if (searchDto.getMinPrice() != null) {
+            minpriceV = BigDecimal.valueOf(searchDto.getMinPrice());
+        }
+        if (searchDto.getMaxPrice() != null) {
+            maxpriceV = BigDecimal.valueOf(searchDto.getMaxPrice());
+        }
+        if (!searchDto.getSortBy().isEmpty()) {
+            sortby = searchDto.getSortBy();
+        }
+        if (!searchDto.getSortOrder().isEmpty()) {
+            sortorder = searchDto.getSortOrder();
+        }
+        if (sortby != null && sortorder != null) {
+        }
+
+        logger.debug(type);
+
+        List<Article> resultList = new ArrayList<Article>();
+
+        switch (type.toUpperCase()) {
+            case ("ALL"): {
+
+                List<Book> listb = this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
+                List<Game> listg = this.gameRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
+                List<LP> listl = this.lpRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
+                if (listb != null) {
+                    resultList.addAll(listb);
+                }
+                if (listg != null) {
+                    resultList.addAll(listg);
+                }
+                if (listl != null) {
+                    resultList.addAll(listl);
+                }
+                break;
+            }
+            case ("BOOK"): {
+                resultList.addAll(this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
+                break;
+
+            }
+            case ("GAME"): {
+                resultList.addAll(this.gameRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
+                break;
+
+            }
+            case ("LP"): {
+                resultList.addAll(this.lpRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
+                break;
+            }
+        }
+
+
+        Long offset = (page - 1) * psize;
+        //Filter Articles
+        List<Article> filteredArticles = Stream.of(resultList)
+                .flatMap(Collection::stream)
+                .filter(article -> {
+                    logger.debug(article.getSearchTitle());
+                    return article.getSearchTitle().contains(filter.replaceAll("[^a-zA-Z0-9]", " ").toLowerCase());
+                })
+                .collect(Collectors.toList());
+        //TODO Sort articles
+        List<Article> sortedArticles;
+        //TODO select sorting field
+        if (sortby != null && !sortby.isEmpty()) {
+            switch (sortby.toUpperCase()) {
+                case ("TYPE"): {
+                    sortedArticles = Stream.of(filteredArticles)
+                            .flatMap(Collection::stream)
+                            .sorted((o1, o2) -> {
+                                if (searchDto.getSortOrder().equals("ASC")) {
+                                    return o1.getClass().getName().compareTo(o2.getClass().getName());
+                                } else {
+                                    return o2.getClass().getName().compareTo(o1.getClass().getName());
+                                }
+                            }).collect(Collectors.toList());
+                    break;
+                }
+                case ("ID"): {
+                    sortedArticles = Stream.of(filteredArticles)
+                            .flatMap(Collection::stream)
+                            .sorted((o1, o2) -> {
+                                if (searchDto.getSortOrder().equals("ASC")) {
+                                    return o1.getId().compareTo(o2.getId());
+                                } else {
+                                    return o2.getId().compareTo(o1.getId());
+                                }
+                            }).collect(Collectors.toList());
+                    break;
+                }
+                case ("TITLE"): {
+                    sortedArticles = Stream.of(filteredArticles)
+                            .flatMap(Collection::stream)
+                            .sorted((o1, o2) -> {
+                                if (searchDto.getSortOrder().equals("ASC")) {
+                                    return o1.getSearchTitle().compareTo(o2.getSearchTitle());
+                                } else {
+                                    return o2.getSearchTitle().compareTo(o1.getSearchTitle());
+                                }
+                            }).collect(Collectors.toList());
+                    break;
+                }
+                case ("PRICE"): {
+                    sortedArticles = Stream.of(filteredArticles)
+                            .flatMap(Collection::stream)
+                            .sorted((o1, o2) -> {
+                                if (searchDto.getSortOrder().equals("ASC")) {
+                                    return o1.getPrice().compareTo(o2.getPrice());
+                                } else {
+                                    return o2.getPrice().compareTo(o1.getPrice());
+                                }
+                            }).collect(Collectors.toList());
+                    break;
+                }
+                default: {
+                    sortedArticles = filteredArticles;
+                }
+            }
+        } else {
+            sortedArticles = filteredArticles;
+        }
+        List<Article> categorizedArticles;
+        switch (category.toUpperCase()) {
+            case "ALL": {
+                categorizedArticles = sortedArticles;
+                break;
+            }
+            case "BOOK": {
+                categorizedArticles = Stream.of(sortedArticles).flatMap(Collection::stream).filter(article -> {
+                    return article instanceof Book;
+                }).collect(Collectors.toList());
+                break;
+            }
+            case "GAME": {
+                categorizedArticles = Stream.of(sortedArticles).flatMap(Collection::stream).filter(article -> {
+                    return article instanceof Game;
+                }).collect(Collectors.toList());
+                break;
+            }
+            case "LP": {
                 categorizedArticles = Stream.of(sortedArticles).flatMap(Collection::stream).filter(article -> {
                     return article instanceof LP;
                 }).collect(Collectors.toList());
