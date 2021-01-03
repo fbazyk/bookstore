@@ -1,6 +1,8 @@
 package com.realdolmen.bookstore.service;
 
 import com.realdolmen.bookstore.BookstoreApplication;
+import com.realdolmen.bookstore.exception.ArticleNotFoundException;
+import com.realdolmen.bookstore.exception.UnableToUpdateArticleException;
 import com.realdolmen.bookstore.model.*;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = BookstoreApplication.class)
 @ContextConfiguration(classes = BookstoreApplication.class)
+@Transactional
+//@DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ArticleServiceTest {
 
@@ -120,11 +124,59 @@ class ArticleServiceTest {
     }
 
     @Test
+    void findByTypeAndId(){
+        Article article = new Article();
+        Boolean success = false;
+        try{
+
+            article = this.articleService.findByTypeAndId(ArticleType.BOOK, 1l);
+        } catch(ArticleNotFoundException anfex){
+            logger.debug("FIND ARTICLE:: article not found: {}", anfex.getMessage());
+        } catch (Exception ex){
+            logger.debug("FIND ARTICLE:: something went wrong: {}", ex.getMessage());
+        }
+        assertNotNull(article);
+    }
+
+    /**
+     *  find an article by type and id
+     *  Change price, title, supplierId
+     *  updateArticle
+     *  find same article again, compare new values
+     * */
+    @Test
+    @Transactional
+    @WithMockUser(username = "andy", password = "campbells", roles = "ADMIN")
     void updateArticle() {
-        //TODO find an article by type and id
-        //TODO Change price, title, supplierId
-        //todo updateArticle
-        //TODO find same article again, compare new values
+        Article article = new Article();
+        Boolean success = false;
+        try{
+
+            article = this.articleService.findByTypeAndId(ArticleType.BOOK, 1l);
+        } catch(ArticleNotFoundException anfex){
+            logger.debug("FIND ARTICLE:: article not found: {}", anfex.getMessage());
+        } catch (Exception ex){
+            logger.debug("FIND ARTICLE:: something went wrong: {}", ex.getMessage());
+        }
+        article.setTitle("Test Title");
+        article.setPrice(BigDecimal.valueOf(100l));
+        article.setSupplierId("100");
+        try{
+            success = this.articleService.updateArticle(article);
+        } catch (UnableToUpdateArticleException uuaex){
+            logger.debug("UPDATE ARTICLE::unable to update article {}", uuaex.getMessage());
+        }
+        assertTrue(success);
+        Article updatedArticle = new Article();
+        try {
+            updatedArticle = this.articleService.findByTypeAndId(ArticleType.BOOK, 1l);
+        } catch(Exception ex){
+            logger.debug("FIND ARTICLE::after update: {}", ex.getMessage());
+        }
+        assertEquals("Test Title", updatedArticle.getTitle());
+        assertEquals(BigDecimal.valueOf(100l), updatedArticle.getPrice());
+        assertEquals("100", updatedArticle.getSupplierId());
+        assertTrue(updatedArticle.getSearchTitle().contains("test"));
     }
 
     @Test

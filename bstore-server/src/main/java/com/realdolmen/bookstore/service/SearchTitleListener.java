@@ -1,15 +1,21 @@
 package com.realdolmen.bookstore.service;
 
 import com.realdolmen.bookstore.model.*;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.time.LocalDateTime;
 
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+@Component
 public class SearchTitleListener {
     public SearchTitleListener() {
     }
-
 
     @PrePersist
     @PreUpdate

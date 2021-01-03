@@ -2,18 +2,23 @@ package com.realdolmen.bookstore.service;
 
 import com.realdolmen.bookstore.model.Audit;
 import com.realdolmen.bookstore.model.Auditable;
+import com.realdolmen.bookstore.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import java.time.LocalDateTime;
 
+@Component
 public class AuditListener {
 
-    private UserService userService;
+    private static UserService userService;
 
-    public AuditListener(UserService userService) {
-        this.userService = userService;
+    @Autowired
+    public void setUserService (UserService service) {
+        this.userService=service;
     }
 
     public AuditListener() {

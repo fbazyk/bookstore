@@ -250,7 +250,8 @@ public class ArticleService {
                     existingBook.setPrice(article.getPrice());
                     existingBook.setTitle(article.getTitle());
                     existingBook.setSupplierId(article.getSupplierId());
-                    this.bookRepository.saveAndFlush(existingBook);
+                    this.bookRepository.save(existingBook);
+                    this.bookRepository.flush();
                     return true;
                 } catch (Exception ex) {
                     logger.debug(ex.getMessage());
