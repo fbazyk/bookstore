@@ -18,13 +18,13 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
-
-    @PostMapping(path = "/auth")
-    public User authenticate(@RequestBody User user){
-        logger.debug("Incoming User: {}", user.getUserName());
-        this.userService.checkUserCredentials(user);
-        return new User();
-    }
+//
+//    @PostMapping(path = "/auth")
+//    public User authenticate(@RequestBody User user){
+//        logger.debug("Incoming User: {}", user.getUserName());
+//        this.userService.checkUserCredentials(user);
+//        return new User();
+//    }
 
     @GetMapping(path = "/auth")
     public @ResponseBody User authenticate1(){

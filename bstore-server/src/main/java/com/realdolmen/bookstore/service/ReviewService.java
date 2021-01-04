@@ -52,7 +52,6 @@ public class ReviewService {
      * Persists in DB
      */
     public void addReview(AddReviewDTO addReviewDTO) {
-        //TODO get current user
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails) {

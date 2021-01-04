@@ -1,6 +1,7 @@
 package com.realdolmen.bookstore.service;
 
 import com.realdolmen.bookstore.BookstoreApplication;
+import com.realdolmen.bookstore.dto.CartArticles;
 import com.realdolmen.bookstore.dto.OrderItemDTO;
 import com.realdolmen.bookstore.exception.QuantityNotAvailableException;
 import com.realdolmen.bookstore.model.ArticleType;
@@ -212,5 +213,16 @@ public class OrderServiceTest {
         Order orderDeletedItem = this.orderService.findOpenOrder();
         //check items size == 0
         assertTrue(orderDeletedItem.getOrderItems().size() == 0);
+    }
+
+    @Test
+    @WithMockUser(username = "soren", password = "either", roles = "USER")
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    public void getCartArticles(){
+        OrderItemDTO oid = new OrderItemDTO(ArticleType.BOOK, 1l, 3l);
+        this.orderService.addUpdateOrderItem(oid);
+        CartArticles ca = this.orderService.getCartArticles(1l, 5l);
+        assertEquals(1l, ca.getTotalArticles());
+
     }
 }

@@ -71,8 +71,8 @@ public class OrderService {
             openOrder = openOrder(currentUser);
         }
         openOrder.setOrderTotal(calcTotal(openOrder));
-        this.saveOrder(openOrder);
-        return openOrder;
+        Order savedOrder = this.saveOrder(openOrder);
+        return savedOrder;
     }
 
     /**
@@ -194,7 +194,7 @@ public class OrderService {
         });
 
         openOrder.setOrderTotal(this.calcTotal(openOrder));
-        this.saveOrder(openOrder);
+        this.orderRepository.save(openOrder);
         logger.debug("addUpdateOrderItem executed");
 
     }

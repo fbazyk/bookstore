@@ -8,6 +8,13 @@ public class AddReviewDTO {
     private Integer rating;
     private String description;
 
+    public AddReviewDTO(ArticleType articleType, Long articleId, Integer rating, String description) {
+        this.articleType = articleType;
+        this.articleId = articleId;
+        this.rating = rating;
+        this.description = description;
+    }
+
     public ArticleType getArticleType() {
         return articleType;
     }

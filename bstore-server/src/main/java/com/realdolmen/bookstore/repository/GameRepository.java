@@ -18,7 +18,7 @@ import java.util.List;
 public interface GameRepository extends JpaRepository<Game, Long> {
     @Query("SELECT g FROM Game g " +
             "WHERE (:articleId is null or g.id = :articleId) " +
-            " and  (:title is null or lower(g.searchTitle) like lower(concat('%',:title,'%'))) " +
+            " and  (:title is null or g.searchTitle like concat('%',:title,'%'))" +
             " and (:minprice is null or g.price >= :minprice) " +
             " and (:maxprice is null or g.price <= :maxprice)" +
             " and g.deleted = false")

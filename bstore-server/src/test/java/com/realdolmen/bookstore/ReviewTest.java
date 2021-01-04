@@ -1,25 +1,29 @@
 package com.realdolmen.bookstore;
 
+import com.realdolmen.bookstore.dto.AddReviewDTO;
 import com.realdolmen.bookstore.model.ArticleType;
 import com.realdolmen.bookstore.model.Review;
 import com.realdolmen.bookstore.model.User;
 import com.realdolmen.bookstore.repository.ArticleRepository;
 import com.realdolmen.bookstore.repository.ReviewRepository;
 import com.realdolmen.bookstore.repository.UserRepository;
+import com.realdolmen.bookstore.service.ReviewService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = BookstoreApplication.class)
@@ -34,6 +38,8 @@ public class ReviewTest {
     private UserRepository userRepository;
     @Autowired
     private ArticleRepository articleRepository;
+    @Autowired
+    private ReviewService reviewService;
 
     @Test
     public void createReview(){
@@ -77,4 +83,27 @@ public class ReviewTest {
 
         this.userRepository.saveAndFlush(user);
     }
+
+    @Test
+    @WithMockUser(username = "soren", password = "either", roles = "USER")
+    public void addReviewTest(){
+        AddReviewDTO addReviewDTO = new AddReviewDTO(ArticleType.BOOK, 1l, 5, "asdf");
+
+        this.reviewService.addReview(addReviewDTO);
+        Set<Review> reviews = this.reviewRepository.findAllByArticleTypeAndArticleId(ArticleType.BOOK, 1l);
+        assertEquals(1l, reviews.size());
+
+    }
+    @Test
+    @WithMockUser(username = "soren", password = "either", roles = "USER")
+    public void findReviewsTest(){
+        AddReviewDTO addReviewDTO = new AddReviewDTO(ArticleType.BOOK, 1l, 5, "asdf");
+
+        this.reviewService.addReview(addReviewDTO);
+        Set<Review> reviews = this.reviewService.findReviews(ArticleType.BOOK, 1l);
+        assertEquals(1l, reviews.size());
+
+    }
+
+
 }

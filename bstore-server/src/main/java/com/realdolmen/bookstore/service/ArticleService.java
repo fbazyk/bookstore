@@ -160,27 +160,24 @@ public class ArticleService {
         }
     }
 
-    public boolean addArticle(String type, Article article) {
+    public Article addArticle(String type, Article article) {
         if (type != null && article != null) {
-            switch (type) {
-                case "book": {
+            switch (type.toUpperCase()) {
+                case "BOOK": {
                     //TODO check if the book with the same title exists (tolowercase)
-                    this.bookRepository.saveAndFlush((Book) article);
-                    return true;
+                    return this.bookRepository.saveAndFlush((Book) article);
                 }
-                case "game": {
-                    this.gameRepository.saveAndFlush((Game) article);
-                    return true;
+                case "GAME": {
+                    return this.gameRepository.saveAndFlush((Game) article);
                 }
-                case "lp": {
-                    this.lpRepository.saveAndFlush((LP) article);
-                    return true;
+                case "LP": {
+                    return this.lpRepository.saveAndFlush((LP) article);
                 }
                 default:
-                    return false;
+                    return null;
             }
         }
-        return true;
+        return null;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -196,7 +193,7 @@ public class ArticleService {
                         book = this.bookRepository.findById(id).get();
                         book.setDeleted(true);
                         this.bookRepository.save(book);
-//                        this.bookRepository.flush();
+                        this.bookRepository.flush();
                     } catch (Exception ex) {
                         //todo throw another exception to the controller
                         throw new ArticleNotFoundException();
@@ -210,7 +207,7 @@ public class ArticleService {
                         game = gameRepository.findById(id).get();
                         game.setDeleted(true);
                         this.gameRepository.save(game);
-//                        this.gameRepository.flush();
+                        this.gameRepository.flush();
                     } catch (Exception ex) {
                         throw new ArticleNotFoundException();
                     }
@@ -223,7 +220,7 @@ public class ArticleService {
                         lp = lpRepository.findById(id).get();
                         lp.setDeleted(true);
                         this.lpRepository.save(lp);
-//                        this.lpRepository.flush();
+                        this.lpRepository.flush();
                     } catch (Exception ex) {
                         throw new ArticleNotFoundException();
                     }
@@ -279,84 +276,7 @@ public class ArticleService {
         }
     }
 
-    public List<Article> search(Map<String, String> searchFields) {
-        Long articleIdV = null;
-        BigDecimal minpriceV = null;
-        BigDecimal maxpriceV = null;
-        String titleV = "";
-        String type = null;
-        String sortby = null;
-        String sortorder = null;
-        logger.debug(type);
 
-        for (Map.Entry<String, String> field : searchFields.entrySet()) {
-            if (Objects.equals(field.getKey(), "id")) {
-                articleIdV = Long.valueOf(field.getValue());
-            }
-            if (Objects.equals(field.getKey(), "title")) {
-                titleV = field.getValue().replaceAll("[^a-zA-Z0-9]", " ").toLowerCase();
-            }
-            if (Objects.equals(field.getKey(), "minprice")) {
-                minpriceV = BigDecimal.valueOf(Long.parseLong(field.getValue()));
-            }
-            if (Objects.equals(field.getKey(), "maxprice")) {
-                maxpriceV = BigDecimal.valueOf(Long.parseLong(field.getValue()));
-            }
-            if (Objects.equals(field.getKey(), "type")) {
-                type = field.getValue();
-            }
-            if (Objects.equals(field.getKey(), "sortby")) {
-                sortby = field.getValue();
-            }
-            if (Objects.equals(field.getKey(), "sortorder")) {
-                sortorder = field.getValue();
-            }
-        }
-        Sort sort = Sort.by(ASC, "id");
-        if (sortby != null && sortorder != null) {
-            sort = Sort.by(sortorder, sortby);
-        }
-
-        logger.debug(type);
-
-        List<Article> resultList = new ArrayList<Article>();
-
-        switch (type) {
-            case ("all"): {
-
-                List<Book> listb = this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
-                List<Game> listg = this.gameRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
-                List<LP> listl = this.lpRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV);
-                if (listb != null) {
-                    resultList.addAll(listb);
-                }
-                if (listg != null) {
-                    resultList.addAll(listg);
-                }
-                if (listl != null) {
-                    resultList.addAll(listl);
-                }
-                break;
-            }
-            case ("book"): {
-                resultList.addAll(this.bookRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
-                break;
-
-            }
-            case ("game"): {
-                resultList.addAll(this.gameRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
-                break;
-
-            }
-            case ("lp"): {
-                resultList.addAll(this.lpRepository.findByArticleParams(articleIdV, titleV, minpriceV, maxpriceV));
-                break;
-            }
-        }
-
-
-        return resultList;
-    }
 
     public Article findByTypeAndId(ArticleType articleType, Long articleId) throws Exception {
         Article result = null;
@@ -459,7 +379,7 @@ public class ArticleService {
         if (searchDto.getArticleId() != null) {
             articleIdV = searchDto.getArticleId();
         }
-        if (!searchDto.getSearchTitle().isEmpty()) {
+        if (searchDto.getSearchTitle() != null && !searchDto.getSearchTitle().isEmpty()) {
             titleV = searchDto.getSearchTitle().replaceAll("[^a-zA-Z0-9]", " ").toLowerCase();
         }
         if (searchDto.getMinPrice() != null) {
@@ -468,10 +388,10 @@ public class ArticleService {
         if (searchDto.getMaxPrice() != null) {
             maxpriceV = BigDecimal.valueOf(searchDto.getMaxPrice());
         }
-        if (!searchDto.getSortBy().isEmpty()) {
+        if (searchDto.getSortBy() != null) {
             sortby = searchDto.getSortBy();
         }
-        if (!searchDto.getSortOrder().isEmpty()) {
+        if (searchDto.getSortOrder() != null) {
             sortorder = searchDto.getSortOrder();
         }
         Sort sort = Sort.by(ASC, "id");

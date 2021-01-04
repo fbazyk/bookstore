@@ -48,7 +48,7 @@ public class UserService {
 
     }
 
-    public void create(NewUserDTO newUserDTO) {
+    public User create(NewUserDTO newUserDTO) {
         User newUser = new User();
         newUser.setPassword(this.passwordEncoder.encode(newUserDTO.getPassword()));
         newUser.setUserName(newUserDTO.getUsername());
@@ -56,7 +56,7 @@ public class UserService {
         newUser.setFirstName(newUserDTO.getFirstName());
         newUser.setLastName(newUserDTO.getLastName());
         newUser.setEnabled(true);
-        this.userRepository.saveAndFlush(newUser);
+        return this.userRepository.saveAndFlush(newUser);
     }
 
     public User findById(long id) throws Exception{
