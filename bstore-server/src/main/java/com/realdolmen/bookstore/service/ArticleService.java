@@ -394,10 +394,10 @@ public class ArticleService {
         if (searchDto.getSortOrder() != null) {
             sortorder = searchDto.getSortOrder();
         }
-        Sort sort = Sort.by(ASC, "id");
-        if (sortby != null && sortorder != null) {
-            sort = Sort.by(sortorder, sortby);
-        }
+//        Sort sort = Sort.by(ASC, "id");
+//        if (sortby != null && sortorder != null) {
+//            sort = Sort.by(sortorder, sortby);
+//        }
 
         logger.debug(type);
 

@@ -17,12 +17,12 @@
 .mat-column-price{
   width: 10%;
 }
-.mat-column-total{
+.mat-column-itemtotal{
   width: 10%;
 }
 
 .mat-column-delete{
-  width: 10%;
+  width: 6%;
 }
 
 .cart--header-container{
