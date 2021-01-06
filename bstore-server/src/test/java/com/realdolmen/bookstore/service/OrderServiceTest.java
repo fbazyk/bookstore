@@ -126,8 +126,9 @@ public class OrderServiceTest {
             result = this.orderService.placeOrder(currentUser);
         } catch (Exception ex) {
             logger.debug("Unable to place order {}", ex.getMessage());
+            result = null;
         }
-        assertNotNull(result);
+                assertNull(result);
     }
 
     @Test
@@ -151,7 +152,6 @@ public class OrderServiceTest {
         assertThrows(QuantityNotAvailableException.class, () -> {
             result.set(this.orderService.placeOrder(currentUser));
         });
-        assertNull(result);
     }
 
     @Test

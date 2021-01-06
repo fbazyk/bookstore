@@ -10,8 +10,8 @@
 	<name>Bookstore</name>
 	<description>Bookstore</description>
 	<modules>
-		<module>bstore-front/bookstore-front-pom.xml</module>
 		<module>bstore-server/bookstore-server-pom.xml</module>
+		<module>bstore-front/bookstore-front-pom.xml</module>
 	</modules>
 
 

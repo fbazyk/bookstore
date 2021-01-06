@@ -10,8 +10,8 @@
 
   <artifactId>bookstore-front</artifactId>
   <properties>
-    <node-version>v12.16.3</node-version>
-    <npm-version>v6.13.7</npm-version>
+    <node-version>v14.15.4</node-version>
+    <npm-version>6.14.10</npm-version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -25,46 +25,36 @@
   </dependencyManagement>
   <build>
     <resources>
-      <resource>
-        <directory>dist</directory>
-      </resource>
+            <resource>
+              <directory>dist</directory>
+            </resource>
     </resources>
     <plugins>
 
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.10.0</version>
+        <version>1.10.4</version>
         <configuration>
           <nodeVersion>${node-version}</nodeVersion>
           <npmVersion>${npm-version}</npmVersion>
-          <installDirectory>./</installDirectory>
-          <workingDirectory>./</workingDirectory>
+<!--          <installDirectory>./</installDirectory>-->
+<!--          <workingDirectory>./</workingDirectory>-->
 
         </configuration>
 
         <executions>
           <execution>
-            <id>install node and npm</id>
+            <id>node install</id>
             <goals>
               <goal>install-node-and-npm</goal>
             </goals>
-            <phase>generate-resources</phase>
             <configuration>
-              <skip>true</skip>
-              <npmDownloadRoot>http://registry.npmjs.org/npm/</npmDownloadRoot>
+              <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
+              <npmDownloadRoot>https://registry.npmjs.org/npm/-/</npmDownloadRoot>
             </configuration>
+            <phase>generate-resources</phase>
           </execution>
-          <!--          <execution>-->
-          <!--            <id>node install</id>-->
-          <!--            <goals>-->
-          <!--              <goal>install-node-and-npm</goal>-->
-          <!--            </goals>-->
-          <!--            <configuration>-->
-          <!--              <downloadRoot>https://nodejs.org/dist/v12.16.3/</downloadRoot>-->
-          <!--            </configuration>-->
-          <!--            <phase>generate-resources</phase>-->
-          <!--          </execution>-->
 
           <execution>
             <id>npm install</id>
@@ -76,6 +66,7 @@
             </configuration>
             <phase>generate-resources</phase>
           </execution>
+
           <execution>
             <id>npm run build</id>
             <goals>
@@ -85,6 +76,7 @@
               <arguments>run build</arguments>
             </configuration>
           </execution>
+
           <execution>
             <id>npm run start</id>
             <goals>
