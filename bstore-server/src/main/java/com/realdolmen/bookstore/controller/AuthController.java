@@ -26,6 +26,7 @@ public class AuthController {
 //        return new User();
 //    }
 
+    @CrossOrigin(origins = "http://localhost:4201")
     @GetMapping(path = "/auth")
     public @ResponseBody User authenticate1(){
         logger.debug("Incoming User:");
