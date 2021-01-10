@@ -30,6 +30,7 @@ public class ArticleService {
     private GameRepository gameRepository;
     private LpRepository lpRepository;
     private UserRepository userRepository;
+    private OrderRepository orderRepository;
     private OrderItemRepository orderItemRepository;
 
 
@@ -44,6 +45,7 @@ public class ArticleService {
                           GameRepository gameRepository,
                           LpRepository lpRepository,
                           UserRepository userRepository,
+                          OrderRepository orderRepository,
                           OrderItemRepository orderItemRepository
     ) {
         this.articleRepository = articleRepository;
@@ -51,6 +53,7 @@ public class ArticleService {
         this.gameRepository = gameRepository;
         this.lpRepository = lpRepository;
         this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
     }
 
@@ -184,7 +187,19 @@ public class ArticleService {
     public boolean deleteByTypeById(String type, long id) throws ArticleNotFoundException {
         if (type != null && id > 0) {
             //TODO delete order items with this type and id
-            this.orderItemRepository.deleteAllByArticleTypeAndArticleId(ArticleType.getByType(type), id);
+
+            //TODO if order is open, delete item from the order
+            //TODO if order is closed, retain the item in the order
+            List<Order> openOrders = this.orderRepository.findOrdersByOrderDateIsNull();
+            for(Order openOrder: openOrders){
+                openOrder.getOrderItems().stream().filter(orderItem -> {
+                    return orderItem.getArticleType().name().equals(type.toUpperCase()) && orderItem.getArticleId().equals(id);
+                }).findFirst().ifPresent(orderItem -> {
+                    openOrder.getOrderItems().remove(orderItem);
+                });
+                this.orderRepository.save(openOrder);
+            }
+//            this.orderItemRepository.deleteAllByArticleTypeAndArticleId(ArticleType.getByType(type), id);
             switch (type) {
                 case "book": {
                     try {
