@@ -5,7 +5,9 @@ import com.realdolmen.bookstore.dto.OrderItemDTO;
 import com.realdolmen.bookstore.exception.QuantityNotAvailableException;
 import com.realdolmen.bookstore.model.Order;
 import com.realdolmen.bookstore.model.User;
+import com.realdolmen.bookstore.model.UserOrdersDTO;
 import com.realdolmen.bookstore.service.ArticleService;
+import com.realdolmen.bookstore.service.InvoiceService;
 import com.realdolmen.bookstore.service.OrderService;
 import com.realdolmen.bookstore.service.UserService;
 import org.slf4j.Logger;
@@ -25,15 +27,18 @@ public class OrderController {
     private OrderService orderService;
     private ArticleService articleService;
     private UserService userService;
+    private InvoiceService invoiceService;
 
     private Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     public OrderController(OrderService orderService,
                            ArticleService articleService,
-                           UserService userService) {
+                           UserService userService,
+                           InvoiceService invoiceService) {
         this.orderService = orderService;
         this.articleService = articleService;
         this.userService = userService;
+        this.invoiceService = invoiceService;
     }
 
     /**
@@ -61,6 +66,19 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(cartArticles);
+    }
+
+    @GetMapping(path="/orders")
+    public ResponseEntity<UserOrdersDTO> getUserOrders(){
+        UserOrdersDTO userOrdersDTO = this.orderService.getUserOrders(this.userService.currentUser());
+        return ResponseEntity.status(HttpStatus.OK).body(userOrdersDTO);
+    }
+
+    @GetMapping(path = "/orders/invoice/{id}")
+    public void getInvoiceFor(@PathVariable long id){
+        //TODO check if user is the user on the order
+        logger.debug("Get invoice for order {}", id);
+//        this.invoiceService.generateInvoiceFor(id);
     }
 
     /**

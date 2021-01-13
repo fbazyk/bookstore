@@ -37,6 +37,7 @@ import { DisplayReviewComponent } from './display-review/display-review.componen
 import { AddReviewComponent } from './add-review/add-review.component';
 import { IfRoleDirective } from './if-role.directive';
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { DisplayOrdersComponent } from './display-orders/display-orders.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
     DisplayReviewComponent,
     AddReviewComponent,
     IfRoleDirective,
+    DisplayOrdersComponent,
   ],
     imports: [
         BrowserModule,

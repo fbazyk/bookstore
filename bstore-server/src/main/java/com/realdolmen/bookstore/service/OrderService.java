@@ -267,4 +267,12 @@ public class OrderService {
         resultCartArticles.setTotalPages((long) Math.ceil((resultCartArticles.getTotalArticles() / (double) psize)));
         return resultCartArticles;
     }
+
+    public UserOrdersDTO getUserOrders(User currentUser) {
+        UserOrdersDTO userOrdersDTO = new UserOrdersDTO();
+        List<Order> orders = this.orderRepository.findOrdersByUserAndOrderDateIsNotNull(currentUser);
+        logger.debug("Orders object is: {}", orders);
+        userOrdersDTO.setOrderList(orders);
+        return userOrdersDTO;
+    }
 }

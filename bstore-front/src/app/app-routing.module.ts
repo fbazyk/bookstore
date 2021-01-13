@@ -12,15 +12,16 @@ import {EditArticleComponent} from "./edit-article/edit-article.component";
 import {RegisterComponent} from "./register/register.component";
 import {CartComponent} from "./cart/cart.component";
 import {AddArticleComponent} from "./add-article/add-article.component";
+import {DisplayOrdersComponent} from "./display-orders/display-orders.component";
 
 
 const routes: Routes = [
 
-  // {
-  //   path: '',
-  //   component: InventoryComponent,
-  //   canActivate: [ UserGuardService]
-  // },
+  {
+    path: 'orders',
+    component: DisplayOrdersComponent,
+    canActivate: [ UserGuardService]
+  },
   {
     path: 'inventory',
     component: InventoryComponent,
