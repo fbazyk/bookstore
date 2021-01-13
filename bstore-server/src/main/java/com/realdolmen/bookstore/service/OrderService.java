@@ -111,7 +111,6 @@ public class OrderService {
         Order order = this.findOpenOrder();
         if (order.getOrderItems().size() > 0) {
             order.setOrderDate(Instant.now());
-//            this.saveOrder(order);
             this.orderRepository.save(order);
             try {
                 this.mockSupplierService.placeOrder(order);
@@ -123,7 +122,6 @@ public class OrderService {
                 }
                 order.setOrderTotal(this.calcTotal(order));
                 this.orderRepository.save(order);
-//                this.saveOrder(order);
                 throw exception;
             } catch (ResourceAccessException ex) {
                 logger.debug("Exception was thrown: {}", ex.getMessage());
