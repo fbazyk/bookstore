@@ -53,6 +53,7 @@ public class OrderService {
      * Find open order
      * where cart date <= LocalDate.now() && orderDate == null
      */
+    @Transactional
     public Order findOpenOrder() {
         //
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -274,5 +275,15 @@ public class OrderService {
         logger.debug("Orders object is: {}", orders);
         userOrdersDTO.setOrderList(orders);
         return userOrdersDTO;
+    }
+
+    public Order findOrderById(Long id) throws Exception {
+        Order order = new Order();
+        try{
+            order = this.orderRepository.findById(id).get();
+        } catch (Exception ex){
+            throw new Exception("Order Not Found");
+        }
+        return order;
     }
 }

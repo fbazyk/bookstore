@@ -25,7 +25,7 @@ export class CartComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatTable, {static: false}) table: MatTable<any>
   //May be null?
-  openOrder: OrderDTO;
+  cart: OrderDTO;
   dataSource: MatTableDataSource<OrderItem>;
   private subscriptionRegistry: Subscription[] = new Array<Subscription>();
 
@@ -63,67 +63,36 @@ export class CartComponent implements OnInit, OnDestroy {
     // this.dataSource.paginator = this.paginator;
     // this.dataSource.sort = this.sort;
     this.paginator.pageSize = 5;
+    this.paginator.pageIndex = 0;
+    // this.paginator.length = 6
 
     // this.dataSource.connect();
-    this.cartService.getCart()
 
-    let orderSub = this.cartService.openOrderBS.subscribe(order => {
-      if (!!order) {
-        this.openOrder = order;
-        this.cartDate = new Date(this.openOrder.cartDate)
+    let orderSub = this.cartService.cartBS.subscribe(cart => {
+      if (!!cart) {
+        this.cart = cart;
+        this.cartDate = new Date(this.cart.cartDate)
         this.cartDateFormatted = moment(this.cartDate).format('DD/MM/YYYY HH:MM');
-        this.cartService.getCartArticles(1, 5).subscribe(cartArticles => {
-          console.log(cartArticles)
-          this.totalArticles = cartArticles.totalArticles;
-          this.currentPage = cartArticles.currentPage-1;
-          this.totalPages = cartArticles.totalPages;
-          this.openOrder.orderItems.forEach(orderItem => {
-            orderItem.article = cartArticles.articles.find(article => {
-              return article.type.toUpperCase() == orderItem.articleType && article.id == orderItem.articleId;
-            })
-          })
-
-          this.displayedOrderItems = this.openOrder.orderItems.filter(value => {
-            return !!value.article
-          })
-          console.log(this.displayedOrderItems)
-          this.dataSource.data = this.displayedOrderItems;
-
-        })
-
-        if (this.openOrder.orderItems.length > 0) {
-          console.log(this.openOrder.orderItems.length)
-
-          // this.openOrder.orderItems.forEach(orderItem => {
-          //   orderItem.editQuantity = false;
-          //   this.articleService
-          //     .getArticleFromServer(orderItem.articleType, orderItem.articleId)
-          //     .subscribe((value1:Article) => {
-          //       console.log(value1)
-          //       orderItem.title = value1.title;
-          //     })
-          //   this.updateDisplayedQuantity();
-          // })
-          this.dataSource.data = this.displayedOrderItems;
-        } else {
           this.dataSource.data = []
-          // this.table.renderRows();
-
-        }
+        this.paginator.pageIndex = 0;
+        this.paginator.length = cart.orderItems.length;
+        this.cartService.pageRequest.next({pageIndex: this.paginator.pageIndex+1, pageSize: this.paginator.pageSize })
         this.updateDisplayedQuantity();
       }
     })
+    this.cartService.getCart()
 
     let caSub = this.cartService.cartArticlesBS.subscribe(cartArticles => {
-      if (!!this.cartService.openOrderBS.value) {
+      if (!!this.cart && !!cartArticles) {
+        console.log("PAGINATOR PAGEINDEX = ", this.paginator)
+        this.paginator.length = this.cartService.cartBS.value.orderItems.length;
 
-
-      this.cartService.openOrderBS.value.orderItems.forEach(orderItem => {
+      this.cartService.cartBS.value.orderItems.forEach(orderItem => {
         orderItem.article = cartArticles.articles.find(article => {
           return article.type.toUpperCase() == orderItem.articleType && article.id == orderItem.articleId;
         })
       })
-      this.displayedOrderItems = this.openOrder.orderItems.filter(value => {
+      this.displayedOrderItems = this.cart.orderItems.filter(value => {
         return !!value.article
       })
       console.log(this.displayedOrderItems)
@@ -132,6 +101,7 @@ export class CartComponent implements OnInit, OnDestroy {
     })
 
     let paginatorSub = this.paginator.page.subscribe(value => {
+      console.log("PAGINATOR CHANGE", value)
       this.cartService.pageRequest.next({pageIndex: value.pageIndex+1, pageSize: this.paginator.pageSize })
     })
     this.subscriptionRegistry.push(caSub);
@@ -157,7 +127,7 @@ export class CartComponent implements OnInit, OnDestroy {
   editQuantity(orderItem: OrderItem) {
     console.log("Edit Quantity")
 
-    this.openOrder.orderItems.forEach(value => {
+    this.cart.orderItems.forEach(value => {
       value.editQuantity = false;
     })
     orderItem.editQuantity = true;
@@ -170,7 +140,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.gamesQuantity = 0;
     this.lpsTotal = 0;
     this.lpsQuantity = 0;
-    this.openOrder.orderItems.forEach(orderItem => {
+    this.cart.orderItems.forEach(orderItem => {
       if (orderItem.articleType == 'BOOK') {
         this.booksQuantity = this.booksQuantity + orderItem.quantity;
         this.booksTotal = this.booksTotal + (orderItem.quantity * orderItem.price);
@@ -189,8 +159,8 @@ export class CartComponent implements OnInit, OnDestroy {
 
 
   cartDate2() {
-    if (!!this.openOrder) {
-      let asdf = Date.parse(this.openOrder.cartDate)
+    if (!!this.cart) {
+      let asdf = Date.parse(this.cart.cartDate)
       console.log(asdf)
     }
     return true;
@@ -244,6 +214,9 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.cartService.pageRequest.next(null);
+    this.cartService.cartArticlesBS.next(null);
+    this.cartService.cartBS.next(null);
     this.subscriptionRegistry.forEach(subscription => subscription.unsubscribe())
   }
 
@@ -256,3 +229,21 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartService.getCart();
   }
 }
+// this.cartService.getCartArticles(1, 5).subscribe(cartArticles => {
+//   console.log(cartArticles)
+//   this.totalArticles = cartArticles.totalArticles;
+//   this.currentPage = cartArticles.currentPage-1;
+//   this.totalPages = cartArticles.totalPages;
+//   this.openOrder.orderItems.forEach(orderItem => {
+//     orderItem.article = cartArticles.articles.find(article => {
+//       return article.type.toUpperCase() == orderItem.articleType && article.id == orderItem.articleId;
+//     })
+//   })
+//
+//   this.displayedOrderItems = this.openOrder.orderItems.filter(value => {
+//     return !!value.article
+//   })
+//   console.log(this.displayedOrderItems)
+//   this.dataSource.data = this.displayedOrderItems;
+//
+// })

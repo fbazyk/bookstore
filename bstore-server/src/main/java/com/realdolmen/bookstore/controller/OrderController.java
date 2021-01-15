@@ -13,11 +13,15 @@ import com.realdolmen.bookstore.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
+
+import java.io.File;
+import java.io.IOException;
 
 
 @CrossOrigin(origins = "http://localhost:4201")
@@ -74,11 +78,21 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(userOrdersDTO);
     }
 
-    @GetMapping(path = "/orders/invoice/{id}")
-    public void getInvoiceFor(@PathVariable long id){
-        //TODO check if user is the user on the order
+    @GetMapping(path = "/orders/invoice/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<File> getInvoiceFor(@PathVariable long id)throws IOException {
+        User currentUser = this.userService.currentUser();
+        Order order = new Order();
+        File invoiceFile = new File("invoice.pdf");
+        try {
+            order = this.orderService.findOrderById(id);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        if(order.getUser().getId().equals(currentUser.getId())){
+            invoiceFile = this.invoiceService.getInvoice(order);
+        }
         logger.debug("Get invoice for order {}", id);
-//        this.invoiceService.generateInvoiceFor(id);
+        return ResponseEntity.ok(invoiceFile);
     }
 
     /**

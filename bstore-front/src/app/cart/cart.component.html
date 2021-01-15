@@ -1,9 +1,9 @@
 <mat-card>
   <mat-card-content>
     <div class="cart--header-container">
-      <p class="cart--header-item">Order ID: {{openOrder?.orderId}}</p>
+      <p class="cart--header-item">Order ID: {{cart?.orderId}}</p>
       <p class="cart--header-item">Cart Date:  {{cartDateFormatted}}</p>
-      <p class="cart--header-item">Cart Total: {{openOrder?.orderTotal}}</p>
+      <p class="cart--header-item">Cart Total: {{cart?.orderTotal}}</p>
       <div class="cart--header-item" *ngIf="booksQuantity>0">
         <p>Quantity of Books: {{booksQuantity}}</p>
         <p>Total for Books: {{booksTotal}}</p>
