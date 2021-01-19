@@ -24,6 +24,10 @@
 .mat-column-delete{
   width: 6%;
 }
+.mat-column-title{
+  width: 50%;
+}
+
 
 .cart--header-container{
   display: flex;

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {MatTableDataSource} from "@angular/material/table";
 import {Article} from "../model/Articles";
 import {OrderDTO} from "../model/OrderDTO";
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-display-orders',
@@ -25,8 +26,11 @@ export class DisplayOrdersComponent implements OnInit {
   }
 
   getInvoice(order: any, row: any) {
+    let headers = new HttpHeaders();
+    headers = headers.set('Accept', 'application/pdf');
     this.http.get(`${environment.apiUrl}/orders/invoice/${order.orderId}`,
-      {observe: "response"}).subscribe(value => {
+      {headers: headers, responseType: "blob"}).subscribe(value => {
+      saveAs(value, 'test.pdf');
       console.log(value)
     })
     console.log(order);

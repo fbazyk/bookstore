@@ -10,8 +10,11 @@ import com.realdolmen.bookstore.service.ArticleService;
 import com.realdolmen.bookstore.service.InvoiceService;
 import com.realdolmen.bookstore.service.OrderService;
 import com.realdolmen.bookstore.service.UserService;
+import net.sf.jasperreports.engine.JRException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +24,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+
+import static java.lang.String.format;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_PDF;
 
 
 @CrossOrigin(origins = "http://localhost:4201")
@@ -79,7 +87,7 @@ public class OrderController {
     }
 
     @GetMapping(path = "/orders/invoice/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<File> getInvoiceFor(@PathVariable long id)throws IOException {
+    public ResponseEntity<InputStreamResource> getInvoiceFor(@PathVariable long id) throws IOException, JRException {
         User currentUser = this.userService.currentUser();
         Order order = new Order();
         File invoiceFile = new File("invoice.pdf");
@@ -92,7 +100,17 @@ public class OrderController {
             invoiceFile = this.invoiceService.getInvoice(order);
         }
         logger.debug("Get invoice for order {}", id);
-        return ResponseEntity.ok(invoiceFile);
+        return new ResponseEntity<>(new InputStreamResource(new FileInputStream(invoiceFile)), getHttpHeaders("1", "en", invoiceFile), OK);
+
+//        return ResponseEntity.ok().headers(getHttpHeaders(order.getOrderId().toString(), "en", invoiceFile)).body(invoiceFile);
+    }
+
+    private HttpHeaders getHttpHeaders(String code, String lang, File invoicePdf) {
+        HttpHeaders respHeaders = new HttpHeaders();
+        respHeaders.setContentType(APPLICATION_PDF);
+        respHeaders.setContentLength(invoicePdf.length());
+        respHeaders.setContentDispositionFormData("attachment", format("%s-%s.pdf", code, lang));
+        return respHeaders;
     }
 
     /**
