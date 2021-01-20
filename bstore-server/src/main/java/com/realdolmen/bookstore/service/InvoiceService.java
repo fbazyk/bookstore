@@ -29,7 +29,7 @@ public class InvoiceService {
     private OrderItemRepository orderItemRepository;
 
     @Autowired
-    private ArticleRepository articleRepository;
+    private ArticleService articleService;
 
     @Value("${invoice.template.path}")
     private String invoice_template;
@@ -37,14 +37,14 @@ public class InvoiceService {
     public File getInvoice(Order order) throws IOException {
         logger.debug("Generating invoice file for order {}", order.getOrderId());
         //TODO get article title into the object
-        List<Article> articles = this.articleRepository.findAll();
+        List<Article> articles = this.articleService.findAll();
         ArrayList<OrderItemReportDTO> oirds = new ArrayList<>();
         List<OrderItemReportDTO> list = order.getOrderItems().stream().map(orderItem -> {
             OrderItemReportDTO result = new OrderItemReportDTO(orderItem);
-            result.setArticle(articles.stream().filter(article -> {
-                return (article.getClass().getName().toUpperCase().equals(orderItem.getArticleType().name())) &&
+            result.setTitle(articles.stream().filter(article -> {
+                return (article.getClass().getSimpleName().toUpperCase().equals(orderItem.getArticleType().name())) &&
                         article.getId().equals(orderItem.getArticleId());
-            }).findFirst().get());
+            }).findFirst().map(Article::getTitle).get());
             return result;
         }).collect(Collectors.toList());
 

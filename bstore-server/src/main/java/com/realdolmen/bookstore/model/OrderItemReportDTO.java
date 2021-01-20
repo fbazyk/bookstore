@@ -9,6 +9,15 @@ public class OrderItemReportDTO {
     private BigDecimal price;
     private Long quantity;
     private Article article;
+    private String title;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public OrderItemReportDTO(OrderItem oi){
         this.id = oi.getId();
