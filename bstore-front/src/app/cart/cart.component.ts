@@ -2,7 +2,7 @@ import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/co
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {environment} from "../../environments/environment";
-import {OrderDTO, OrderItem} from "../model/OrderDTO";
+import {OrderDTO, OrderItemDTO} from "../model/OrderDTO";
 import {CartService} from "../service/cart.service";
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {Article} from "../model/Articles";
@@ -26,10 +26,10 @@ export class CartComponent implements OnInit, OnDestroy {
   @ViewChild(MatTable, {static: false}) table: MatTable<any>
   //May be null?
   cart: OrderDTO;
-  dataSource: MatTableDataSource<OrderItem>;
+  dataSource: MatTableDataSource<OrderItemDTO>;
   private subscriptionRegistry: Subscription[] = new Array<Subscription>();
 
-  displayedOrderItems: OrderItem[];
+  displayedOrderItems: OrderItemDTO[];
 
   displayedColumns: string[] = ["articleId", "articleType", "title", "price", "quantity", "itemtotal", "delete"]
   displayQuantity: boolean = true;
@@ -59,7 +59,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     console.log("Initialize Cart")
-    this.dataSource = new MatTableDataSource<OrderItem>()
+    this.dataSource = new MatTableDataSource<OrderItemDTO>()
     // this.dataSource.paginator = this.paginator;
     // this.dataSource.sort = this.sort;
     this.paginator.pageSize = 5;
@@ -111,7 +111,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   //TODO DELETE button
-  updateQuantity(orderItem: OrderItem) {
+  updateQuantity(orderItem: OrderItemDTO) {
     if (orderItem.quantity >= 1) {
       this.cartService.updateQuantity(orderItem);
     } else {
@@ -124,7 +124,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
 
-  editQuantity(orderItem: OrderItem) {
+  editQuantity(orderItem: OrderItemDTO) {
     console.log("Edit Quantity")
 
     this.cart.orderItems.forEach(value => {
@@ -224,7 +224,7 @@ export class CartComponent implements OnInit, OnDestroy {
     console.log($event)
   }
 
-  deleteOrderItem(orderItem: OrderItem) {
+  deleteOrderItem(orderItem: OrderItemDTO) {
     this.cartService.delete(orderItem)
     this.cartService.getCart();
   }

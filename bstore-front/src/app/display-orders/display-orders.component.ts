@@ -25,16 +25,14 @@ export class DisplayOrdersComponent implements OnInit {
     })
   }
 
-  getInvoice(order: any, row: any) {
+  getInvoice(order: OrderDTO) {
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
     this.http.get(`${environment.apiUrl}/orders/invoice/${order.orderId}`,
-      {headers: headers, responseType: "blob"}).subscribe(value => {
-      saveAs(value, 'test.pdf');
-      console.log(value)
+      {headers: headers, responseType: "blob"}).subscribe(response => {
+      let blob = new Blob([response], {type: "application/pdf"});
+      saveAs(blob, `invoice-${order.orderId}.pdf`);
     })
-    console.log(order);
-    console.log(row);
   }
 }
 export interface DisplayOrdersDTO{

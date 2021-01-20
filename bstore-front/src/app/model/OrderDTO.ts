@@ -4,18 +4,18 @@ export interface OrderDTO{
   cartDate: string
   orderDate: string
   orderId: number
-  orderItems: OrderItem[]
+  orderItems: OrderItemDTO[]
   orderTotal: number
 }
 
-export interface OrderItem{
-  articleId: number
-  articleType: string
+export interface OrderItemDTO{
+  articleId?: number
+  articleType?: string
   title?: string
-  id: number
-  price: number
-  quantity: number
-  article: Article
+  id?: number
+  price?: number
+  quantity?: number
+  article?: Article
   editQuantity?: boolean
 }
 

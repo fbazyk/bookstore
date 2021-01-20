@@ -6,7 +6,6 @@ import {Form, FormBuilder, FormGroup} from "@angular/forms";
 import {UserService} from "../user.service";
 import {Location} from '@angular/common';
 import {Subscription} from "rxjs";
-import {OrderItemDTO} from "../model/OrderItemDTO";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {ReviewService} from "../service/review.service";
@@ -14,6 +13,7 @@ import {Review} from "../model/Review";
 import {ExistingUserDTO} from "../model/ExistingUserDTO";
 import {UserRole as UserRole} from "../model/User"
 import {MatSlideToggleChange} from "@angular/material/slide-toggle";
+import {OrderItemDTO} from "../model/OrderDTO";
 
 @Component({
   selector: 'app-display-article',

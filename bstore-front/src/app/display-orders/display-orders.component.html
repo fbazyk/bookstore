@@ -23,7 +23,7 @@
   <ng-container matColumnDef="invoice">
     <th mat-header-cell *matHeaderCellDef> Invoice </th>
     <td mat-cell *matCellDef="let order; let row = index" >
-      <button mat-button (click)="getInvoice(order, row)">Invoice</button>
+      <button mat-button (click)="getInvoice(order)">Invoice</button>
     </td>
   </ng-container>
 

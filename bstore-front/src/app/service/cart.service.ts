@@ -2,12 +2,11 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {environment} from "../../environments/environment";
-import {OrderDTO, OrderItem} from "../model/OrderDTO";
+import {OrderDTO, OrderItemDTO} from "../model/OrderDTO";
 import {BehaviorSubject, Observable} from "rxjs";
 import {Article} from "../model/Articles";
 import {withLatestFrom} from "rxjs/operators";
 import {PageRequest} from "../model/ArticlesPage";
-import {OrderItemDTO} from "../model/OrderItemDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +41,7 @@ export class CartService {
       })
   }
 
-  updateQuantity(orderItem: OrderItem) {
+  updateQuantity(orderItem: OrderItemDTO) {
     console.log("CART-SERVICE::Update Quantity")
     console.log(orderItem)
     this.http.post(`${environment.apiUrl}/orderitem`, orderItem)
@@ -59,7 +58,7 @@ export class CartService {
 
   }
 
-  delete(orderItem: OrderItem) {
+  delete(orderItem: OrderItemDTO) {
     let oi: OrderItemDTO = {
       articleId: orderItem.articleId,
       articleType: orderItem.articleType

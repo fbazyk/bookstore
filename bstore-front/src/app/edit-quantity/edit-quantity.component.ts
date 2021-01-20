@@ -8,7 +8,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import {OrderItem} from "../model/OrderDTO";
+import {OrderItemDTO} from "../model/OrderDTO";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
@@ -20,9 +20,9 @@ export class EditQuantityComponent implements OnInit {
 
   // TODO
   @Input()
-  providedItem: OrderItem;
+  providedItem: OrderItemDTO;
   @Output()
-  newItemEvent = new EventEmitter<OrderItem>();
+  newItemEvent = new EventEmitter<OrderItemDTO>();
 
   @ViewChild('quantity') inputQuantity: ElementRef;
 
