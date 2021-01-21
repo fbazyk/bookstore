@@ -97,7 +97,7 @@ public class OrderController {
             exception.printStackTrace();
         }
         if(order.getUser().getId().equals(currentUser.getId())){
-            invoiceFile = this.invoiceService.getInvoice(order);
+            invoiceFile = this.invoiceService.getInvoice(order, currentUser);
         }
         logger.debug("Get invoice for order {}", id);
         return new ResponseEntity<>(new InputStreamResource(new FileInputStream(invoiceFile)), getHttpHeaders("1", "en", invoiceFile), OK);

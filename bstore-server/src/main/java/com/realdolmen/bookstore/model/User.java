@@ -65,6 +65,11 @@ public class User implements UserDetails {
     @Column(name = "enabled")
     private Boolean enabled;
 
+    @OneToOne
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @JsonManagedReference
+    private UserAddress address;
+
     public Set<Book> getFavoriteBooks() {
         return favoriteBooks;
     }
@@ -185,5 +190,13 @@ public class User implements UserDetails {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public UserAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(UserAddress address) {
+        this.address = address;
     }
 }

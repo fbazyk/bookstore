@@ -1,5 +1,6 @@
+insert into address(city, country, number, postcode, street) values ('København', 'Denmark', '1', '1218', 'Proviantpassagen');
 insert into users (username, enabled, first_name, last_name, role, password) values ('andy', true, 'Andy', 'Warhall', 'ADMIN', '$2y$10$s25xqwyrfniBLvLIJNwCHOo3h.A53CAy3EaGtGDrsUCHyH5YMiiu2');
-insert into users (username, enabled, first_name, last_name, role, password) values ('soren', true, 'Soren', 'Kierkegaard', 'USER', '$2y$10$mXSrKiM.ZLlLkCVyoV8JfOX/DB2XFRKyQkTW3DAKmsuRO/v4s22dC');
+insert into users (username, enabled, first_name, last_name, role, password, address_id) values ('soren', true, 'Soren', 'Kierkegaard', 'USER', '$2y$10$mXSrKiM.ZLlLkCVyoV8JfOX/DB2XFRKyQkTW3DAKmsuRO/v4s22dC', 1);
 insert into books (price, supplier_id, title, search_title, author, isbn, pages) values ( 10, '399', 'Book1', 'book1author1', 'Author1', '0525564454', 200);
 insert into books (price, supplier_id, title, search_title, author, isbn, pages) values ( 12, '399', 'Book2', 'book2author2', 'Author2', '978-0140445770', 300);
 insert into books (price, supplier_id, title, search_title, author, isbn, pages) values ( 12, '399', 'The Myth of Sisyphus', 'themythofsisyphusalbertcamus', 'Albert Camus', '978-0525564454', 300);

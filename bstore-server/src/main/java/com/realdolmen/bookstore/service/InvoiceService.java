@@ -1,9 +1,6 @@
 package com.realdolmen.bookstore.service;
 
-import com.realdolmen.bookstore.model.Article;
-import com.realdolmen.bookstore.model.Order;
-import com.realdolmen.bookstore.model.OrderItem;
-import com.realdolmen.bookstore.model.OrderItemReportDTO;
+import com.realdolmen.bookstore.model.*;
 import com.realdolmen.bookstore.repository.ArticleRepository;
 import com.realdolmen.bookstore.repository.OrderItemRepository;
 import net.sf.jasperreports.engine.*;
@@ -34,7 +31,7 @@ public class InvoiceService {
     @Value("${invoice.template.path}")
     private String invoice_template;
 
-    public File getInvoice(Order order) throws IOException {
+    public File getInvoice(Order order, User user) throws IOException {
         logger.debug("Generating invoice file for order {}", order.getOrderId());
         //TODO get article title into the object
         List<Article> articles = this.articleService.findAll();
@@ -54,6 +51,8 @@ public class InvoiceService {
 
         Map<String, Object> parameters = new HashMap<>(Map.ofEntries(Map.entry("order", order)));
         parameters.put("createdBy", "Fedor");
+        parameters.put("USER", user);
+        parameters.put("ORDER", order);
 
         //load file and compile it
         File file = ResourceUtils.getFile("classpath:reports/test_template.jrxml");
