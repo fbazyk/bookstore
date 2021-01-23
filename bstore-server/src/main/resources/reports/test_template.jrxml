@@ -33,7 +33,7 @@
 					<text><![CDATA[invoice number:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="507" y="43" width="68" height="20" uuid="d5979589-777d-4787-b644-a8ed90abe7e1"/>
+					<reportElement x="507" y="43" width="68" height="20" forecolor="#FFFFFF" uuid="d5979589-777d-4787-b644-a8ed90abe7e1"/>
 					<textElement>
 						<font size="14" isBold="true"/>
 					</textElement>

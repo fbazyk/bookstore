@@ -3,7 +3,7 @@ import {BehaviorSubject, Observable, of} from "rxjs";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {map} from "rxjs/operators";
 import {environment} from "../environments/environment";
-import {User, UserRole} from "./model/User";
+import {User, UserAddress, UserRole} from "./model/User";
 import {Router} from "@angular/router";
 import {ExistingUserDTO} from "./model/ExistingUserDTO";
 import {Location} from "@angular/common";
@@ -15,9 +15,6 @@ import {Location} from "@angular/common";
   providedIn: 'root'
 })
 export class UserService implements OnInit {
-
-  private allUsersList: User[];
-  // allUsersListBS: BehaviorSubject<User[]> = new BehaviorSubject<[User]>([null]);
 
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
@@ -52,7 +49,7 @@ export class UserService implements OnInit {
       responseType: 'json',
     })
       .subscribe(user => {
-        //TODO Store user in the localstorage to retrieve roles
+        //TODO Store user in the localstorage to retrieve roles??
         console.log(user)
         let classUser = Object.assign(new User(), user)
         console.log(classUser)
@@ -83,6 +80,13 @@ export class UserService implements OnInit {
     localStorage.removeItem('currentUser');
     localStorage.removeItem("basicAuthString");
     this.currentUserSubject.next(null);
+  }
+
+  updateAddress(updatedAddress: UserAddress){
+    this.http.post(`${environment.apiUrl}/users/address`, updatedAddress, {observe: 'body'}).subscribe(value => {
+      console.log(value);
+      this.currentUserSubject.next(Object.assign(new User(), value))
+    })
   }
 
   //

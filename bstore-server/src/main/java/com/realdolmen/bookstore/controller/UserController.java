@@ -4,7 +4,9 @@ import com.realdolmen.bookstore.dto.ExistingUserDTO;
 import com.realdolmen.bookstore.model.ArticleType;
 import com.realdolmen.bookstore.model.Review;
 import com.realdolmen.bookstore.model.User;
+import com.realdolmen.bookstore.model.UserAddress;
 import com.realdolmen.bookstore.service.UserService;
+import org.apache.tomcat.jni.Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,22 @@ public class UserController {
             User foundUser = this.userService.findById(id);
             foundUser.setPassword(null);
             return ResponseEntity.ok().body(foundUser);
+
+        }catch (Exception ex){
+            logger.debug(ex.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping(value = "/address")
+    @CrossOrigin(origins = "http://localhost:4201")
+    public ResponseEntity<User> updateAddress(
+//            @RequestBody UserAddress updatedAddress
+    ){
+        logger.debug("UPDATE-ADDRESS::incoming object {}");
+        try{
+//            User currentUser = this.userService.updateAddress(updatedAddress);
+            return ResponseEntity.ok().build();
+//                    .body(currentUser);
 
         }catch (Exception ex){
             logger.debug(ex.getMessage());

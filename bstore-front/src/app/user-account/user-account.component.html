@@ -1,0 +1,45 @@
+<mat-card class="address--card">
+  <form [formGroup]="addressForm" class="address--form">
+    <mat-form-field class="full-width"><label for="street">Street</label>
+
+      <input matInput id="street" formControlName="street">
+
+    </mat-form-field>
+<!--    <span *ngIf="(registerForm.controls.username.errors?.required-->
+<!--    || registerForm.controls.username.errors?.minLength)-->
+<!--&& (registerForm.controls.username.dirty-->
+<!--|| registerForm.controls.username.touched)"> Username is required</span>-->
+
+<!--    <span *ngIf="registerForm.controls.username.errors?.userExists-->
+<!--&& (registerForm.controls.username.dirty-->
+<!--|| registerForm.controls.username.touched)"> Username is taken</span>-->
+
+
+    <mat-form-field class="full-width">
+      <label for="number">House Number</label>
+
+      <input matInput id="number" formControlName="number">
+
+    </mat-form-field>
+<!--    <span *ngIf="(registerForm.controls.password.dirty-->
+<!--    || registerForm.controls.password.touched)-->
+<!--    && registerForm.controls.password.errors">-->
+<!--      Password is required and should be at least 4 characters</span>-->
+    <mat-form-field class="full-width"><label for="city">City</label>
+
+      <input matInput id="city" formControlName="city">
+
+
+    </mat-form-field>
+<!--    <span *ngIf="registerForm.controls.confirmPassword.touched &&-->
+<!--      !(registerForm.controls.confirmPassword.value-->
+<!--      == registerForm.controls.password.value)"> Passwords do not match</span>-->
+    <mat-form-field class="full-width"><label for="postcode">Post Code</label>
+      <input matInput id="postcode" formControlName="postcode">
+    </mat-form-field>
+    <mat-form-field class="full-width"><label for="country">Country</label>
+      <input matInput id="country" formControlName="country">
+    </mat-form-field>
+    <button (click)="submit()" mat-button [disabled]="addressForm.invalid">Submit</button>
+  </form>
+</mat-card>

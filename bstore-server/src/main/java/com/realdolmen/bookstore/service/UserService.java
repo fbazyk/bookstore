@@ -2,7 +2,9 @@ package com.realdolmen.bookstore.service;
 
 import com.realdolmen.bookstore.dto.NewUserDTO;
 import com.realdolmen.bookstore.model.User;
+import com.realdolmen.bookstore.model.UserAddress;
 import com.realdolmen.bookstore.repository.UserRepository;
+import org.apache.tomcat.jni.Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,5 +93,11 @@ public class UserService {
         }
         logger.debug(username);
         return username;
+    }
+
+    public User updateAddress(UserAddress updatedAddress) {
+        User user = this.currentUser();
+        user.setAddress(updatedAddress);
+        return this.userRepository.save(user);
     }
 }

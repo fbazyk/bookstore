@@ -11,6 +11,15 @@ export class User {
   favoriteBooks?: Article[]
   favoriteGames?: Article[]
   favoriteLps?: Article[]
+  address?: UserAddress;
+}
+
+export interface UserAddress {
+  street?: string;
+  number?: string;
+  city?: string;
+  postcode?: string
+  country?: string;
 }
 
 export enum UserRole {

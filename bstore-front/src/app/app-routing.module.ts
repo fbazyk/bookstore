@@ -13,6 +13,7 @@ import {RegisterComponent} from "./register/register.component";
 import {CartComponent} from "./cart/cart.component";
 import {AddArticleComponent} from "./add-article/add-article.component";
 import {DisplayOrdersComponent} from "./display-orders/display-orders.component";
+import {UserAccountComponent} from "./user-account/user-account.component";
 
 
 const routes: Routes = [
@@ -20,6 +21,11 @@ const routes: Routes = [
   {
     path: 'orders',
     component: DisplayOrdersComponent,
+    canActivate: [ UserGuardService]
+  },
+  {
+    path: 'account',
+    component: UserAccountComponent,
     canActivate: [ UserGuardService]
   },
   {
