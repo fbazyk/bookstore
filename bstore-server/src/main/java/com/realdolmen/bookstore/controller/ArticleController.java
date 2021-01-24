@@ -134,21 +134,6 @@ public class ArticleController {
             return ResponseEntity.ok(result);
     }
 
-//    @PostMapping("/article/oldsearch")
-//    public ResponseEntity<List<Article>> searchArticle(@RequestBody Map<String,String> searchFields) {
-//       logger.debug("Search initiated");
-//
-//        List<Article> resultLsit = this.articleService.search(searchFields);
-//        //todo catch custom exception and throw bad request "field not provided"
-//        if(resultLsit != null && resultLsit.size()>0){
-//            logger.debug("ResultList {}", resultLsit);
-//            return new ResponseEntity<List<Article>>(resultLsit, HttpStatus.OK);
-//        } else {
-//            return ResponseEntity.noContent().build();
-//        }
-//
-//    }
-
     @PostMapping("/article/search")
     public ResponseEntity<ArticlesPage> search(@RequestParam Long page,
                                                @RequestParam Long psize,

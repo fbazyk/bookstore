@@ -51,11 +51,13 @@ public class UserController {
     public ResponseEntity<User> userById(@PathVariable long id) {
         logger.debug("User for, id {}", id);
         try {
-//            ExistingUserDTO foundUser = ExistingUserDTO.from(this.userService.findById(id));
-            //TODO check if current user is the user that is requested
+            User currentUser = this.userService.currentUser();
             User foundUser = this.userService.findById(id);
-            foundUser.setPassword(null);
-            return ResponseEntity.ok().body(foundUser);
+            if(currentUser.getId().equals(foundUser.getId())){
+                foundUser.setPassword(null);
+                return ResponseEntity.ok().body(foundUser);
+
+            } else return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
 
         } catch (Exception ex) {
             logger.debug(ex.getMessage());
