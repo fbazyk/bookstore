@@ -1,6 +1,7 @@
 package com.realdolmen.bookstore.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.realdolmen.bookstore.dto.UserAddressDTO;
 
 import javax.persistence.*;
 
@@ -33,6 +34,15 @@ public class UserAddress {
     private String country;
 
     public UserAddress() {
+    }
+
+    public UserAddress(User user, UserAddressDTO updatedAddress) {
+        this.user = user;
+        this.street = updatedAddress.getStreet();
+        this.number = updatedAddress.getNumber();
+        this.city = updatedAddress.getCity();
+        this.postcode = updatedAddress.getPostcode();
+        this.country = updatedAddress.getCountry();
     }
 
     public Long getId() {

@@ -65,7 +65,7 @@ public class User implements UserDetails {
     @Column(name = "enabled")
     private Boolean enabled;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     @JsonManagedReference
     private UserAddress address;

@@ -1,6 +1,7 @@
 package com.realdolmen.bookstore.controller;
 
 import com.realdolmen.bookstore.dto.ExistingUserDTO;
+import com.realdolmen.bookstore.dto.UserAddressDTO;
 import com.realdolmen.bookstore.model.ArticleType;
 import com.realdolmen.bookstore.model.Review;
 import com.realdolmen.bookstore.model.User;
@@ -35,7 +36,7 @@ public class UserController {
     @GetMapping
     public List<User> findAll() {
 
-        List<User> result =this.userService.findAll();
+        List<User> result = this.userService.findAll();
         logger.debug("Users", result.get(0));
         logger.debug("Users", result);
         return result;
@@ -43,35 +44,37 @@ public class UserController {
 
     /**
      * Find User by Id
-     * */
+     */
 
     @GetMapping(value = "/id/{id}")
     @CrossOrigin(origins = "http://localhost:4201")
-    public ResponseEntity<User> userById(@PathVariable long id){
+    public ResponseEntity<User> userById(@PathVariable long id) {
         logger.debug("User for, id {}", id);
-        try{
+        try {
 //            ExistingUserDTO foundUser = ExistingUserDTO.from(this.userService.findById(id));
+            //TODO check if current user is the user that is requested
             User foundUser = this.userService.findById(id);
             foundUser.setPassword(null);
             return ResponseEntity.ok().body(foundUser);
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.debug(ex.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @PostMapping(value = "/address")
     @CrossOrigin(origins = "http://localhost:4201")
     public ResponseEntity<User> updateAddress(
-//            @RequestBody UserAddress updatedAddress
-    ){
-        logger.debug("UPDATE-ADDRESS::incoming object {}");
-        try{
-//            User currentUser = this.userService.updateAddress(updatedAddress);
-            return ResponseEntity.ok().build();
-//                    .body(currentUser);
+            @RequestBody UserAddressDTO updatedAddress
+    ) {
+        logger.debug("UPDATE-ADDRESS::incoming object {}", updatedAddress);
+        try {
+            User currentUser = this.userService.updateAddress(updatedAddress);
+            return ResponseEntity.ok()
+                    .body(currentUser);
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.debug(ex.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

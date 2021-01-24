@@ -11,7 +11,7 @@ import {Subscription} from "rxjs";
 export class UserAccountComponent implements OnInit {
 
   private subs: Subscription[] = [];
-  private addressForm: FormGroup;
+  public addressForm: FormGroup;
 
 
   constructor(private userService: UserService,

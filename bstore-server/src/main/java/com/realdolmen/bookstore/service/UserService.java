@@ -1,6 +1,7 @@
 package com.realdolmen.bookstore.service;
 
 import com.realdolmen.bookstore.dto.NewUserDTO;
+import com.realdolmen.bookstore.dto.UserAddressDTO;
 import com.realdolmen.bookstore.model.User;
 import com.realdolmen.bookstore.model.UserAddress;
 import com.realdolmen.bookstore.repository.UserRepository;
@@ -30,7 +31,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> findAll(){
+    public List<User> findAll() {
         return this.userRepository.findAll();
     }
 
@@ -43,7 +44,7 @@ public class UserService {
     }
 
     public User findByUserName(String username) {
-        logger.debug("Find User"+username+"in DB");
+        logger.debug("Find User" + username + "in DB");
         Optional<User> currentUser = this.userRepository.findByUserName(username);
         //todo check optional usage
         return currentUser.get();
@@ -61,7 +62,7 @@ public class UserService {
         return this.userRepository.saveAndFlush(newUser);
     }
 
-    public User findById(long id) throws Exception{
+    public User findById(long id) throws Exception {
         logger.debug("Finding user by ID {}", id);
         return this.userRepository.findById(id).orElseThrow(() -> {
             return new Exception("Something went wrong");
@@ -69,7 +70,7 @@ public class UserService {
     }
 
     public User currentUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication(). getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails) {
             username = ((UserDetails) principal).getUsername();
@@ -82,8 +83,8 @@ public class UserService {
         return foundUser;
     }
 
-    public String currentUserName(){
-        Object principal = SecurityContextHolder.getContext().getAuthentication(). getPrincipal();
+    public String currentUserName() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails) {
             username = ((UserDetails) principal).getUsername();
@@ -95,9 +96,21 @@ public class UserService {
         return username;
     }
 
-    public User updateAddress(UserAddress updatedAddress) {
+    public User updateAddress(UserAddressDTO updatedAddressDTO) {
         User user = this.currentUser();
-        user.setAddress(updatedAddress);
-        return this.userRepository.save(user);
+        UserAddress addressToUpdate = user.getAddress();
+        if (addressToUpdate != null) {
+            addressToUpdate.setCity(updatedAddressDTO.getCity());
+            addressToUpdate.setCountry(updatedAddressDTO.getCountry());
+            addressToUpdate.setPostcode(updatedAddressDTO.getPostcode());
+            addressToUpdate.setStreet(updatedAddressDTO.getStreet());
+            addressToUpdate.setNumber(updatedAddressDTO.getNumber());
+        } else {
+            UserAddress updatedAddress = new UserAddress(user, updatedAddressDTO);
+            user.setAddress(updatedAddress);
+        }
+        User savedUser = this.userRepository.save(user);
+        savedUser.setPassword(null);
+        return savedUser;
     }
 }
