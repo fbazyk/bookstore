@@ -89,6 +89,9 @@ public class OrderController {
     @GetMapping(path = "/orders/invoice/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<InputStreamResource> getInvoiceFor(@PathVariable long id) throws IOException, JRException {
         User currentUser = this.userService.currentUser();
+        if(currentUser.getAddress()==null || currentUser.getAddress().getId()==null){
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
+        }
         Order order = new Order();
         File invoiceFile = new File("invoice.pdf");
         try {
