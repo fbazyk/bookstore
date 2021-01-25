@@ -269,12 +269,15 @@ public class OrderService {
         return resultCartArticles;
     }
 
-    public UserOrdersDTO getUserOrders(User currentUser) {
-        UserOrdersDTO userOrdersDTO = new UserOrdersDTO();
-        List<Order> orders = this.orderRepository.findOrdersByUserAndOrderDateIsNotNull(currentUser);
-        logger.debug("Orders object is: {}", orders);
-        userOrdersDTO.setOrderList(orders);
-        return userOrdersDTO;
+//    public UserOrdersDTO getUserOrders(User currentUser) {
+//        UserOrdersDTO userOrdersDTO = new UserOrdersDTO();
+//        List<Order> orders = this.orderRepository.findOrdersByUserAndOrderDateIsNotNull(currentUser);
+//        logger.debug("Orders object is: {}", orders);
+//        userOrdersDTO.setOrderList(orders);
+//        return userOrdersDTO;
+//    }
+    public List<Order> getUserOrders1(User currentUser) {
+        return this.orderRepository.findOrdersByUserAndOrderDateIsNotNull(currentUser);
     }
 
     public Order findOrderById(Long id) throws Exception {
@@ -285,5 +288,9 @@ public class OrderService {
             throw new Exception("Order Not Found");
         }
         return order;
+    }
+
+    public Order getUserOrderById(User currentUser, Long id) {
+        return this.orderRepository.findOrdersByUserAndId(currentUser, id);
     }
 }

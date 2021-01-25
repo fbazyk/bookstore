@@ -1,0 +1,19 @@
+.mat-column-title{
+  width: 65%;
+}
+
+.mat-column-price{
+  width: 15%;
+}
+
+.mat-column-quantity{
+  width: 15%;
+}
+.mat-column-itemtotal{
+  width: 15%;
+}
+
+.mat-dialog-footer{
+  display: flex;
+  flex-direction: row-reverse;
+}

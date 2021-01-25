@@ -12,4 +12,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Order findOrdersByOrderDateIsNullAndUser(User user);
     List<Order> findOrdersByOrderDateIsNull();
     List<Order> findOrdersByUserAndOrderDateIsNotNull(User user);
+
+    Order findOrdersByUserAndId(User currentUser, Long id);
 }

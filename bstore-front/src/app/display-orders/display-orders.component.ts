@@ -7,6 +7,8 @@ import {OrderDTO} from "../model/OrderDTO";
 import { saveAs } from 'file-saver';
 import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import {DisplayOrderArticlesComponent} from "../display-order-articles/display-order-articles.component";
 
 @Component({
   selector: 'app-display-orders',
@@ -19,6 +21,7 @@ export class DisplayOrdersComponent implements OnInit {
   constructor(
     private http: HttpClient,
     public snackBar: MatSnackBar,
+    public matDialog: MatDialog,
     private router: Router
   ) { }
 
@@ -46,9 +49,22 @@ export class DisplayOrdersComponent implements OnInit {
     })
   }
 
-  showOrder(event: MouseEvent) {
+  showOrder(event: MouseEvent, order: any) {
     //TODO show order
     console.log(event)
+    console.log(order)
+    const dialogConfig = new MatDialogConfig();
+    // The user can't close the dialog by clicking outside its body
+
+    dialogConfig.disableClose = false;
+    dialogConfig.id = "display-order-articles-component";
+    dialogConfig.height = "auto";
+    dialogConfig.width = "80vw";
+    dialogConfig.data = {
+      order: order
+    };
+    // https://material.angular.io/components/dialog/overview
+    const modalDialog = this.matDialog.open(DisplayOrderArticlesComponent, dialogConfig);
   }
 }
 export interface DisplayOrdersDTO{

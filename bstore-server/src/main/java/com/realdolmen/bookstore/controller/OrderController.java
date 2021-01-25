@@ -82,8 +82,16 @@ public class OrderController {
 
     @GetMapping(path="/orders")
     public ResponseEntity<UserOrdersDTO> getUserOrders(){
-        UserOrdersDTO userOrdersDTO = this.orderService.getUserOrders(this.userService.currentUser());
+        UserOrdersDTO userOrdersDTO = new UserOrdersDTO();
+
+         userOrdersDTO.setOrderList(this.orderService.getUserOrders1(this.userService.currentUser()));
         return ResponseEntity.status(HttpStatus.OK).body(userOrdersDTO);
+    }
+
+    @GetMapping(path="/orders/{id}")
+    public ResponseEntity<Order> getOrderById(@PathVariable Long id){
+        Order order = this.orderService.getUserOrderById(this.userService.currentUser(), id);
+        return ResponseEntity.status(HttpStatus.OK).body(order);
     }
 
     @GetMapping(path = "/orders/invoice/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -151,7 +159,6 @@ public class OrderController {
 
     @PostMapping(path = "/order")
     public ResponseEntity<Boolean> placeOrder(){
-        //TODO in OrderService: placeOrder
         Object principal = SecurityContextHolder.getContext().getAuthentication(). getPrincipal();
         String username;
         if (principal instanceof UserDetails) {

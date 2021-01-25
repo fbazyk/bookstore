@@ -77,7 +77,7 @@ public class ArticleController {
             Article article = articleService.getNotDeletedArticle(type, id);
             return ResponseEntity.ok().body(article);
         } catch (ArticleNotFoundException ex){
-            String errorMessage = "Unable to find Article" + type + ":" + id;
+            String errorMessage = "Unable to find Article " + type + ":" + id;
             return ResponseEntity.badRequest().body(errorMessage);
         }
     }
