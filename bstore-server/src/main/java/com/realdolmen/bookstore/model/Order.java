@@ -42,6 +42,9 @@ public class Order implements Auditable{
     @Column
     private BigDecimal orderTotal;
 
+    @Column(name = "shipping_date")
+    private Instant shippingDate;
+
     @Embedded
     private Audit audit;
 
@@ -84,6 +87,14 @@ public class Order implements Auditable{
             orderItems = new HashSet<>();
         }
         return orderItems;
+    }
+
+    public Instant getShippingDate() {
+        return shippingDate;
+    }
+
+    public void setShippingDate(Instant shippingDate) {
+        this.shippingDate = shippingDate;
     }
 
     public void setOrderItems(Set<OrderItem> orderItems) {

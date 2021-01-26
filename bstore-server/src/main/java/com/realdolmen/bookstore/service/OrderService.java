@@ -276,7 +276,7 @@ public class OrderService {
 //        userOrdersDTO.setOrderList(orders);
 //        return userOrdersDTO;
 //    }
-    public List<Order> getUserOrders1(User currentUser) {
+    public List<Order> getUserOrders(User currentUser) {
         return this.orderRepository.findOrdersByUserAndOrderDateIsNotNull(currentUser);
     }
 
@@ -291,6 +291,11 @@ public class OrderService {
     }
 
     public Order getUserOrderById(User currentUser, Long id) {
-        return this.orderRepository.findOrdersByUserAndId(currentUser, id);
+        return this.orderRepository.findOrdersByUserAndOrderId(currentUser, id);
+    }
+
+    public List<Order> getNewOrders() {
+        this.orderRepository.findOrdersByOrderDateIsNotNullAndShippingDateIsNull();
+        return null;
     }
 }

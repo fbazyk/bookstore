@@ -5,7 +5,7 @@ import com.realdolmen.bookstore.dto.OrderItemDTO;
 import com.realdolmen.bookstore.exception.QuantityNotAvailableException;
 import com.realdolmen.bookstore.model.Order;
 import com.realdolmen.bookstore.model.User;
-import com.realdolmen.bookstore.model.UserOrdersDTO;
+import com.realdolmen.bookstore.model.OrdersDTO;
 import com.realdolmen.bookstore.service.ArticleService;
 import com.realdolmen.bookstore.service.InvoiceService;
 import com.realdolmen.bookstore.service.OrderService;
@@ -81,11 +81,19 @@ public class OrderController {
     }
 
     @GetMapping(path="/orders")
-    public ResponseEntity<UserOrdersDTO> getUserOrders(){
-        UserOrdersDTO userOrdersDTO = new UserOrdersDTO();
+    public ResponseEntity<OrdersDTO> getUserOrders(){
+        OrdersDTO ordersDTO = new OrdersDTO();
 
-         userOrdersDTO.setOrderList(this.orderService.getUserOrders1(this.userService.currentUser()));
-        return ResponseEntity.status(HttpStatus.OK).body(userOrdersDTO);
+         ordersDTO.setOrderList(this.orderService.getUserOrders(this.userService.currentUser()));
+        return ResponseEntity.status(HttpStatus.OK).body(ordersDTO);
+    }
+
+    @GetMapping(path="/orders/new")
+    public ResponseEntity<OrdersDTO> getNewOrders(){
+        OrdersDTO ordersDTO = new OrdersDTO();
+
+         ordersDTO.setOrderList(this.orderService.getNewOrders());
+        return ResponseEntity.status(HttpStatus.OK).body(ordersDTO);
     }
 
     @GetMapping(path="/orders/{id}")

@@ -2,7 +2,7 @@ package com.realdolmen.bookstore.model;
 
 import java.util.List;
 
-public class UserOrdersDTO {
+public class OrdersDTO {
     List<Order> orderList;
 
     public List<Order> getOrderList() {
