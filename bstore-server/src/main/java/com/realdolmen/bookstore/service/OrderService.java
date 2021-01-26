@@ -295,7 +295,7 @@ public class OrderService {
     }
 
     public List<Order> getNewOrders() {
-        this.orderRepository.findOrdersByOrderDateIsNotNullAndShippingDateIsNull();
-        return null;
+        List<Order> resultList = this.orderRepository.findOrdersByOrderDateIsNotNullAndShippingDateIsNull();
+        return resultList;
     }
 }
