@@ -19,3 +19,7 @@ export interface OrderItemDTO{
   editQuantity?: boolean
 }
 
+export class OrdersDTO{
+  orderList: OrderDTO[]
+}
+
