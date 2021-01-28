@@ -6,10 +6,7 @@ import com.realdolmen.bookstore.exception.QuantityNotAvailableException;
 import com.realdolmen.bookstore.model.Order;
 import com.realdolmen.bookstore.model.User;
 import com.realdolmen.bookstore.model.OrdersDTO;
-import com.realdolmen.bookstore.service.ArticleService;
-import com.realdolmen.bookstore.service.InvoiceService;
-import com.realdolmen.bookstore.service.OrderService;
-import com.realdolmen.bookstore.service.UserService;
+import com.realdolmen.bookstore.service.*;
 import net.sf.jasperreports.engine.JRException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +20,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.OK;
@@ -40,17 +41,20 @@ public class OrderController {
     private ArticleService articleService;
     private UserService userService;
     private InvoiceService invoiceService;
+    private PackingListService packingListService;
 
     private Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     public OrderController(OrderService orderService,
                            ArticleService articleService,
                            UserService userService,
-                           InvoiceService invoiceService) {
+                           InvoiceService invoiceService,
+                           PackingListService packingListService) {
         this.orderService = orderService;
         this.articleService = articleService;
         this.userService = userService;
         this.invoiceService = invoiceService;
+        this.packingListService = packingListService;
     }
 
     /**
@@ -94,6 +98,17 @@ public class OrderController {
 
          ordersDTO.setOrderList(this.orderService.getNewOrders());
         return ResponseEntity.status(HttpStatus.OK).body(ordersDTO);
+    }
+    @GetMapping(path="/orders/plist/{id}")
+    public HttpServletResponse getPackingList(HttpServletResponse response, @PathVariable Long id) throws Exception {
+        logger.debug("GET PACKING LIST::method triggered");
+        Order order = this.orderService.getOrderById(id);
+        response.setContentType("application/octet-stream");
+           String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=packing-list_"+ id + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+        this.packingListService.generatePackingList(order, response);
+        return response;
     }
 
     @GetMapping(path="/orders/{id}")

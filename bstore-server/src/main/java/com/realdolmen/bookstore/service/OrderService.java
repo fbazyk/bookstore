@@ -298,4 +298,8 @@ public class OrderService {
         List<Order> resultList = this.orderRepository.findOrdersByOrderDateIsNotNullAndShippingDateIsNull();
         return resultList;
     }
+
+    public Order getOrderById(Long id) throws Exception {
+        return this.orderRepository.findById(id).orElseThrow(Exception::new);
+    }
 }

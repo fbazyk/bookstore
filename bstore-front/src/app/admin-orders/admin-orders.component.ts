@@ -5,6 +5,8 @@ import {OrderDTO, OrdersDTO} from "../model/OrderDTO";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {DisplayOrderArticlesComponent} from "../display-order-articles/display-order-articles.component";
+import {HttpClient} from "@angular/common/http";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-admin-orders',
@@ -23,6 +25,7 @@ export class AdminOrdersComponent implements OnInit {
   constructor(
     private orderService: OrderService,
     public matDialog: MatDialog,
+    private http: HttpClient,
   ) { }
 
   ngOnInit(): void {
@@ -46,6 +49,9 @@ export class AdminOrdersComponent implements OnInit {
     $event.stopPropagation()
     console.log($event)
     console.log(order)
+    this.http.get(`${environment.apiUrl}/orders/plist/${order.orderId}`).subscribe(value => {
+      console.log(value);
+    })
 
   }
 
