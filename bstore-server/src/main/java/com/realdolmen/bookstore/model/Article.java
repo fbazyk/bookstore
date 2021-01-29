@@ -1,5 +1,6 @@
 package com.realdolmen.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.realdolmen.bookstore.service.AuditListener;
@@ -59,8 +60,15 @@ public class Article implements Auditable {
     @JoinColumn(name = "article_id")
     private Set<Review> reviews;
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    @JsonManagedReference
+    private StorageLocation location;
+
     @Embedded
     private Audit audit;
+
+
 
     public boolean isDeleted() {
         return deleted;
@@ -75,6 +83,14 @@ public class Article implements Auditable {
             audit = new Audit();
         }
         return audit;
+    }
+
+    public StorageLocation getLocation() {
+        return location;
+    }
+
+    public void setLocation(StorageLocation location) {
+        this.location = location;
     }
 
     public void setAudit(Audit audit) {

@@ -30,6 +30,7 @@ import java.util.Date;
 
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 import static org.springframework.http.MediaType.APPLICATION_PDF;
 
 
@@ -100,15 +101,15 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(ordersDTO);
     }
     @GetMapping(path="/orders/plist/{id}")
-    public HttpServletResponse getPackingList(HttpServletResponse response, @PathVariable Long id) throws Exception {
+    public ResponseEntity<InputStreamResource>  getPackingList(HttpServletResponse response, @PathVariable Long id) throws Exception {
         logger.debug("GET PACKING LIST::method triggered");
         Order order = this.orderService.getOrderById(id);
-        response.setContentType("application/octet-stream");
-           String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=packing-list_"+ id + ".xlsx";
-        response.setHeader(headerKey, headerValue);
-        this.packingListService.generatePackingList(order, response);
-        return response;
+        HttpHeaders respHeaders = new HttpHeaders();
+        File packingList = this.packingListService.generatePackingList(order, response);
+        respHeaders.setContentType(APPLICATION_OCTET_STREAM);
+        respHeaders.setContentLength(packingList.length());
+        respHeaders.setContentDispositionFormData("attachment", format("packinglist-%s.xlsx", id));
+        return new ResponseEntity<>(new InputStreamResource(new FileInputStream(packingList)), respHeaders , OK);
     }
 
     @GetMapping(path="/orders/{id}")

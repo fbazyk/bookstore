@@ -55,12 +55,12 @@ public class InvoiceService {
         parameters.put("ORDER", order);
 
         //load file and compile it
-        File file = ResourceUtils.getFile("classpath:reports/test_template.jrxml");
+        File invoiceTemplate = ResourceUtils.getFile("classpath:reports/test_template.jrxml");
 
         File pdf = File.createTempFile("invoice", ".pdf");
 
         try (FileOutputStream fos = new FileOutputStream(pdf)) {
-            JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+            JasperReport jasperReport = JasperCompileManager.compileReport(invoiceTemplate.getAbsolutePath());
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
             JasperExportManager.exportReportToPdfStream(jasperPrint, fos);
         } catch (final Exception e) {
