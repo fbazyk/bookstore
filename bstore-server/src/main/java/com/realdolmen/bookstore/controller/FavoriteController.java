@@ -42,7 +42,7 @@ public class FavoriteController {
     }
 
     @PostMapping(value = "/favorite/{type}/{id}", produces="text/plain")
-    public ResponseEntity<?> favoriteArticle(@PathVariable String type, @PathVariable long id, @RequestBody Article article) {
+    public ResponseEntity<?> favoriteArticle(@PathVariable String type, @PathVariable long id) {
         User user = this.userService.currentUser();
 //
         switch (type.toUpperCase()){
@@ -66,7 +66,7 @@ public class FavoriteController {
     }
 
     @PostMapping(value = "/unfavorite/{type}/{id}", produces="text/plain")
-    public ResponseEntity<?> unfavoriteArticle(@PathVariable String type, @PathVariable long id, @RequestBody Article article) {
+    public ResponseEntity<?> unfavoriteArticle(@PathVariable String type, @PathVariable long id) {
         User user = this.userService.currentUser();
 //
         switch (type.toUpperCase()){
