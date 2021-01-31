@@ -110,7 +110,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
   }
 
-  //TODO DELETE button
   updateQuantity(orderItem: OrderItemDTO) {
     if (orderItem.quantity >= 1) {
       this.cartService.updateQuantity(orderItem);

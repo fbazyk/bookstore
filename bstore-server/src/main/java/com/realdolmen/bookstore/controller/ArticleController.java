@@ -1,11 +1,12 @@
 package com.realdolmen.bookstore.controller;
 
+import com.realdolmen.bookstore.dto.ArticleDTO;
 import com.realdolmen.bookstore.dto.SearchDTO;
 import com.realdolmen.bookstore.exception.ArticleNotFoundException;
 import com.realdolmen.bookstore.exception.UnableToUpdateArticleException;
-import com.realdolmen.bookstore.model.Article;
-import com.realdolmen.bookstore.model.ArticlesPage;
+import com.realdolmen.bookstore.model.*;
 import com.realdolmen.bookstore.service.ArticleService;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class ArticleController {
     Logger logger = LoggerFactory.getLogger(ArticleController.class);
 
     private ArticleService articleService;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     public ArticleController(ArticleService articleService) {
@@ -94,10 +98,25 @@ public class ArticleController {
     }
 
     @PostMapping(value = "/article/{type}/{id}", produces="text/plain")
-    public ResponseEntity<?> changeArticle(@PathVariable String type, @PathVariable long id, @RequestBody Article article) {
+    public ResponseEntity<?> changeArticle(@PathVariable String type, @PathVariable long id, @RequestBody ArticleDTO article) {
+        Article article1 = new Article();
         try{
             if(article.getId() != id) throw new UnableToUpdateArticleException();
-            articleService.updateArticle(article);
+            switch(article.getType().toUpperCase()){
+                case "BOOK": {
+                    article1 = modelMapper.map(article, Book.class);
+                    break;
+                }
+                case "GAME":{
+                    article1 = modelMapper.map(article, Game.class);
+                    break;
+                }
+                case "LP":{
+                    article1 = modelMapper.map(article, LP.class);
+                    break;
+                }
+            }
+            articleService.updateArticle(article1);
             return ResponseEntity.ok("Article Updated");
         } catch (UnableToUpdateArticleException ex){
             return ResponseEntity.unprocessableEntity().body("Article Was Not Updated");
@@ -105,7 +124,7 @@ public class ArticleController {
     }
 
     @PutMapping(value = "/article/{type}", produces = "text/plain")
-    public ResponseEntity<?> addArticle(@RequestBody Article article, @PathVariable String type) {
+    public ResponseEntity<?> addArticle(@RequestBody ArticleDTO article, @PathVariable String type) {
         //TODO unmarshall Article object into correct type
         //TODO Create ArticleDTO with explicitly stated type
         //TODO read https://stackabuse.com/data-transfer-object-pattern-in-java-implementation-and-mapping/
@@ -117,7 +136,21 @@ public class ArticleController {
         logger.debug("Put Article {}", type);
         try{
             if(article.getId() == 0){
-                Article noId = article;
+                Article noId = new Article();
+                switch(article.getType().toUpperCase()){
+                    case "BOOK": {
+                        noId = modelMapper.map(article, Book.class);
+                        break;
+                    }
+                    case "GAME":{
+                        noId = modelMapper.map(article, Game.class);
+                        break;
+                    }
+                    case "LP":{
+                        noId = modelMapper.map(article, LP.class);
+                        break;
+                    }
+                }
                 noId.setId(null);
                 articleService.addArticle(type, noId);
             }

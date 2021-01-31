@@ -79,9 +79,11 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
         this.reviews.forEach(review => {
           // console.log(review)
           if (!!review) {
-            this.userService.getUserName(review.userId).subscribe((existingUserDTO: ExistingUserDTO) => {
-              // console.log(existingUserDTO);
-              review.userName = existingUserDTO.username;
+            this.userService.getUserName(review.userId).subscribe((username:string) => {
+              console.log(username);
+              review.userName = username;
+            }, error => {
+              console.log(error);
             });
           }
         })

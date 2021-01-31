@@ -135,11 +135,11 @@ export class UserService implements OnInit {
   }
 
   getUserName(userId: number) {
-    return this.http.get(`${environment.apiUrl}/users/id/${userId}`)
+    return this.http.get(`${environment.apiUrl}/users/name/${userId}`, {responseType: 'text'})
   }
 
   updateUserInfo() {
-    this.http.get(`${environment.apiUrl}/users/id/${this.currentUserValue.id}`).subscribe((value: User) => {
+    this.http.get(`${environment.apiUrl}/users/id/${this.currentUserValue.id}` ).subscribe((value: User) => {
       console.log(value)
       this.currentUserSubject.next(value)
     })

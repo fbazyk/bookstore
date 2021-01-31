@@ -260,7 +260,7 @@ export class ArticleService implements OnInit {
     this.isLoading.next(true);
     // submittedArticle.id == 0 only if it's a new article
     if (submittedArticle.id > 0) {
-      this.http.post(`${environment.apiUrl}/article/${submittedArticle.type}/${submittedArticle.id}`, submittedArticle, {responseType: "text"}).subscribe(response => {
+      this.http.post(`${environment.apiUrl}/article/${submittedArticle.type}/${submittedArticle.id}`, submittedArticle, {headers : {'Content-Type' : 'application/json' }, responseType: "text"}).subscribe(response => {
         let successSnackBar = this.snackBar.open(`Article ${submittedArticle.type} ${submittedArticle.id} was updated.`, null, {duration: 2500})
         this.isLoading.next(false);
         this.findPagedCategory(this.pageRequest.value.pageIndex,

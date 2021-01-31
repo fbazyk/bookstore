@@ -65,6 +65,22 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = "/name/{id}")
+    @CrossOrigin(origins = "http://localhost:4201")
+    public ResponseEntity<String> userNameById(@PathVariable long id) {
+        logger.debug("User for, id {}", id);
+        try {
+            User currentUser = this.userService.currentUser();
+            User foundUser = this.userService.findById(id);
+
+                return ResponseEntity.ok().body(foundUser.getUserName());
+
+        } catch (Exception ex) {
+            logger.debug(ex.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping(value = "/address")
     @CrossOrigin(origins = "http://localhost:4201")
     public ResponseEntity<User> updateAddress(

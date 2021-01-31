@@ -253,14 +253,14 @@ public class ArticleService {
     public boolean updateArticle(Article article) throws UnableToUpdateArticleException {
 
         if (article.getId() != null && article.getId() > 0) {
-            if (article instanceof Book) {
+            if (article instanceof Book ) {
                 try {
                     Book existingBook = this.bookRepository.findById(article.getId()).get();
+                    existingBook.setTitle(article.getTitle());
+                    existingBook.setPrice(article.getPrice());
                     existingBook.setAuthor(((Book) article).getAuthor());
                     existingBook.setIsbn(((Book) article).getIsbn());
                     existingBook.setPages(((Book) article).getPages());
-                    existingBook.setPrice(article.getPrice());
-                    existingBook.setTitle(article.getTitle());
                     existingBook.setSupplierId(article.getSupplierId());
                     this.bookRepository.save(existingBook);
                     this.bookRepository.flush();
@@ -271,14 +271,27 @@ public class ArticleService {
                 }
             } else if (article instanceof Game) {
                 try {
-                    this.gameRepository.saveAndFlush((Game) article);
+                    Game existingGame = this.gameRepository.findById(article.getId()).get();
+                    existingGame.setTitle(article.getTitle());
+                    existingGame.setPrice(article.getPrice());
+                    existingGame.setPublisher(((Game) article).getPublisher());
+                    existingGame.setMinage(((Game) article).getMinage());
+                    existingGame.setGenre(((Game) article).getGenre());
+                    existingGame.setSupplierId(article.getSupplierId());
+                    this.gameRepository.saveAndFlush(existingGame);
                     return true;
                 } catch (Exception ex) {
                     throw new UnableToUpdateArticleException();
                 }
             } else if (article instanceof LP) {
                 try {
-                    this.lpRepository.saveAndFlush((LP) article);
+                    LP existingLp = this.lpRepository.findById(article.getId()).get();
+                    existingLp.setTitle(article.getTitle());
+                    existingLp.setPrice(article.getPrice());
+                    existingLp.setArtist(((LP) article).getArtist());
+                    existingLp.setGenre(((LP) article).getGenre());
+                    existingLp.setSupplierId(article.getSupplierId());
+                    this.lpRepository.saveAndFlush(existingLp);
                     return true;
                 } catch (Exception ex) {
                     throw new UnableToUpdateArticleException();
