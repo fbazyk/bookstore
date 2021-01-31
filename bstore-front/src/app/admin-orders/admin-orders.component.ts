@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {OrderService} from "../service/order.service";
 import {Subscription} from "rxjs";
+import { saveAs } from 'file-saver';
 import {OrderDTO, OrdersDTO} from "../model/OrderDTO";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {DisplayOrderArticlesComponent} from "../display-order-articles/display-order-articles.component";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 
 @Component({
@@ -49,8 +50,13 @@ export class AdminOrdersComponent implements OnInit {
     $event.stopPropagation()
     console.log($event)
     console.log(order)
-    this.http.get(`${environment.apiUrl}/orders/plist/${order.orderId}`).subscribe(value => {
-      console.log(value);
+    let headers = new HttpHeaders();
+    headers = headers.set('Accept', 'application/octetstream')
+    this.http.get(`${environment.apiUrl}/orders/plist/${order.orderId}`,
+      {headers: headers, responseType: 'blob'}).subscribe(response => {
+      console.log(response);
+      let blob = new Blob([response], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+      saveAs(blob, `packinglist-${order.orderId}.xlsx`)
     })
 
   }

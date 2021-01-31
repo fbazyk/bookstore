@@ -34,8 +34,9 @@ public class PackingListService {
 
     public File generatePackingList(Order order, HttpServletResponse response) throws IOException, ArticleNotFoundException {
         logger.debug("GENERATE PACKING LIST::method triggered");
-        //TODO open workbook
+        //open workbook
         workbook = new XSSFWorkbook();
+        //write header row
         this.writeHeaderLine();
         sheet = workbook.getSheet("Articles");
         int rowNumber = 1;
@@ -59,17 +60,14 @@ public class PackingListService {
             sheet.autoSizeColumn(i);
         }
 
-        //todo write header row
-        //TODO prepare the data for writing
-        //TODO open file for writing
-        File xls = File.createTempFile("packinglist", ".xlsx");
-        try (FileOutputStream fos = new FileOutputStream(xls)) {
+        //open file for writing
+        File xlsx = File.createTempFile("packinglist", ".xlsx");
+        try (FileOutputStream fos = new FileOutputStream(xlsx)) {
             workbook.write(fos);
             workbook.close();
 
         }
-        //TODO Optional: add data for StorageLocation
-        return xls;
+        return xlsx;
     }
 
     private void createDataCell(Row row, int columnCount, Object value) {
