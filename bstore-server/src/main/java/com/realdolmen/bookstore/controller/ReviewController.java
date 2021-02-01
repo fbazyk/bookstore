@@ -40,6 +40,13 @@ public class ReviewController {
 
     }
 
+    @GetMapping(value = "/reviews/user/{id}")
+    public ResponseEntity<Set<Review>> userReviews(@PathVariable Long id){
+        logger.debug("Reviews for user: id{}", id);
+        Set<Review> foundReviews = this.reviewService.findReviewsByUserId(id);
+        return ResponseEntity.ok(foundReviews);
+    }
+
     @PostMapping(value = "/reviews/add")
     public ResponseEntity<?> addReview(@RequestBody AddReviewDTO addReviewDTO){
         logger.debug("reviews for: type {}, id {}", addReviewDTO.getArticleType(), addReviewDTO.getArticleId());

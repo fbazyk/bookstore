@@ -59,7 +59,7 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
       });
 
 
-      this.reviewService.getReviews(params['type'], params['id']);
+      this.reviewService.getReviewsForArticle(params['type'], params['id']);
     });
     let userIsAdminSub = this.userService.isAdmin().subscribe(isAdmin => {
       this.showAdminControls = isAdmin
@@ -71,7 +71,7 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
     })
 
 
-    let reviewSub = this.reviewService.reviews.subscribe(reviews => {
+    let reviewSub = this.reviewService.articleReviews.subscribe(reviews => {
       if (!!reviews) {
         // console.log(reviews)
         this.reviews = reviews;
@@ -114,7 +114,7 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.reviewService.reviews.next(null)
+    this.reviewService.articleReviews.next(null)
     this.subs.forEach(subscription => subscription.unsubscribe())
   }
 

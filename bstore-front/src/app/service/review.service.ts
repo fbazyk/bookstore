@@ -5,15 +5,18 @@ import {environment} from "../../environments/environment";
 import {BehaviorSubject} from "rxjs";
 import {Review} from "../model/Review";
 import {AddReviewDTO} from "../model/AddReviewDTO";
+import {UserService} from "../user.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReviewService {
 
-  public reviews: BehaviorSubject<Review[]> = new BehaviorSubject<Review[]>(null);
+  public userReviews: BehaviorSubject<Review[]> = new BehaviorSubject<Review[]>(null)
+  public articleReviews: BehaviorSubject<Review[]> = new BehaviorSubject<Review[]>(null);
 
   constructor(private http: HttpClient,
+              private userService: UserService,
               public snackBar: MatSnackBar) {
     console.log("REVIEW SERVICE INITIALIZED")
   }
@@ -21,18 +24,28 @@ export class ReviewService {
   //TODO
   //TODO
 
-  getReviews(type: string, id: number) {
+  getReviewsForArticle(type: string, id: number) {
     console.log()
     this.http.get(`${environment.apiUrl}/reviews/${type}/${id}`, {observe: "body", responseType: "json"})
       .subscribe((reviews: Review[]) => {
         // console.log(reviews)
         if(!!reviews){
-          this.reviews.next(reviews);
+          this.articleReviews.next(reviews);
 
         }
       }, error => {
         console.log(error);
       })
+  }
+
+  getReviewsForUser(){
+    let userId = this.userService.currentUserValue.id;
+    this.http.get(`${environment.apiUrl}/reviews/user/${userId}`).subscribe((value: Review[]) => {
+      console.log("Reviews for current user")
+      console.log(value)
+      this.userReviews.next(value);
+    })
+
   }
 
   submit(formgroup: any, articleType: string, articleId: number) {
@@ -48,7 +61,7 @@ export class ReviewService {
       addReview,
       {observe: "response", responseType: "json"})
       .subscribe(value => {
-        this.getReviews(articleType, articleId)
+        this.getReviewsForArticle(articleType, articleId)
         this.snackBar.open("Success", '', {duration:5000})
       }, error => {
         this.snackBar.open("Unable to update review", '', {duration:5000})

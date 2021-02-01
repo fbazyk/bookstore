@@ -1,0 +1,11 @@
+<mat-card>
+  <mat-card-title>Reviews</mat-card-title>
+  <div *ngFor="let review of userReviews">
+    {{review.articleId}}
+    {{review.articleType}}
+    {{review.articleTitle}}
+    {{review.userName}}
+    {{review.rating}}
+    {{review.description}}
+  </div>
+</mat-card>

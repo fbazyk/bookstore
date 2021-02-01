@@ -95,6 +95,10 @@ public class ReviewService {
         return foundReviews;
     }
 
+    public Set<Review> findReviewsByUserId(Long id) {
+        return this.reviewRepository.findAllByUserId(id);
+    }
+
     /** TODO
      *
      * */
