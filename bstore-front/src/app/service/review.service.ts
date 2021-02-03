@@ -49,23 +49,31 @@ export class ReviewService {
   }
 
   submit(formgroup: any, articleType: string, articleId: number) {
-    console.log(formgroup.review);
+    console.log(formgroup.description);
     console.log(formgroup.rating)
     let addReview: AddReviewDTO = {
       articleId: articleId,
       articleType: articleType,
       rating: formgroup.rating,
-      description: formgroup.review,
+      description: formgroup.description,
     }
     this.http.post(`${environment.apiUrl}/reviews/add`,
       addReview,
       {observe: "response", responseType: "json"})
       .subscribe(value => {
-        this.getReviewsForArticle(articleType, articleId)
+        this.getReviewsForArticle(articleType, articleId);
+        this.getReviewsForUser();
         this.snackBar.open("Success", '', {duration:5000})
       }, error => {
         this.snackBar.open("Unable to update review", '', {duration:5000})
         console.log("SOMETHING WENT WRONG")
       })
+  }
+
+  deleteReview(review: Review) {
+    this.http.delete(`${environment.apiUrl}/reviews/${review.id}`).subscribe(value => {
+      console.log(value);
+      this.getReviewsForUser()
+    })
   }
 }

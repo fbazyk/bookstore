@@ -1,0 +1,37 @@
+.mat-column-articleid{
+  width: 5%;
+  padding: 0 0.5rem 0 0.5rem;
+}
+
+.mat-column-type{
+  width: 5%;
+  padding: 0 0.5rem 0 0.5rem;
+}
+.mat-column-title{
+  width: 15%;
+  padding: 0 0.5rem 0 0.5rem;
+}
+.mat-column-description{
+  width: 50%;
+  padding: 0 0.5rem 0 0.5rem;
+}
+.mat-column-rating{
+  width: 5%;
+  padding: 0 0.5rem 0 0.5rem;
+}
+.mat-column-edit{
+  width: 17%;
+  padding: 0 0.5rem 0 0.5rem;
+}
+.mat-column-delete{
+  width: 5%;
+  padding: 0 0.5rem 0 0.5rem;
+}
+
+mat-form-field.mat-form-field--width__small {
+  width: 5rem;
+}
+
+mat-form-field.mat-form-field--width__full {
+  width: 100%;
+}

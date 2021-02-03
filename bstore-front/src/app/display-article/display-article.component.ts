@@ -157,8 +157,10 @@ export class DisplayArticleComponent implements OnInit, OnDestroy {
   }
 
   navigate() {
-    this.router.navigate(['/inventory']);
+    // this.router.navigate(['/inventory']);
+    this.location.back();
   }
+
 
   addToCart() {
     let orderItem: OrderItemDTO = {

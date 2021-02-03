@@ -1,11 +1,77 @@
 <mat-card>
   <mat-card-title>Reviews</mat-card-title>
-  <div *ngFor="let review of userReviews">
-    {{review.articleId}}
-    {{review.articleType}}
-    {{review.articleTitle}}
-    {{review.userName}}
-    {{review.rating}}
-    {{review.description}}
-  </div>
+  <form [formGroup]="form">
+
+    <table mat-table [dataSource]="dataSource" matSort *ngIf="userReviews.length>0">
+      <ng-container matColumnDef="articleid">
+        <th mat-header-cell *matHeaderCellDef> ID</th>
+        <td mat-cell *matCellDef="let review" (click)="openArticle(review)"> {{review.articleId}} </td>
+      </ng-container>
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef> Type</th>
+        <td mat-cell *matCellDef="let review"> {{review.articleType}} </td>
+      </ng-container>
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef> Title</th>
+        <td mat-cell *matCellDef="let review"> {{review.articleTitle}} </td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef> Description</th>
+        <td mat-cell *matCellDef="let review">
+        <span *ngIf="!review.edit">
+        {{review.description}} </span>
+          <div *ngIf="review.edit">
+            <mat-form-field appearance="fill" class="mat-form-field--width__full">
+              <input matInput #description autofocus formControlName="description" type="text">
+            </mat-form-field>
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="rating">
+        <th mat-header-cell *matHeaderCellDef> Rating</th>
+        <td mat-cell *matCellDef="let review">
+           <span *ngIf="!review.edit">
+        {{review.rating}} </span>
+          <mat-form-field appearance="fill" *ngIf="!!review.edit" class="mat-form-field--width__small">
+            <mat-label>Rating</mat-label>
+            <mat-select formControlName="rating">
+              <mat-option *ngFor="let rating of ratings" [value]="rating">
+                {{rating}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="edit">
+        <th mat-header-cell *matHeaderCellDef> Edit</th>
+        <td mat-cell *matCellDef="let review">
+          <button class="button" *ngIf="!review.edit" mat-icon-button type="button"
+                  (click)="editReview(review)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button class="button" *ngIf="!!review.edit" mat-icon-button type="button"
+                  (click)="submitReview($event, review)">
+            <mat-icon>done</mat-icon>
+          </button>
+          <button class="button" *ngIf="!!review.edit" mat-icon-button type="button" (click)="dismiss($event, review)">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef> Delete</th>
+        <td mat-cell *matCellDef="let review">
+          <button class="button" mat-icon-button type="button"
+                  (click)="deleteReview(review)">
+            <mat-icon >delete</mat-icon>
+          </button>
+        </td>
+
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+      </tr>
+    </table>
+  </form>
+
 </mat-card>

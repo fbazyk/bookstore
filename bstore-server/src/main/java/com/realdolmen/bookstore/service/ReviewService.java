@@ -99,6 +99,14 @@ public class ReviewService {
         return this.reviewRepository.findAllByUserId(id);
     }
 
+    public Review findReviewById(Long id) {
+        return this.reviewRepository.findById(id).get();
+    }
+
+    public void deleteReviewById(Long id) {
+        this.reviewRepository.deleteById(id);
+    }
+
     /** TODO
      *
      * */

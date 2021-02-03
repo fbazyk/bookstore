@@ -25,7 +25,7 @@ export class AddReviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.reviewForm = this.fb.group({
-      review: ['', Validators.required],
+      description: ['', Validators.required],
       rating: [4, Validators.required]
     })
   }

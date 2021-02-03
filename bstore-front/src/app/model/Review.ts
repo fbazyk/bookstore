@@ -7,6 +7,7 @@ export interface Review {
   articleTitle?: string;
   rating?: number;
   description?: string;
+  edit?: boolean;
   userId?: number;
   userName?: string;
 }

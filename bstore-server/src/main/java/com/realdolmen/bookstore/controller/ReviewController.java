@@ -3,7 +3,9 @@ package com.realdolmen.bookstore.controller;
 import com.realdolmen.bookstore.dto.AddReviewDTO;
 import com.realdolmen.bookstore.model.ArticleType;
 import com.realdolmen.bookstore.model.Review;
+import com.realdolmen.bookstore.model.User;
 import com.realdolmen.bookstore.service.ReviewService;
+import com.realdolmen.bookstore.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,10 +19,12 @@ import java.util.Set;
 public class ReviewController {
 
     private ReviewService reviewService;
+    private UserService userService;
     Logger logger = LoggerFactory.getLogger(ReviewController.class);
 
-    public ReviewController(ReviewService reviewService) {
+    public ReviewController(ReviewService reviewService, UserService userService) {
         this.reviewService = reviewService;
+        this.userService = userService;
     }
 
     @GetMapping(value = "/reviews/{type}/{id}")
@@ -62,5 +66,19 @@ public class ReviewController {
 
     }
 
+    @DeleteMapping(value="/reviews/{id}")
+    public ResponseEntity<?> deleteReview(@PathVariable Long id){
+        logger.debug("Deleting the review for id {}", id);
+        //TODO get review from service
+        Review existingReview = this.reviewService.findReviewById(id);
+        User currentUser = this.userService.currentUser();
+        if(existingReview.getUserId().equals(currentUser.getId())){
+            this.reviewService.deleteReviewById(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
+        }
+        //TODO Make sure that user is the user in the review
+    }
 
 }
