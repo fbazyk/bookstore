@@ -43,6 +43,7 @@ import {DisplayOrderArticlesComponent} from './display-order-articles/display-or
 import {MatDialogModule} from "@angular/material/dialog";
 import { AdminOrdersComponent } from './admin-orders/admin-orders.component';
 import { UserReviewsComponent } from './user-reviews/user-reviews.component';
+import { UserFavoritesComponent } from './user-favorites/user-favorites.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { UserReviewsComponent } from './user-reviews/user-reviews.component';
     DisplayOrderArticlesComponent,
     AdminOrdersComponent,
     UserReviewsComponent,
+    UserFavoritesComponent,
   ],
   imports: [
     BrowserModule,

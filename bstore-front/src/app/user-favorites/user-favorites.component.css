@@ -1,0 +1,18 @@
+.mat-column-articleid{
+  width: 5%
+}
+
+.mat-column-type{
+  width: 5%
+}
+.mat-column-title{
+  width: 50%
+}
+
+.mat-column-price{
+  width: 5%;
+}
+
+.mat-column-delete{
+  width: 5%
+}
