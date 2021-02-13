@@ -1,7 +1,6 @@
 package com.realdolmen.bookstore.service;
 
 import com.realdolmen.bookstore.model.*;
-import com.realdolmen.bookstore.repository.ArticleRepository;
 import com.realdolmen.bookstore.repository.OrderItemRepository;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -32,7 +31,7 @@ public class InvoiceService {
     private String invoice_template;
 
     public File getInvoice(Order order, User user) throws IOException {
-        logger.debug("Generating invoice file for order {}", order.getOrderId());
+        logger.debug("Generating invoice file for order {}", order.getId());
         //TODO get article title into the object
         List<Article> articles = this.articleService.findAll();
         ArrayList<OrderItemReportDTO> oirds = new ArrayList<>();

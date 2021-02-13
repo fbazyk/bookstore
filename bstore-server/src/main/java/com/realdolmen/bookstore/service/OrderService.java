@@ -7,8 +7,6 @@ import com.realdolmen.bookstore.exception.QuantityNotAvailableException;
 import com.realdolmen.bookstore.model.*;
 import com.realdolmen.bookstore.repository.OrderItemRepository;
 import com.realdolmen.bookstore.repository.OrderRepository;
-import com.realdolmen.bookstore.repository.UserRepository;
-import org.hibernate.boot.model.relational.QualifiedName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -87,7 +85,7 @@ public class OrderService {
         openOrder.setUser(user);
         openOrder.setCartDate(Instant.now());
         openOrder = this.saveOrder(openOrder);
-        logger.debug("OpenOrder executed {}", openOrder.getOrderId());
+        logger.debug("OpenOrder executed {}", openOrder.getId());
         return openOrder;
     }
 
@@ -116,7 +114,7 @@ public class OrderService {
             try {
                 this.mockSupplierService.placeOrder(order);
             } catch (QuantityNotAvailableException exception) {
-                order = this.orderRepository.findById(order.getOrderId()).get();
+                order = this.orderRepository.findById(order.getId()).get();
                 order.setOrderDate(null);
                 for (OrderItem orderItem : exception.getItemSet()) {
                     order.getOrderItems().remove(orderItem);
@@ -291,7 +289,7 @@ public class OrderService {
     }
 
     public Order getUserOrderById(User currentUser, Long id) {
-        return this.orderRepository.findOrdersByUserAndOrderId(currentUser, id);
+        return this.orderRepository.findOrdersByUserAndId(currentUser, id);
     }
 
     public List<Order> getNewOrders() {

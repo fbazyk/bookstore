@@ -15,8 +15,8 @@ import java.util.Set;
 public class Order implements Auditable{
 
     @Id
-    @GeneratedValue
-    private Long orderId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
@@ -74,12 +74,12 @@ public class Order implements Auditable{
         this.version = version;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Long getId() {
+        return id;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setId(Long orderId) {
+        this.id = orderId;
     }
 
     public Set<OrderItem> getOrderItems() {

@@ -21,5 +21,5 @@ insert into lps (price, supplier_id, title, search_title, artist, genre) VALUES 
 insert into reviews(article_id, article_type, rating, description, user_id) VALUES (1, 'BOOK', 10, 'Great Work!', 2);
 insert into reviews(article_id, article_type, rating, description, user_id) VALUES (2, 'LP', 10, 'Great Work!', 2);
 insert into reviews(article_id, article_type, rating, description, user_id) VALUES (3, 'LP', 10, 'Great Work!', 1);
-insert into orders(order_id, cart_date, order_date, shipping_date, order_total, user_id) VALUES (1, '2021-01-28 21:32:44.059699', '2021-01-28 21:32:44.059699', null, 10, 2);
-insert into order_item(id, article_id, article_type, price, quantity, order_id) values (1, 1, 'BOOK', 10, 1, 1);
+insert into orders(cart_date, order_date, shipping_date, order_total, user_id) VALUES ('2021-01-28 21:32:44.059699', '2021-01-28 21:32:44.059699', null, 10, 2);
+insert into order_item(article_id, article_type, price, quantity, order_id) values (1, 'BOOK', 10, 1, 1);

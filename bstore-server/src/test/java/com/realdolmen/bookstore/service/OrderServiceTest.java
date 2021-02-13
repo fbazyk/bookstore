@@ -45,7 +45,7 @@ public class OrderServiceTest {
     void findOpenOrder() {
         //
         Order order = this.orderService.findOpenOrder();
-        logger.debug("Order ID is: {}", order.getOrderId());
+        logger.debug("Order ID is: {}", order.getId());
         assertNotNull(order);
     }
 
@@ -65,7 +65,7 @@ public class OrderServiceTest {
         User currentUser = this.userService.findByUserName(username);
         logger.debug("Current User: {}", currentUser);
         Order openOrder = this.orderService.openOrder(currentUser);
-        logger.debug("Open Order Id = {}", openOrder.getOrderId());
+        logger.debug("Open Order Id = {}", openOrder.getId());
 //        try {
 //            Thread.sleep(1000);
 //        }catch (Exception ex){
@@ -174,7 +174,7 @@ public class OrderServiceTest {
         order.setCartDate(Instant.now());
         order.setUser(currentUser);
         Order savedOrder = this.orderService.saveOrder(order);
-        assertNotNull(savedOrder.getOrderId());
+        assertNotNull(savedOrder.getId());
     }
 
     @Test
