@@ -32,6 +32,7 @@ public class ArticleService {
     private UserRepository userRepository;
     private OrderRepository orderRepository;
     private OrderItemRepository orderItemRepository;
+    private StorageLocationRepository storageLocationRepository;
 
 
     @PersistenceContext
@@ -46,7 +47,8 @@ public class ArticleService {
                           LpRepository lpRepository,
                           UserRepository userRepository,
                           OrderRepository orderRepository,
-                          OrderItemRepository orderItemRepository
+                          OrderItemRepository orderItemRepository,
+                          StorageLocationRepository storageLocationRepository
     ) {
         this.articleRepository = articleRepository;
         this.bookRepository = bookRepository;
@@ -55,6 +57,7 @@ public class ArticleService {
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
+        this.storageLocationRepository = storageLocationRepository;
     }
 
     public List<Article> findAll() {
@@ -252,6 +255,14 @@ public class ArticleService {
 
     public boolean updateArticle(Article article) throws UnableToUpdateArticleException {
 
+        StorageLocation existingLocation = this.storageLocationRepository.findByCode(article.getLocation().getCode());
+        StorageLocation updatedLocation = new StorageLocation();
+        if(existingLocation == null){
+            updatedLocation = this.storageLocationRepository.save(article.getLocation());
+        } else {
+            updatedLocation = existingLocation;
+        }
+
         if (article.getId() != null && article.getId() > 0) {
             if (article instanceof Book ) {
                 try {
@@ -262,6 +273,7 @@ public class ArticleService {
                     existingBook.setIsbn(((Book) article).getIsbn());
                     existingBook.setPages(((Book) article).getPages());
                     existingBook.setSupplierId(article.getSupplierId());
+                    existingBook.setLocation(updatedLocation);
                     this.bookRepository.save(existingBook);
                     this.bookRepository.flush();
                     return true;
@@ -278,6 +290,7 @@ public class ArticleService {
                     existingGame.setMinage(((Game) article).getMinage());
                     existingGame.setGenre(((Game) article).getGenre());
                     existingGame.setSupplierId(article.getSupplierId());
+                    existingGame.setLocation(updatedLocation);
                     this.gameRepository.saveAndFlush(existingGame);
                     return true;
                 } catch (Exception ex) {
@@ -291,6 +304,7 @@ public class ArticleService {
                     existingLp.setArtist(((LP) article).getArtist());
                     existingLp.setGenre(((LP) article).getGenre());
                     existingLp.setSupplierId(article.getSupplierId());
+                    existingLp.setLocation(updatedLocation);
                     this.lpRepository.saveAndFlush(existingLp);
                     return true;
                 } catch (Exception ex) {

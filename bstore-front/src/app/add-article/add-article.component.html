@@ -74,6 +74,24 @@
           </mat-select>
         </mat-form-field>
       </div>
+      <div formGroupName="location"  class="edit-article--input-fields__column">
+        <mat-form-field>
+          <mat-label>Code</mat-label>
+          <input matInput formControlName="code">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Row</mat-label>
+          <input matInput formControlName="row">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Segment</mat-label>
+          <input matInput formControlName="segment">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Level</mat-label>
+          <input matInput formControlName="level">
+        </mat-form-field>
+      </div>
       <div class="search-form--errors">
         <div *ngIf="articleForm.invalid"> Some data is missing, please check the entries</div>
         <div

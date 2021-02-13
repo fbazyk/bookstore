@@ -60,7 +60,7 @@ public class Article implements Auditable {
     @JoinColumn(name = "article_id")
     private Set<Review> reviews;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     @JsonManagedReference
     private StorageLocation location;

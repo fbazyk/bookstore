@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Subscription} from "rxjs";
-import {Article, articleTypes, gameGenres, lpGenres} from "../model/Articles";
+import {Article, articleTypes, gameGenres, lpGenres, StorageLocation} from "../model/Articles";
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {correctISBNValidator} from "../validation/ArticleValidation";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -47,6 +47,13 @@ export class AddArticleComponent implements OnInit {
     minage: ['', Validators.min(0)],
     genre:  ['', ],
     artist: '',
+    location: this.fb.group({
+      code: '',
+      row: '',
+      segment: '',
+      level: ''
+    })
+
   });
 
   constructor(private route: ActivatedRoute,
@@ -98,6 +105,12 @@ export class AddArticleComponent implements OnInit {
       author: '',
       isbn: ['', [correctISBNValidator(), Validators.required]],
       pages: ['', Validators.min(0)],
+      location: this.fb.group({
+        code: '',
+        row: '',
+        segment: '',
+        level: ''
+      })
     });
     this.subscribeToTypeValueChanges()
   }
@@ -114,6 +127,12 @@ export class AddArticleComponent implements OnInit {
       publisher: ['', Validators.minLength(1)],
       minage: ['', Validators.min(0)],
       genre:  ['', [Validators.required]],
+      location: this.fb.group({
+        code: '',
+        row: '',
+        segment: '',
+        level: ''
+      })
     });
     this.subscribeToTypeValueChanges()
   }
@@ -129,6 +148,12 @@ export class AddArticleComponent implements OnInit {
       supplierId: ['', Validators.required],
       genre:  ['', [Validators.required]],
       artist: '',
+      location: this.fb.group({
+        code: '',
+        row: '',
+        segment: '',
+        level: ''
+      })
     });
     this.subscribeToTypeValueChanges()
   }
@@ -205,12 +230,18 @@ export class AddArticleComponent implements OnInit {
   }
 
   submitChanges($event: Event) {
-    console.log("form valid", this.articleForm.valid)
+    console.log("form valid", this.articleForm.valid);
+    console.log("form valid", this.articleForm.value);
 
     if (this.articleForm.valid) {
       this.article.title = this.articleForm.get('title').value;
       this.article.price = this.articleForm.get('price').value;
       this.article.supplierId = this.articleForm.get('supplierId').value;
+      this.article.location = new StorageLocation();
+      this.article.location.code = this.articleForm.get('location.code').value;
+      this.article.location.row = this.articleForm.get('location.row').value;
+      this.article.location.segment = this.articleForm.get('location.segment').value;
+      this.article.location.level = this.articleForm.get('location.level').value;
       switch (this.article.type) {
         case 'book': {
           this.article.author = this.articleForm.get('author').value;

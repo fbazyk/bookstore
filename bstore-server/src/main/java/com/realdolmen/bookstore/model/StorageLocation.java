@@ -16,12 +16,6 @@ public class StorageLocation {
     private String segment;
     private String level;
 
-    @Column(name = "article_id")
-    private Long articleId;
-
-    @Column(name= "article_type")
-    private String articleType;
-
     public String getCode() {
         return code;
     }
@@ -62,19 +56,4 @@ public class StorageLocation {
         this.id = id;
     }
 
-    public Long getArticleId() {
-        return articleId;
-    }
-
-    public void setArticleId(Long articleId) {
-        this.articleId = articleId;
-    }
-
-    public String getArticleType() {
-        return articleType;
-    }
-
-    public void setArticleType(String articleType) {
-        this.articleType = articleType;
-    }
 }

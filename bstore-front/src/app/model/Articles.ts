@@ -16,7 +16,14 @@ export interface Article{
   artist?: string;
   genre?: GameGenre|LpGenre;
   editQuantity?: boolean
+  location?: StorageLocation;
+}
 
+export class StorageLocation{
+  code: string;
+  row: string;
+  segment: string;
+  level: string;
 }
 
 export enum articleType{

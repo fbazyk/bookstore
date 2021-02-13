@@ -1,5 +1,7 @@
 package com.realdolmen.bookstore.dto;
 
+import com.realdolmen.bookstore.model.StorageLocation;
+
 import java.math.BigDecimal;
 
 public class ArticleDTO {
@@ -16,6 +18,7 @@ public class ArticleDTO {
     private String artist;
     private String genre;
     private Boolean deleted;
+    private StorageLocation location;
 
     public ArticleDTO() {
     }
@@ -122,5 +125,13 @@ public class ArticleDTO {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public StorageLocation getLocation() {
+        return location;
+    }
+
+    public void setLocation(StorageLocation location) {
+        this.location = location;
     }
 }

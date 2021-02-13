@@ -5,7 +5,7 @@ import {ArticleService} from "../service/article.service";
 import {UserService} from "../user.service";
 import {Location} from "@angular/common";
 import {Subscription} from "rxjs";
-import {Article, articleTypes, Book, Game, gameGenres, Lp, lpGenres} from "../model/Articles";
+import {Article, articleTypes, Book, Game, gameGenres, Lp, lpGenres, StorageLocation} from "../model/Articles";
 import {
   correctISBNValidator,
   correctNewArticleTypeValidator
@@ -39,6 +39,12 @@ export class EditArticleComponent implements OnInit {
     minage: ['', Validators.min(0)],
     genre:  ['', ],
     artist: '',
+    location: this.fb.group({
+      code: '',
+      row: '',
+      segment: '',
+      level: ''
+    })
   });
 
   constructor(private route: ActivatedRoute,
@@ -101,8 +107,14 @@ export class EditArticleComponent implements OnInit {
       title: this.article.title,
       price: this.article.price,
       supplierId: this.article.supplierId,
+      location: {
+        code: this.article.location.code,
+        row: this.article.location.row,
+        segment: this.article.location.segment,
+        level: this.article.location.level,
+      }
     });
-
+    console.log(this.articleForm)
     console.log(this.articleForm.get('type'))
     // this.articleForm.controls['type'].setValidators([Validators.required, correctNewArticleTypeValidator]);
     // this.articleForm.controls['type'].markAsDirty();
@@ -154,6 +166,11 @@ export class EditArticleComponent implements OnInit {
       this.article.title = this.articleForm.get('title').value;
       this.article.price = this.articleForm.get('price').value;
       this.article.supplierId = this.articleForm.get('supplierId').value;
+      this.article.location = new StorageLocation();
+      this.article.location.code = this.articleForm.get('location.code').value;
+      this.article.location.row = this.articleForm.get('location.row').value;
+      this.article.location.segment = this.articleForm.get('location.segment').value;
+      this.article.location.level = this.articleForm.get('location.level').value;
       switch (this.article.type) {
         case 'book': {
           this.article.author = this.articleForm.get('author').value;

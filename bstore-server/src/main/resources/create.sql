@@ -6,7 +6,7 @@ create table lps (id  bigserial not null, created_by varchar(255), created_on ti
 create table order_item (id int8 not null, article_id int8, article_type varchar(255), created_by varchar(255), created_on timestamp, updated_by varchar(255), updated_on timestamp, price numeric(19, 2), quantity int8, version int4, order_id int8, primary key (id));
 create table orders (order_id int8 not null, created_by varchar(255), created_on timestamp, updated_by varchar(255), updated_on timestamp, cart_date timestamp, order_date timestamp, shipping_date timestamp, order_total numeric(19, 2), version int4, user_id int8, primary key (order_id));
 create table reviews (id  bigserial not null, article_id int8, article_type varchar(255), created_by varchar(255), created_on timestamp, updated_by varchar(255), updated_on timestamp, description varchar(255), rating int4, user_id int8, primary key (id));
-create table storage_location (id  bigserial not null, article_id int8, article_type varchar(255), code varchar(255), level varchar(255), row varchar(255), segment varchar(255), primary key (id));
+create table storage_location (id  bigserial not null, code varchar(255), level varchar(255), row varchar(255), segment varchar(255), primary key (id));
 create table users (id  bigserial not null, enabled boolean, first_name varchar(100) not null, last_name varchar(100) not null, password varchar(255), role varchar(255), username varchar(255), address_id int8, primary key (id));
 create table users_favorite_books (user_id int8 not null, favorite_books_id int8 not null, primary key (user_id, favorite_books_id));
 create table users_favorite_games (user_id int8 not null, favorite_games_id int8 not null, primary key (user_id, favorite_games_id));
