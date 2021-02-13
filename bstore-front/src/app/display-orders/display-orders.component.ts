@@ -36,10 +36,10 @@ export class DisplayOrdersComponent implements OnInit {
     event.stopPropagation();
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
-    this.http.get(`${environment.apiUrl}/orders/invoice/${order.orderId}`,
+    this.http.get(`${environment.apiUrl}/orders/invoice/${order.id}`,
       {headers: headers, responseType: "blob"}).subscribe(response => {
       let blob = new Blob([response], {type: "application/pdf"});
-      saveAs(blob, `invoice-${order.orderId}.pdf`);
+      saveAs(blob, `invoice-${order.id}.pdf`);
     }, (error: HttpErrorResponse) => {
         console.log(error)
       if(error.status){

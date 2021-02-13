@@ -3,7 +3,7 @@ import {Article} from "./Articles";
 export interface OrderDTO{
   cartDate: string
   orderDate: string
-  orderId: number
+  id: number
   orderItems: OrderItemDTO[]
   orderTotal: number
 }

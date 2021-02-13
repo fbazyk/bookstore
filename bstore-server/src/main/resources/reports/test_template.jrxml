@@ -37,7 +37,7 @@
 					<textElement>
 						<font size="14" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{ORDER}.getOrderId()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{ORDER}.getId()]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
