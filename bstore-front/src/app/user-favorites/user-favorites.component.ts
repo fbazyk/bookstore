@@ -25,10 +25,12 @@ export class UserFavoritesComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.currentUser.subscribe((user: User) => {
-      console.log(user)
-      this.favoriteArticles = user.favoriteBooks.concat(user.favoriteGames, user.favoriteLps);
-      console.log(this.favoriteArticles)
-      this.dataSource.data = this.favoriteArticles;
+      if(!!user){
+        this.favoriteArticles = user.favoriteBooks.concat(user.favoriteGames, user.favoriteLps);
+        this.dataSource.data = this.favoriteArticles;
+      } else {
+        this.dataSource.data = []
+      }
     })
   }
 
