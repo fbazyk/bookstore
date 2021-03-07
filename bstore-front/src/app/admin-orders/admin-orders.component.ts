@@ -52,11 +52,11 @@ export class AdminOrdersComponent implements OnInit {
     console.log(order)
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/octetstream')
-    this.http.get(`${environment.apiUrl}/orders/plist/${order.orderId}`,
+    this.http.get(`${environment.apiUrl}/orders/plist/${order.id}`,
       {headers: headers, responseType: 'blob'}).subscribe(response => {
       console.log(response);
       let blob = new Blob([response], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
-      saveAs(blob, `packinglist-${order.orderId}.xlsx`)
+      saveAs(blob, `packinglist-${order.id}.xlsx`)
     })
 
   }

@@ -155,4 +155,4 @@ if( requestBody.contains("some data") )&#13;
     return "Response N"&#13;
 }&#13;
 */&#13;
-</con:dispatchPath><con:response name="OK" id="4ee96bb2-8b9b-4a77-9ec9-370a8399a962" httpResponseStatus="200" mediaType="text/xml"><con:settings/><con:responseContent>Order accepted</con:responseContent></con:response></con:restMockAction></con:restMockService><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/></con:soapui-project>
+</con:dispatchPath><con:response name="OK" id="4ee96bb2-8b9b-4a77-9ec9-370a8399a962" httpResponseStatus="200" mediaType="text/xml"><con:settings/><con:responseContent>Order accepted</con:responseContent></con:response></con:restMockAction></con:restMockService><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

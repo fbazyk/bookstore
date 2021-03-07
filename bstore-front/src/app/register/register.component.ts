@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {debounceTime} from "rxjs/operators";
+import {debounceTime, switchMap, tap} from "rxjs/operators";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Router} from "@angular/router";
 
@@ -57,7 +57,7 @@ export class RegisterComponent implements OnInit {
   submit() {
     console.log("submitting form");
     console.log(this.registerForm.value)
-    const headers = new HttpHeaders({'No-Auth':'True'});
+    const headers = new HttpHeaders({'No-Auth': 'True'});
 
     this.http.post(`${environment.apiUrl}/register`,
       {
@@ -67,7 +67,7 @@ export class RegisterComponent implements OnInit {
         "lastName": this.registerForm.controls.lastName.value
       }, {headers: headers}).subscribe(value => {
       this.router.navigate(["/login"])
-        console.log(value)
+      console.log(value)
     })
   }
 }
