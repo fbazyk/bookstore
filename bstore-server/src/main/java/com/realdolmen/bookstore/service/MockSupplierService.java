@@ -37,12 +37,12 @@ public class MockSupplierService {
 
             throw new QuantityNotAvailableException("Some items are not available", itemsQuantity3);
         } else {
-            RestTemplate restTemplate = new RestTemplate();
-            String mockSupplierURL
-                    = "http://localhost:8089/supplier/order";
-            HttpEntity<Order> request = new HttpEntity<>(processingOrder);
-            String result = restTemplate.postForObject(mockSupplierURL, request, String.class);
-            logger.debug("PLACE ORDER::All items are ordered {}", result);
+//            RestTemplate restTemplate = new RestTemplate();
+//            String mockSupplierURL
+//                    = "http://localhost:8089/supplier/order";
+//            HttpEntity<Order> request = new HttpEntity<>(processingOrder);
+//            String result = restTemplate.postForObject(mockSupplierURL, request, String.class);
+//            logger.debug("PLACE ORDER::All items are ordered {}", result);
             return true;
         }
     }
