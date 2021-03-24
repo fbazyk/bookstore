@@ -1,5 +1,28 @@
 # Getting Started
 
+1. Import project into IntelljIdea
+2. Postgres DB should run on the localhost with following credentials:
+```
+spring.datasource.url=jdbc:postgresql://localhost:5432/bookstore
+spring.datasource.username=postgres
+spring.datasource.password=pgadmin
+```
+3. Run clean install
+```
+mvn clean install -DskipTests
+```
+This also launches angular server @ http://localhost:4201/
+
+4. Run the spring boot application with 
+```
+mvn spring-boot:run
+```
+
+5. Log In with:  
+admin andy:campbells,  
+user soren:either,  
+or register a new user to browse catalogue
+
 ### Reference Documentation
 For further reference, please consider the following sections:
 
